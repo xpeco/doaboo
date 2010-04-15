@@ -10,7 +10,7 @@ $Apache::DBI::DEBUG = 2; #it works under mod_perl only
 
 sub GetDBH {
  my $dbh = DBI->connect
- ("DBI:mysql:doaboo:localhost", 'root', '',
+ ("DBI:mysql:doaboo:localhost", 'doaboo', 'doaboo',
    {
     PrintError => 1, # warn() on errors
     RaiseError => 0, # don't die on error
