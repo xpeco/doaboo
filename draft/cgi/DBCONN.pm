@@ -5,6 +5,7 @@ package DBCONN;
 use strict;
 use warnings;
 use Apache::DBI;
+#use DBI; # debug
 use XML::Simple;
 
 $Apache::DBI::DEBUG = 2; #it works under mod_perl only
@@ -13,8 +14,8 @@ sub new{
 	my $class=shift;
    my $self={@_};
    bless($self, $class);
-   $self->_init; # make the connection
-   return $self;
+   my $dbh=$self->_init; # make the connection
+   return $dbh;
 }
 
 sub rawget
@@ -22,12 +23,13 @@ sub rawget
 # same way the EXIN functions do.
 {
 	my $dbh=shift;
-	unless (ref $self){
-      print "Error, should call surname() with an object, not a class";
+	unless (ref $dbh){
+      print "Error, should call rawget() with an object, not a class";
    }
 	my $query=shift;
 	my $format=shift;
  	my $do=$dbh->prepare($query);
+
  	$do->execute;
 	if (not defined $format){return $do->fetchall_arrayref({});}
 	elsif ($format eq 'ARRAY'){
