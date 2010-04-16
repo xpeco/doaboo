@@ -1,14 +1,12 @@
 #!/usr/bin/perl
 
-package DBCONN;
 use strict;
 use warnings;
-use lib '/home/cdoblado/doaboo/draft/cgi/';
 use DBCONN;
 use CGI;
 use HTML::Template;
 
-my $dbh =GetDBH();
+my $dbh = DBCONN->new;
 my $cgi = CGI->new;
 my $t = HTML::Template->new(filename => "../db.tmpl");
 
