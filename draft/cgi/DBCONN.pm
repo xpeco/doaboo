@@ -4,8 +4,7 @@ package DBCONN;
 
 use strict;
 use warnings;
-use Apache::DBI;
-#use DBI; # debug
+use DBI;
 use XML::Simple;
 
 $Apache::DBI::DEBUG = 2; #it works under mod_perl only
