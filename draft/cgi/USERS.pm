@@ -64,19 +64,9 @@ sub check {
 
 sub _init{
 	my $self=shift;
-	my $dbh;
-	if(defined $self->{db})
-	{
-		print "Desc already defined\n";
-		$dbh=$self->{db}; 
-	}
-	else{
-		print "Forced to create a dbh\n";
-		$dbh=DBCONN->new();
-	}
-	my $user=$dbh->DBCONN::rawget('select * from ADM_USERS where ADM_LOGIN=\''.$self->{login}.'\' limit 1');
-	$self->{group}=$user->[0]->{ADM_GROUP};
+	my $user=$self->{db}->DBCONN::rawget('select * from ADM_USERS where ADM_LOGIN=\''.$self->{login}.'\' limit 1');
 	$self->{adm_password}=$user->[0]->{ADM_PASSWORD};
+	$self->{user}=$user;
 	return $self;
 }
 1;

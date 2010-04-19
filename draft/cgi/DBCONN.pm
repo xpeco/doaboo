@@ -4,8 +4,8 @@ package DBCONN;
 
 use strict;
 use warnings;
-use Apache::DBI;
-#use DBI; # debug
+#use Apache::DBI;
+use DBI; # debug
 use XML::Simple;
 
 $Apache::DBI::DEBUG = 2; #it works under mod_perl only
@@ -48,6 +48,17 @@ sub rawget
 	}
 	else {return $do->fetchall_arrayref({});}
 }
+
+sub user {
+	my $self=shift;
+	unless (ref $self){
+      print "Error, should call setuser() with an object, not a class";
+   }
+	my $login=shift;
+	$self->{login}=$login if defined $login;
+	return $self->{login};
+} 
+
 
 sub _init {
 	my $conf=XML::Simple::XMLin("./doaboo.conf");
