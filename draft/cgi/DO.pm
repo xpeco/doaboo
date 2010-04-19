@@ -18,9 +18,14 @@ sub new{
 sub query{
 	my $self=shift;
 	my $query=shift;
+	my $format=shift;
 	print "At q, user: $self->{login} -- here we should check permissions\n";
-	my $result=$self->{db}->DBCONN::rawget($query);
+	# $query->_cleanquery;
+	my $result=$self->{db}->DBCONN::rawget($query,$format);
 	return $result;
+}
+
+sub _cleanquery{
 }
 
 sub _initdb{
