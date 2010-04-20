@@ -14,35 +14,35 @@ sub new{
    return $self;
 }
 
-sub login {
-	my $self=shift;
-	unless (ref $self){
-      print "Error, should call login() with an object, not a class";
-   }
+#sub login {
+#	my $self=shift;
+#	unless (ref $self){
+#      print "Error, should call login() with an object, not a class";
+#   }
 #	my $login=shift;
 #	$self->{login}=$login if defined $login;
-	return $self->{login};
-} 
+#	return $self->{login};
+#} 
 
-sub password {
-	my $self=shift;
-	unless (ref $self){
-      print "Error, should call password() with an object, not a class";
-   }
+#sub password {
+#	my $self=shift;
+#	unless (ref $self){
+#      print "Error, should call password() with an object, not a class";
+#   }
 #	my $password=shift;
 #	$self->{password}=$password if defined $password;
-	return $self->{password};
-} 
+#	return $self->{password};
+#} 
 
-sub group {
-	my $self=shift;
-	unless (ref $self){
-      print "Error, should call group() with an object, not a class";
-   }
+#sub group {
+#	my $self=shift;
+#	unless (ref $self){
+#      print "Error, should call group() with an object, not a class";
+#   }
 #	my $group=shift;
 #	$self->{adm_group}=$group if defined $group;
-	return $self->{group};
-} 
+#	return $self->{group};
+#} 
 
 sub _encrypt
 {
