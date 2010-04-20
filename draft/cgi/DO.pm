@@ -26,6 +26,20 @@ sub query{
 }
 
 sub _cleanquery{
+# This subroutine receives a Query from Pulso to process it according to the permissions.
+# 1.- Remove the Q to forbidden Tables/Objects
+# 2.- Remove forbidden fields from Q
+# 3.- Add calculated values
+# 4.- Add ranges (permissions based on INSTANCES)
+# Finally, it returns a cleaned Q or 1 if it fails. 
+	my $query=shift;
+	my $object=$query;
+	$object=~s/.*FROM //s;
+ 	$object=~s/( WHERE.*| ORDER.*)//s; # got the Object from the Q
+	my $result=$self->{db}->DBCONN::rawget('select ADM',$format);
+
+
+
 }
 
 sub _initdb{
