@@ -48,6 +48,17 @@ sub rawget
 	else {return $do->fetchall_arrayref({});}
 }
 
+sub user {
+	my $self=shift;
+	unless (ref $self){
+      print "Error, should call setuser() with an object, not a class";
+   }
+	my $login=shift;
+	$self->{login}=$login if defined $login;
+	return $self->{login};
+} 
+
+
 sub _init {
 	my $conf=XML::Simple::XMLin("./doaboo.conf");
 	my $dbh = DBI->connect("DBI:mysql:$conf->{DDBB}->{NAME}:$conf->{DDBB}->{HOST}", $conf->{DDBB}->{USER},$conf->{DDBB}->{PASS},
