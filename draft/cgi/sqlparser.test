@@ -1,0 +1,7 @@
+select A,B from TableA where XX like 1';
+select A,B from TableA where XX; drop A;
+alter tableA set;
+  select A,B from TableA, TableB where (XX = \'as\') and (YY=\'b\');
+select A,B from TableA, TableB where XX;drop tableC;
+select A,B from TableA, TableB where XX in (select C from TableC) and YY=(select X from TableX)'
+
