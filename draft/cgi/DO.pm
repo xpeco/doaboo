@@ -32,14 +32,11 @@ sub _cleanquery{
 # 3.- Add calculated values
 # 4.- Add ranges (permissions based on INSTANCES)
 # Finally, it returns a cleaned Q or 1 if it fails. 
-	my $query=shift;
-	my $object=$query;
-	$object=~s/.*FROM //s;
- 	$object=~s/( WHERE.*| ORDER.*)//s; # got the Object from the Q
-	my $result=$self->{db}->DBCONN::rawget('select ADM',$format);
-
-
-
+#	my $query=shift;
+#	my $object=$query;
+#	$object=~s/.*FROM //s;
+# 	$object=~s/( WHERE.*| ORDER.*)//s; # got the Object from the Q
+#	my $result=$self->{db}->DBCONN::rawget('select ADM',$format);
 }
 
 sub _initdb{
