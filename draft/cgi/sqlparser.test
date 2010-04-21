@@ -1,7 +1,8 @@
-select A,B from TableA where XX like 1';
+select A,B from TableA;
+select A,B from TableA limit 10;
+select A,B from TableA where XX like '1' limit 10,2;
 select A,B from TableA where XX; drop A;
 alter tableA set;
   select A,B from TableA, TableB where (XX = \'as\') and (YY=\'b\');
 select A,B from TableA, TableB where XX;drop tableC;
-select A,B from TableA, TableB where XX in (select C from TableC) and YY=(select X from TableX)'
-
+select A,B from TableA, TableB where XX in (select C from TableC) and YY=(select X from TableX) limit 100;

@@ -16,7 +16,7 @@ sub only_select
 	my $self=shift;
 	my $result='OK';
 	if($self->{input}!~/\A\s*select.*/i){print "Try only select\n";$result='ERROR';}
-	elsif($self->{input}=~/select{2,}/i){print "subselect not supported yet\n";$result='ERROR';}
+	elsif($self->{input}=~/(\w+.*select)/i){print "subselect not supported yet\n";$result='ERROR';}
 	elsif($self->{input}=~/\;.*\w+/){print "only one command please\n";$result='ERROR';}
 	return $result;
 }
@@ -25,7 +25,7 @@ sub parse_tables
 {
 	my $self=shift;
 	my $q=$self->{input};
-	$q=~s/(.*from )|(where.*)|(\s*)//ig;
+	$q=~s/(.*from )|(where.*)|(limit.*)|(\s*)//ig;
 	return $q;
 }
 
@@ -56,4 +56,15 @@ sub parse_where_fields
 	$result=~s/\,\Z//;
 	return $result;
 }
+
+sub parse_limit
+{
+	my $self=shift;
+	my $q=$self->{input};
+	
+	$q=~s/(.*limit )//ig;
+	if ($&) {$q=~s/\;//;return $q;}
+	else {return '';}
+}
+
 1;

@@ -12,6 +12,7 @@ while(my $m=<STDIN>)
 		print "Tables:".$query->parse_tables."\n";
 		print "Fields:".$query->parse_fields."\n";
 		print "Where Fields:".$query->parse_where_fields."\n";
+		print "Limit section:".$query->parse_limit."\n";
 	}
 	print "------------------------------------------------\n";
 }
