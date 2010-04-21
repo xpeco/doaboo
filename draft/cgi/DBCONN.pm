@@ -60,7 +60,8 @@ sub user {
 
 
 sub _init {
-	my $conf=XML::Simple::XMLin("./doaboo.conf");
+	#my $conf=XML::Simple::XMLin("./doaboo.conf");
+	my $conf=XML::Simple::XMLin("$ENV{DOABOOPATH}/cgi/doaboo.conf");
 	my $dbh = DBI->connect("DBI:mysql:$conf->{DDBB}->{NAME}:$conf->{DDBB}->{HOST}", $conf->{DDBB}->{USER},$conf->{DDBB}->{PASS},
 		{
 			PrintError => 1, # warn() on errors
