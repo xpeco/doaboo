@@ -3,12 +3,23 @@
 <body>
 
 <table border="1">
-<tr><th>VALOR1</th><th>VALOR2</th><th>VALOR3</th></tr>
+
+<!--<tr><th>VALOR1</th><th>VALOR2</th><th>VALOR3</th></tr>-->
 
 <TMPL_VAR NAME="TITLE">
-<TMPL_LOOP NAME="ROWS">
+
+
+<TMPL_LOOP NAME="Campos">
  <tr>
-  <td><TMPL_VAR NAME="serialn"></td>
+  <td><TMPL_VAR NAME="Nombre"></td>
+ </tr>
+</TMPL_LOOP>
+
+
+
+<TMPL_LOOP NAME="Valores">
+ <tr>
+  <td><TMPL_VAR NAME="NAME"></td>
   <td><TMPL_VAR NAME="type"></td>
   <td><TMPL_VAR NAME="id"></td>
  </tr>
