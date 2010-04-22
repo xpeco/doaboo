@@ -11,7 +11,7 @@ sub new{
    return $self;
 }
 
-sub only_select
+sub _only_select
 {
 	my $self=shift;
 	my $result='OK';
@@ -21,7 +21,7 @@ sub only_select
 	return $result;
 }
 
-sub parse_tables
+sub _parse_tables
 {
 	my $self=shift;
 	my $q=$self->{input};
@@ -29,7 +29,7 @@ sub parse_tables
 	return $q;
 }
 
-sub parse_fields
+sub _parse_fields
 {
 	my $self=shift;
 	my $q=$self->{input};
@@ -37,7 +37,7 @@ sub parse_fields
 	return $q;
 }
 
-sub parse_where_fields
+sub _parse_where_fields
 {
 	my $self=shift;
 	my $result='';
@@ -57,7 +57,7 @@ sub parse_where_fields
 	return $result;
 }
 
-sub parse_limit
+sub _parse_limit
 {
 	my $self=shift;
 	my $q=$self->{input};
@@ -67,4 +67,19 @@ sub parse_limit
 	else {return '';}
 }
 
+sub test_sql_parser
+{
+	my $input=shift;
+	print "------------------------------------------------\n";
+   print "Parsing: $input\n";
+   my $query=SQLPARSER->new(input=>$input);
+   if($query->_only_select eq 'OK'){
+      print "Tables:".$query->_parse_tables."\n";
+      print "Fields:".$query->_parse_fields."\n";
+      print "Where Fields:".$query->_parse_where_fields."\n";
+      print "Limit section:".$query->_parse_limit."\n";
+   }
+   print "------------------------------------------------\n";
+
+}
 1;
