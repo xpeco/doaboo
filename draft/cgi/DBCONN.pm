@@ -11,10 +11,10 @@ $Apache::DBI::DEBUG = 2; #it works under mod_perl only
 
 sub new{
 	my $class=shift;
-   my $self={@_};
-   bless($self, $class);
-   my $dbh=$self->_init; # make the connection
-   return $dbh;
+	my $self={@_};
+	bless($self, $class);
+	my $dbh=$self->_init; # make the connection
+	return $dbh;
 }
 
 sub rawget
