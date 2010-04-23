@@ -4,24 +4,18 @@
 
 <table border="1">
 
-<!--<tr><th>VALOR1</th><th>VALOR2</th><th>VALOR3</th></tr>-->
-
 <TMPL_VAR NAME="TITLE">
 
-
 <TMPL_LOOP NAME="Campos">
- <tr>
-  <td><TMPL_VAR NAME="Nombre"></td>
- </tr>
+  <th><TMPL_VAR NAME="Nombre"></th>
 </TMPL_LOOP>
 
-
-
+<!-- ATTENTION!!! BUG the "l" from "serialn" is a "1" (one!!!) -->
 <TMPL_LOOP NAME="Valores">
  <tr>
-  <td><TMPL_VAR NAME="NAME"></td>
-  <td><TMPL_VAR NAME="type"></td>
   <td><TMPL_VAR NAME="id"></td>
+  <td><TMPL_VAR NAME="seria1n">&nbsp;</td>
+  <td><TMPL_VAR NAME="type"></td>
  </tr>
 </TMPL_LOOP>
 
