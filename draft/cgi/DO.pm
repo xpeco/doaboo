@@ -19,28 +19,33 @@ sub query{
 	my $self=shift;
 	my $query=shift;
 	my $format=shift;
-	print "At q, user: $self->{login} -- here we should check permissions\n";
+	#print "At q, user: $self->{login} -- here we should check permissions\n";
 	# $query->_cleanquery;
 	my $result=$self->{db}->DBCONN::rawget($query,$format);
 	return $result;
 }
 
-sub _cleanquery{
-# This subroutine receives a Query from Pulso to process it according to the permissions.
-# 1.- Remove the Q to forbidden Tables/Objects
-# 2.- Remove forbidden fields from Q
-# 3.- Add calculated values
-# 4.- Add ranges (permissions based on INSTANCES)
-# Finally, it returns a cleaned Q or 1 if it fails. 
-	my $query=shift;
-	my $object=$query;
-	$object=~s/.*FROM //s;
- 	$object=~s/( WHERE.*| ORDER.*)//s; # got the Object from the Q
-	my $result=$self->{db}->DBCONN::rawget('select ADM',$format);
-
-
-
+sub getviews{
+	my $self=shift;
+	my $topic=shift;
+	my $result=$self->{db}->DBCONN::rawget("select NAME from ADM_VIEWS where OBJECT=\'$topic\' and \(\(USER_VIEW=\'$self->{login}\' or GROUP_VIEW IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or \(USER_VIEW=\'\' and GROUP_VIEW=\'\'\)\)",'ARRAY');
+	return $result;
 }
+
+sub getview{
+	my $self=shift;
+	my $topic=shift;
+	my $result=$self->{db}->DBCONN::rawget("select NAME from ADM_VIEWS where OBJECT=\'$topic\' and \(\(USER_VIEW=\'$self->{login}\' or GROUP_VIEW IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or \(USER_VIEW=\'\' and GROUP_VIEW=\'\'\)\)",'ARRAY');
+	return $result;
+}
+
+sub getreports{
+	my $self=shift;
+	my $topic=shift;
+	my $result=$self->{db}->DBCONN::rawget("select NAME from ADM_REPORTS where OBJECT=\'$topic\' and \(\(USER_REPORT=\'$self->{login}\' or GROUP_REPORT IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or \(USER_REPORT=\'\' and GROUP_REPORT=\'\'\)\)",'ARRAY');
+	return $result;
+}
+
 
 sub _initdb{
 	my $self=shift;
@@ -53,8 +58,9 @@ sub _inituser{
 	my $self=shift;
 	my $user=USERS->new(db=>$self->{db},login=>$self->{login},password=>$self->{password});
 	if ($user->check() ne 'OK'){ 
-		print "not valid user...\n";
+		$self->{error}='Not valid user';
 	}
+	$self->{error}=1;
 	$self->{login}=$user->{user}->[0]->{ADM_LOGIN};
 	$self->{group}=$user->{user}->[0]->{ADM_GROUP};
 	$self->{name}=$user->{user}->[0]->{ADM_NAME};
