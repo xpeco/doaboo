@@ -1,5 +1,4 @@
 #!/usr/bin/perl
-
 use strict;
 use warnings;
 use DBCONN;
@@ -10,22 +9,33 @@ my $dbh = DBCONN->new;
 my $cgi = CGI->new;
 print $cgi->header;
 
+######################
+# Template Definition
+######################
 my $t = HTML::Template->new(filename => "db.tmpl",
                             path     => "$ENV{DOABOOPATH}",
                             die_on_bad_params => 1,
-                            case_insensitive => 1
+                            case_insensitive => 1,
+                            loop_context_vars =>1
                             #associate => $cgi
                             );
-
+                            
+###############################################################
 #Will be substituted by DO.pm functions
 my $sql = 'SELECT * FROM machines';
 my $sth = $dbh->prepare($sql) or die "Prepare exception: $DBI::errstr";
 $sth->execute() or die "Execute exception: $DBI::errstr";
+########################################################################
 
-# Title
+###############
+# General Data
+###############
 $t->param(TITLE => "Datos de la tabla 'machines'");
+print "Numero de registros: ", $sth->rows."<br>";
 
+#########
 # Fields 
+#########
 my @headings;
 foreach (@{$sth->{NAME}}) {
         my %rowh;
@@ -34,28 +44,45 @@ foreach (@{$sth->{NAME}}) {
 }
 $t->param(Campos=>\@headings);
 
-#my $values = $sth->fetchall_hashref('serialn');
-#foreach my $val (keys %$values) {
-# print "HERE $values->{$val}->{id},$val,$values->{$val}->{type} <br>";
-#}
+#############
+# DEBUG - OK
+#############
+#print "Field0: $headings[0]->{Nombre}<br>";
+#print "Field1: $headings[1]->{Nombre}<br>";
+#print "Field2: $headings[2]->{Nombre}<br>";
+#print "<br>";
 
-# Values
-# ATTENTION!!! BUG the "l" from "serialn" is a "1" (one!!!)
-my @rows;
-while (my @data_row = $sth->fetchrow_array) {
-        my %row;
-        $row{id} = $data_row[0];
-        $row{seria1n} = $data_row[1];
-        $row{type} = $data_row[2];
-        push @rows, \%row;
+###############
+# Registers
+###############
+my @results;
+my @registers;
+my $instances = $sth->fetchall_arrayref({});
+my $i=0;
+foreach (@$instances) {
+  foreach (@{$sth->{NAME}}) {
+  	    push @registers, {Valor => \@$instances};	    
+	    my %rowh;
+	    #print "DATA: $i: $registers[$i]->{Valor}[$i]->{$_} <br>";
+        $rowh{Valor} = $registers[$i]->{Valor}[$i]->{$_};
+        push @results, \%rowh;
+	    #print "$i: $rowh{Valor}<br>";
+  }
+  push @results, {newline => '1'};
+  $i++;
 }
-$t->param(Valores=>\@rows);
+$t->param(Valores=>\@results);
 
 
+################
 #TMPL output
+################
 print $t->output;
 
 
+##########################
+# PREVIOUS TESTS
+##########################
 #################
 # Values OK
 #################
@@ -122,3 +149,5 @@ print $t->output;
 # #OR
 # print join ", ", @{$sth->{NAME}}; 
 ##########################################
+
+

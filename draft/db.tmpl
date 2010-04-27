@@ -2,24 +2,36 @@
 <head></head>
 <body>
 
-<table border="1">
-
 <TMPL_VAR NAME="TITLE">
+
+<table border="1">
 
 <TMPL_LOOP NAME="Campos">
   <th><TMPL_VAR NAME="Nombre"></th>
-</TMPL_LOOP>
+</TMPL_LOOP> 
 
-<!-- ATTENTION!!! BUG the "l" from "serialn" is a "1" (one!!!) -->
 <TMPL_LOOP NAME="Valores">
- <tr>
-  <td><TMPL_VAR NAME="id"></td>
-  <td><TMPL_VAR NAME="seria1n">&nbsp;</td>
-  <td><TMPL_VAR NAME="type"></td>
- </tr>
+  <TMPL_IF NAME="__FIRST__">
+   <tr><td colspan="3"> A </td></tr>
+   <tr>
+  </TMPL_IF>
+  <TMPL_UNLESS NAME="newline"> 
+     <td><TMPL_VAR NAME="Valor"></td>
+  <TMPL_ELSE>   
+    </tr>
+    <TMPL_UNLESS NAME="__LAST__">
+      <tr>
+    </TMPL_UNLESS>
+  </TMPL_UNLESS>
 </TMPL_LOOP>
 
 </table>
+
+<br>
+
+
+
+
 
 </body>
 </html>
