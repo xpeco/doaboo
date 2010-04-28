@@ -12,6 +12,8 @@ sub new{
    bless($self, $class);
    $self->_initdb; # Creates the db connection
 	$self->_inituser; # Check pass and store the basic user info
+	print "Group2: $self->{group}\n";
+
    return $self;
 }
 
@@ -46,6 +48,21 @@ sub getreports{
 	return $result;
 }
 
+sub getactions{
+	my $self=shift;
+	my $topic=shift;
+	my $result='';
+	if($self->{ractions} eq 'ALLOWANCE')
+	{
+	print "list of actions allowed - [all actions of the topic - actions listed here]\n";
+#		$result=$self->{db}->DBCONN::rawget("select NAME from ADM_REPORTS where OBJECT=\'$topic\' and \(\(USER_REPORT=\'$self->{login}\' or GROUP_REPORT IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or \(USER_REPORT=\'\' and GROUP_REPORT=\'\'\)\)",'ARRAY');
+	}
+	else
+	{
+	print "list of actions - [all actions listed here]\n";
+	}
+	return $result;
+}
 
 sub _initdb{
 	my $self=shift;
@@ -57,15 +74,16 @@ sub _initdb{
 sub _inituser{
 	my $self=shift;
 	my $user=USERS->new(db=>$self->{db},login=>$self->{login},password=>$self->{password});
-	if ($user->check() ne 'OK'){ 
-		$self->{error}='Not valid user';
+	# Compose $self
+	foreach my $field (keys %$user){
+		$self->{$field}=$user->{$field};
 	}
-	$self->{error}=1;
-	$self->{login}=$user->{user}->[0]->{ADM_LOGIN};
-	$self->{group}=$user->{user}->[0]->{ADM_GROUP};
-	$self->{name}=$user->{user}->[0]->{ADM_NAME};
-#	$self->{organization}=$user->{user}->[0]->{ADM_ORG};
-#	$self->{status}=$user->{user}->[0]->{ADM_STATUS};
 	return $self;
+}
+
+sub logout{
+	my $self=shift;
+	# remove the hash?
+	undef $self;
 }
 1;

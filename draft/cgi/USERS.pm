@@ -64,9 +64,18 @@ sub check {
 
 sub _init{
 	my $self=shift;
-	my $user=$self->{db}->DBCONN::rawget('select * from ADM_USERS where ADM_LOGIN=\''.$self->{login}.'\' limit 1');
+	my $user=$self->{db}->DBCONN::rawget('select ADM_PASSWORD,ADM_GROUP,ADM_NAME,ADM_RESTRICTIONS_METHOD from ADM_USERS,ADM_GROUPS where ADM_LOGIN=\''.$self->{login}.'\' and ADM_GROUP=ADM_GROUP_NAME limit 1');
+	$self->{error}=1;
 	$self->{adm_password}=$user->[0]->{ADM_PASSWORD};
-	$self->{user}=$user;
+	if ($self->check() ne 'OK'){ 
+		$self->{error}='Not valid user';
+		print "Not valid user\n";
+	}
+
+	$self->{name}=$user->[0]->{ADM_NAME};
+	$self->{group}=$user->[0]->{ADM_GROUP};
+	$self->{adm_password}=$user->[0]->{ADM_PASSWORD};
+	$self->{ractions}=$user->[0]->{ADM_RESTRICTIONS_METHOD};
 	return $self;
 }
 1;
