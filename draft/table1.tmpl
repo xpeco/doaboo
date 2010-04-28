@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-15">
+   <title>DOABOO TABLE</title>
+   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+   <link rel="stylesheet" href="/doaboo/doaboo.css" media="screen" type="text/css">
+</head>
+
+<body>
+<div class="ext font">
+<TMPL_VAR NAME="TITLE">
+
+<center><table class="data font">
+
+<TMPL_LOOP NAME="Campos">
+  <th class="headerline"><TMPL_VAR NAME="Nombre"></th>
+</TMPL_LOOP> 
+
+
+<TMPL_LOOP NAME="Valores">
+  <TMPL_IF NAME="__FIRST__">
+  <tr class="oddline">
+  </TMPL_IF>
+  <TMPL_UNLESS NAME="newline">
+    <td><TMPL_VAR NAME="Valor"></td>
+  <TMPL_ELSE>   
+  </tr>
+  <TMPL_UNLESS NAME="__LAST__">
+    <TMPL_IF NAME="oddline">
+    <tr class="oddline">
+    <TMPL_ELSE>
+    <tr class="evenline">
+    </TMPL_IF>
+  </TMPL_UNLESS>
+  </TMPL_UNLESS>
+</TMPL_LOOP>
+
+
+</table></center>
+
+<div>Showing <TMPL_VAR name="INSTANCES_NUMBER"> results in <TMPL_VAR name="COLUMNS_NUMBER"> columns</div>
+
+</div>
+</body>
+</html>
