@@ -20,29 +20,17 @@ my $t = HTML::Template->new(filename => "table1.tmpl",
                             #associate => $cgi
                             );
                             
-###############################################################
-# Will be substituted by DO.pm functions
+###########
+# Query
+###########
 my $sql = 'SELECT * FROM machines';
 my $sth = $dbh->prepare($sql) or die "Prepare exception: $DBI::errstr";
 $sth->execute() or die "Execute exception: $DBI::errstr";
-########################################################################
 
 ########
 # DEBUG
 ########
 #my $rows = DBI::dump_results($sth);
-
-###############################################
-#TEST THIS!!!!
-#my $j = 1;
-#while (my $row = $sth->fetchrow_hashref) {
-#        print "row ", $j++, "\n";
-#        for my $col (keys %$row) {
-#            print "\t $col is $row->{$col}\n";
-#        }
-#    }
-##################################################
-
 
 ###############
 # General Data
@@ -51,12 +39,11 @@ $t->param(TITLE => "Datos obtenidos");
 $t->param(INSTANCES_NUMBER =>  $sth->rows);
 $t->param(COLUMNS_NUMBER =>  $sth->{NUM_OF_FIELDS});
 
-#$sth->{TYPE}
-#NAME, NAME_uc, NAME_lc, NAME_hash, NAME_lc_hash and NAME_uc_HASH.
+#$sth->{TYPE} NAME, NAME_uc, NAME_lc, NAME_hash, NAME_lc_hash and NAME_uc_HASH.
 
-#########
+########################
 # Fields 
-#########
+########################
 my @headings;
 foreach (@{$sth->{NAME}}) {
         my %rowh;
@@ -64,6 +51,32 @@ foreach (@{$sth->{NAME}}) {
         push @headings, \%rowh;
 }
 $t->param(Campos=>\@headings);
+
+
+my @results;
+
+###########################
+# Instances
+###########################
+my @instances;
+while (my $row = $sth->fetchrow_hashref) {
+  for my $col (sort keys %$row) {          
+     my %rowh;
+     $rowh{Valor} = $row->{$col};
+     push @instances, \%rowh;
+  }
+  push @instances, {Newline => '1'};
+}
+$t->param(Valores=>\@instances);
+
+#$i = $i ^ 1; #changes state 1/0 in every iteration
+#if (not $i % 2);even
+#if ($i % 2);odd
+
+################
+#TMPL output
+################
+print $t->output;
 
 
 #############
@@ -74,34 +87,29 @@ $t->param(Campos=>\@headings);
 #print "Field2: $headings[2]->{Nombre}<br>";
 #print "<br>";
 
-###############
-# Registers
-###############
-my @results;
-my @registers;
-my $instances = $sth->fetchall_arrayref({});
-my $i=0;
-foreach (@$instances) {
-  foreach (@{$sth->{NAME}}) {
-  	    push @registers, {Valor => \@$instances};	    
-	    my %rowh;
-	    #print "DATA: $i: $registers[$i]->{Valor}[$i]->{$_} <br>";
-        $rowh{Valor} = $registers[$i]->{Valor}[$i]->{$_};
-        push @results, \%rowh;
-	    #print "$i: $rowh{Valor}<br>";
-  }
-  #Marker for new lines
-  push @results, {newline => '1'};
-  #Markes for odd/even lines -- LOOP __ODD__ non valid 'cause it's a single loop
-  #if (($i > 1) && ($i % 2 != 0)) { push @results, {oddline => '1'}; }
-  $i++;
-}
-$t->param(Valores=>\@results);
-
-################
-#TMPL output
-################
-print $t->output;
+#####################################################################
+# Registers - IT WORKS FOR TABLE BUT IT'S TOO COMPLICATED / TWISTY
+#####################################################################
+#my @results;
+#my @registers;
+#my $instances = $sth->fetchall_arrayref({});
+#my $i=0;
+#foreach (@$instances) {
+#  foreach (@{$sth->{NAME}}) {
+#  	    push @registers, {Valor => \@$instances};	    
+#	    my %rowh;
+#	    #print "DATA: $i: $registers[$i]->{Valor}[$i]->{$_} <br>";
+#        $rowh{Valor} = $registers[$i]->{Valor}[$i]->{$_};
+#        push @results, \%rowh;
+#	    #print "$i: $rowh{Valor}<br>";
+#  }
+#  #Marker for new lines
+#  push @results, {newline => '1'};
+#  #Markes for odd/even lines -- LOOP __ODD__ non valid 'cause it's a single loop
+#  #if (($i > 1) && ($i % 2 != 0)) { push @results, {oddline => '1'}; }
+#  $i++;
+#}
+#$t->param(Valores=>\@results);
 
 
 ##########################
