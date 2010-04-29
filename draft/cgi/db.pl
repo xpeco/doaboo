@@ -12,7 +12,7 @@ print $cgi->header;
 ######################
 # Template Definition
 ######################
-my $t = HTML::Template->new(filename => "db.tmpl",
+my $t = HTML::Template->new(filename => "table1.tmpl",
                             path     => "$ENV{DOABOOPATH}",
                             die_on_bad_params => 1,
                             case_insensitive => 1,
@@ -21,17 +21,38 @@ my $t = HTML::Template->new(filename => "db.tmpl",
                             );
                             
 ###############################################################
-#Will be substituted by DO.pm functions
+# Will be substituted by DO.pm functions
 my $sql = 'SELECT * FROM machines';
 my $sth = $dbh->prepare($sql) or die "Prepare exception: $DBI::errstr";
 $sth->execute() or die "Execute exception: $DBI::errstr";
 ########################################################################
 
+########
+# DEBUG
+########
+#my $rows = DBI::dump_results($sth);
+
+###############################################
+#TEST THIS!!!!
+#my $j = 1;
+#while (my $row = $sth->fetchrow_hashref) {
+#        print "row ", $j++, "\n";
+#        for my $col (keys %$row) {
+#            print "\t $col is $row->{$col}\n";
+#        }
+#    }
+##################################################
+
+
 ###############
 # General Data
 ###############
-$t->param(TITLE => "Datos de la tabla 'machines'");
-print "Numero de registros: ", $sth->rows."<br>";
+$t->param(TITLE => "Datos obtenidos");
+$t->param(INSTANCES_NUMBER =>  $sth->rows);
+$t->param(COLUMNS_NUMBER =>  $sth->{NUM_OF_FIELDS});
+
+#$sth->{TYPE}
+#NAME, NAME_uc, NAME_lc, NAME_hash, NAME_lc_hash and NAME_uc_HASH.
 
 #########
 # Fields 
@@ -43,6 +64,7 @@ foreach (@{$sth->{NAME}}) {
         push @headings, \%rowh;
 }
 $t->param(Campos=>\@headings);
+
 
 #############
 # DEBUG - OK
@@ -68,11 +90,13 @@ foreach (@$instances) {
         push @results, \%rowh;
 	    #print "$i: $rowh{Valor}<br>";
   }
+  #Marker for new lines
   push @results, {newline => '1'};
+  #Markes for odd/even lines -- LOOP __ODD__ non valid 'cause it's a single loop
+  #if (($i > 1) && ($i % 2 != 0)) { push @results, {oddline => '1'}; }
   $i++;
 }
 $t->param(Valores=>\@results);
-
 
 ################
 #TMPL output
