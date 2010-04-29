@@ -23,15 +23,15 @@ table.data {
  background-color: #ebebeb;
  text-align:left;
 }
-th.headerline {
+.headerline {
  background-color: #aaaaaa;
  text-align:center;
 }
-tr.oddline {
+.oddline {
  background-color: #0fbb0f;
  border:1px solid;
 }
-tr.evenline {
+.evenline {
  background-color: #ffffff;
  border:1px solid;
 }

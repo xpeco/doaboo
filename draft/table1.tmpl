@@ -5,13 +5,14 @@
    <title>DOABOO TABLE</title>
    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
    <link rel="stylesheet" href="/doaboo/doaboo.css" media="screen" type="text/css">
+   <TMPL_INCLUDE NAME="doaboo.js">
 </head>
 
-<body>
+<body onload="javascript:AplicarCebra('DataTable');">
 <div class="ext font">
 <TMPL_VAR NAME="TITLE">
 
-<center><table class="data font">
+<center><table id="DataTable" class="data font">
 
  <TMPL_LOOP NAME="Campos">
   <th class="headerline"><TMPL_VAR NAME="Nombre"></th>
@@ -35,6 +36,6 @@
 
 <div>Showing <TMPL_VAR name="INSTANCES_NUMBER"> results in <TMPL_VAR name="COLUMNS_NUMBER"> columns</div>
 
-</div>
+</div> <!--ext-->
 </body>
 </html>
