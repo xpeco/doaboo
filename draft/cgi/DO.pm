@@ -41,12 +41,13 @@ sub getrecords{
 	my $limit=shift;
 # Step 1: get fields from View. No permissions, if the user can see the view also he can see its fields.
 # Step 2: compose fields section of the query. Add the calculated ('' as calculated)
-# Step 3: get restriccions by instance
-# Step 4: compose where section of the query. The result of an eval.
-# Step 5: run the query with limit 0,15
-# Step 6: calculated the calculates = eval
+# Step 3: improve fields with caption and relationships (?)
+# Step 4: get restricions by instance
+# Step 5: compose where section of the query. The result of an eval restrictions.
+# Step 6: run the query with limit 0,15
+# Step 7: calculated the calculates = eval
 
-# WE AVOID restricctions based on Calculates. We avoid loops
+# WE AVOID restrictions based on Calculates. We avoid loops
 
 	my $result=$self->{db}->DBCONN::rawget("select NAME.ADM_VIEW_FIELDS from ADM_VIEW_FIELDS,ADM_VIEW where OBJECT.ADM_VIEW=\'$topic\' and NAME.ADM_VIEW=\'$view\' and \(\(USER_VIEW=\'$self->{login}\' or GROUP_VIEW IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or \(USER_VIEW=\'\' and GROUP_VIEW=\'\'\)\)",'ARRAY');
 	return $result;
