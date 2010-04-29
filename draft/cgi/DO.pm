@@ -12,8 +12,6 @@ sub new{
    bless($self, $class);
    $self->_initdb; # Creates the db connection
 	$self->_inituser; # Check pass and store the basic user info
-	print "Group2: $self->{group}\n";
-
    return $self;
 }
 
@@ -33,6 +31,13 @@ sub getviews{
 	my $result=$self->{db}->DBCONN::rawget("select NAME from ADM_VIEWS where OBJECT=\'$topic\' and \(\(USER_VIEW=\'$self->{login}\' or GROUP_VIEW IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or \(USER_VIEW=\'\' and GROUP_VIEW=\'\'\)\)",'ARRAY');
 	return $result;
 }
+sub getview{
+	my $self=shift;
+	my $topic=shift;
+	my $view=shift;
+	my $result=$self->{db}->DBCONN::rawget("select ADM_VIEW_FIELDS.NAME from ADM_VIEW_FIELDS,ADM_VIEWS where ADM_VIEWS.OBJECT=\'$topic\' and ADM_VIEWS.NAME=\'$view\' and \(\(USER_VIEW=\'$self->{login}\' or GROUP_VIEW IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or (USER_VIEW=\'\' and GROUP_VIEW=\'\'\)\) and ADM_VIEW_FIELDS.ADM_VIEW=concat\(\'[[\',ADM_VIEWS.OBJECT,\']][[\',ADM_VIEWS.NAME,\']]\'\)",'ARRAY');
+	return $result;
+}
 
 sub getrecords{
 	my $self=shift;
@@ -40,7 +45,12 @@ sub getrecords{
 	my $view=shift;
 	my $limit=shift;
 # Step 1: get fields from View. No permissions, if the user can see the view also he can see its fields.
-# Step 2: compose fields section of the query. Add the calculated ('' as calculated)
+
+#select ADM_VIEW_FIELDS.NAME from ADM_VIEW_FIELDS,ADM_VIEWS where ADM_VIEWS.OBJECT='ALARMS' and ADM_VIEWS.NAME='ALARMS_NEW_ORGANISED' and ((USER_VIEW='aspower' or GROUP_VIEW IN (select ADM_GROUP from ADM_USERS where ADM_LOGIN='aspower')) or (USER_VIEW='' and GROUP_VIEW='')) and ADM_VIEW_FIELDS.ADM_VIEW=concat('[[',ADM_VIEWS.OBJECT,']][[',ADM_VIEWS.NAME,']]');
+
+# Step 2: compose fields section of the query. Add the calculated ('' as calculated). Which fields of the View are calculated?
+
+
 # Step 3: improve fields with caption and relationships (?)
 # Step 4: get restricions by instance
 # Step 5: compose where section of the query. The result of an eval restrictions.
@@ -48,6 +58,7 @@ sub getrecords{
 # Step 7: calculated the calculates = eval
 
 # WE AVOID restrictions based on Calculates. We avoid loops
+
 
 	my $result=$self->{db}->DBCONN::rawget("select NAME.ADM_VIEW_FIELDS from ADM_VIEW_FIELDS,ADM_VIEW where OBJECT.ADM_VIEW=\'$topic\' and NAME.ADM_VIEW=\'$view\' and \(\(USER_VIEW=\'$self->{login}\' or GROUP_VIEW IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or \(USER_VIEW=\'\' and GROUP_VIEW=\'\'\)\)",'ARRAY');
 	return $result;

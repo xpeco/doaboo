@@ -21,4 +21,7 @@ if ($user->{error}) #if (not $user->{error})
 	print "Reports:".$user->getreports($topic)."\n";
 	print "Actions:".$user->getactions($topic)."\n";
 
+	print "View details:".$user->getview($topic,'DOA')."\n";
+
+
 }
