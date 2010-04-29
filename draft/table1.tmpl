@@ -13,28 +13,22 @@
 
 <center><table class="data font">
 
-<TMPL_LOOP NAME="Campos">
+ <TMPL_LOOP NAME="Campos">
   <th class="headerline"><TMPL_VAR NAME="Nombre"></th>
-</TMPL_LOOP> 
+ </TMPL_LOOP> 
 
+ <tr class="oddline">
 
-<TMPL_LOOP NAME="Valores">
-  <TMPL_IF NAME="__FIRST__">
-  <tr class="oddline">
-  </TMPL_IF>
-  <TMPL_UNLESS NAME="newline">
+ <TMPL_LOOP NAME="Valores">
+  <TMPL_UNLESS NAME="Newline">
     <td><TMPL_VAR NAME="Valor"></td>
   <TMPL_ELSE>   
-  </tr>
-  <TMPL_UNLESS NAME="__LAST__">
-    <TMPL_IF NAME="oddline">
-    <tr class="oddline">
-    <TMPL_ELSE>
-    <tr class="evenline">
-    </TMPL_IF>
+    </tr>
+    <TMPL_UNLESS NAME="__LAST__">
+      <tr class="oddline">
+    </TMPL_UNLESS>
   </TMPL_UNLESS>
-  </TMPL_UNLESS>
-</TMPL_LOOP>
+ </TMPL_LOOP>
 
 
 </table></center>
