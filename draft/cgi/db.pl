@@ -52,9 +52,6 @@ foreach (@{$sth->{NAME}}) {
 }
 $t->param(Campos=>\@headings);
 
-
-my @results;
-
 ###########################
 # Instances
 ###########################
@@ -68,10 +65,6 @@ while (my $row = $sth->fetchrow_hashref) {
   push @instances, {Newline => '1'};
 }
 $t->param(Valores=>\@instances);
-
-#$i = $i ^ 1; #changes state 1/0 in every iteration
-#if (not $i % 2);even
-#if ($i % 2);odd
 
 ################
 #TMPL output
@@ -99,8 +92,8 @@ print $t->output;
 #  	    push @registers, {Valor => \@$instances};	    
 #	    my %rowh;
 #	    #print "DATA: $i: $registers[$i]->{Valor}[$i]->{$_} <br>";
-#        $rowh{Valor} = $registers[$i]->{Valor}[$i]->{$_};
-#        push @results, \%rowh;
+#       $rowh{Valor} = $registers[$i]->{Valor}[$i]->{$_};
+#       push @results, \%rowh;
 #	    #print "$i: $rowh{Valor}<br>";
 #  }
 #  #Marker for new lines
