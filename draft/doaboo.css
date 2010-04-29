@@ -1,5 +1,5 @@
 body {
-   background-color: green;
+   background-color: #8fb88f;
    text-align: center;
 }
 .font {
@@ -11,33 +11,40 @@ body {
 div.ext {
  clear:both;
  margin:auto;
- width: 1000px;
- padding: 2px;
+ width: 98%;
+ padding: 6px;
  border: 2px solid;
  border-color: red;
- background-color: #ebebeb;
+ background-color: #ffffff;
+ color: #000091;
+ font-weight: bold;
 }
 table.data {
  width:90%;
  border:1px solid;
  background-color: #ebebeb;
- text-align:left;
+ color: #222222;
+ margin: 4px 0px 4px 0px;
 }
-.headerline {
- background-color: #aaaaaa;
+tr.headerline {
+ background-color: #888888;
+ color: #efefef;
+}
+tr.oddline {
+ background-color: #8fb08f; /*#8fbe8f;*/ /*Para iluminar: #0fbb0f */
+ border:1px solid;
+}
+tr.evenline {
+ background-color: #8f7d8f;
+ border:1px solid;
+}
+td.control {
+ width: 28px;
  text-align:center;
-}
-.oddline {
- background-color: #0fbb0f;
- border:1px solid;
-}
-.evenline {
- background-color: #ffffff;
- border:1px solid;
 }
 
 /***********************************/
-
+/*
 div.top {
  height:90px;
  padding: 0px 18px 0px 0px;
@@ -137,3 +144,4 @@ div.footer {
  font-size: 1.2em;
  color: #efefef;
 }
+*/

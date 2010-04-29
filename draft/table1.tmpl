@@ -14,23 +14,39 @@
 
 <center><table id="DataTable" class="data font">
 
- <TMPL_LOOP NAME="Campos">
-  <th class="headerline"><TMPL_VAR NAME="Nombre"></th>
- </TMPL_LOOP> 
+ <!--Header line - Campos Loop-->
+ <tr class="headerline">
+   <!-- Control cells -->
+   <td class="control">Icon</td>
+   <td class="control">&nbsp;</td>
+   <td class="control">Icon</td>
+   <!-- Column Names Loop -->
+   <TMPL_LOOP NAME="Campos">
+    <td><TMPL_VAR NAME="Nombre"></td>
+   </TMPL_LOOP>
+ </tr> 
 
+ <!--First Line of the Instances Loop-->
  <tr class="oddline">
+     <td class="control"><input type="checkbox" id="cell"></td>
+     <td class="control">&nbsp;</td>
+     <td class="control">&nbsp;</td>
 
- <TMPL_LOOP NAME="Valores">
-  <TMPL_UNLESS NAME="Newline">
-    <td><TMPL_VAR NAME="Valor"></td>
-  <TMPL_ELSE>   
-    </tr>
-    <TMPL_UNLESS NAME="__LAST__">
-      <tr class="oddline">
+   <!-- Instances Loop - Cell by Cell -->
+   <TMPL_LOOP NAME="Valores">
+    <TMPL_UNLESS NAME="Newline">
+     <td><TMPL_VAR NAME="Valor"></td>
+    <TMPL_ELSE>   
+     </tr>
+     <TMPL_UNLESS NAME="__LAST__">
+      <tr class="oddline"> <!-- alternative colors applied with JS on body load -->
+       <!-- Control Cells-->
+       <td class="control"><input type="checkbox" id="cell"></td>
+       <td class="control">&nbsp;</td>
+       <td class="control">&nbsp;</td>
+     </TMPL_UNLESS>
     </TMPL_UNLESS>
-  </TMPL_UNLESS>
- </TMPL_LOOP>
-
+   </TMPL_LOOP>
 
 </table></center>
 
