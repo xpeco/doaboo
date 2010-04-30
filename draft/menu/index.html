@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<script type="text/javascript" src="/doaboo/menu/prototype.js"></script>
+<script type="text/javascript" src="/doaboo/menu/effects.js"></script>
+<script type="text/javascript" src="/doaboo/menu/side-bar.js"></script>
+
+<style>
+a{ outline: none; }
+a:active{ outline: none; }
+
+#sideBar{text-align:left;}
+#sideBar ul{
+	margin:0px 0px 0px 0px;
+	padding:0px 0px 0px 0px;
+}
+#sideBar li{
+	margin:0px 10px 3px 10px;
+	padding:2px;
+	list-style-type:none;
+	display:block;
+	background-color:#ffffff;
+	width:120px;
+	color:#a0a0a0;
+}
+#sideBar li a{
+	width:100%;
+}
+#sideBar li a:link,
+#sideBar li a:visited{
+	color:#a0a0a0;
+	font-family:verdana;
+	font-size: 0.8em;
+	text-decoration:none;
+	display:block;
+	margin:0px 0px 0px 0px;
+	padding:0px;
+	width:100%;
+}
+#sideBar li a:hover{
+	color:#000000;
+	text-decoration:underline;
+}
+
+#sideBar{
+	width: 144px;
+}
+#sideBarTab{
+	width: 144px;
+}
+#sideBarTab img{
+	border:0px solid #FFFFFF;
+}
+#sideBarContents{
+	overflow:hidden !important;
+}
+#sideBarContentsInner{
+}
+</style>
+
+
+</head>
+
+<body>
+
+<div id="sideBar" style="background-color:#ebebeb;">
+	
+	<a href="#" id="sideBarTab"><img src="/doaboo/menu/slide-button.gif" alt="sideBar" title="sideBar"></a>
+	
+	<div id="sideBarContents" style="display:none;">
+		<div id="sideBarContentsInner">
+			<!--<h2>side<span>bar</span></h2>-->
+			<ul>
+				<li><a href="#">Link One - Lane</a></li>
+				<li><a href="#">Link Two - Lane </a></li>
+				<li><a href="#">Link Three - Lane</a></li>
+				<li><a href="#">Link Four - Lane</a></li>
+				<li><a href="#">Link Five - Lane</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
