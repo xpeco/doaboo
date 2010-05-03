@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use DO;
-$ENV{DOABOOPATH}='/home/peco/doaboo/draft';
+$ENV{DOABOOPATH}='/home/peco/doaboo/draft'; # recursive config
 
 my $user=DO->new(login=>'aspower',password=>'123');
 print "error:$user->{error}\n";
