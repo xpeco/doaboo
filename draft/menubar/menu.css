@@ -1,6 +1,6 @@
 #menu {
 	width: 100%;
-	background: #00A5A5;
+	background: #Bf8dD2; /*#8f9f8f;*/
 	border-bottom: 0px #D0DADB solid;
 	padding-left: 10px;
 	height: 33px;
@@ -20,7 +20,7 @@
 	margin: 0 3px 0 0;
 	padding: 0;
 	font-size: 12px;
-	line-height: 1, 5em;
+	line-height: 1,5em;
 	list-style-type: none;
 }
 
@@ -60,7 +60,7 @@
 	border-left: 1px solid #fff;
 	border-top: 1px solid #fff;
 	border-right: 1px solid #fff;
-	background: #80D2D2;
+	background: #8f7dD2 /*#80D2D2;*/
 }
 
 #menu  ul.level2 li, #menu ul.level3 li {
@@ -77,6 +77,6 @@
 
 #menu  ul.level2 li a:hover,#menu  ul.level3 li a:hover {
 	font-weight: normal;
-	background-color: #FF8401;
+	background-color: #Af9fEf; /*#FF8401;*/
 	background-image: none;
 }
