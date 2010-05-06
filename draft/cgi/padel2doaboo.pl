@@ -30,11 +30,22 @@ print "Tables: $r\n\n";
 for ($i=0;$i<@XMLin;$i++) {
 	my $objects= $XMLin[$i]->{MODULE}->{OBJECT};
 	foreach my $object (@$objects) {
+
 		# Insert TOPIC details
 		$object->{DESC} = $object->{NAME} if not defined $object->{DESC};
-		$object->{HINT} = $object->{NAME} if not defined $object->{HINT};
-		print "Topic: $object->{DESC}\n";
-		print "Topic: $object->{HINT}\n";
+		$object->{HINT} = '' if not defined $object->{HINT};
+		my $r=$dbh->prepare("select id from doaboo_topics where description=\'$object->{DESC}\'");
+		$r->execute;
+		my @out=$r->fetchrow_array;
+		if(defined $out[0]){
+			print "Updating Topic: $object->{DESC} ($out[0])\n";
+			$dbh->prepare("update doaboo_topics set description=\'$object->{DESC}\',hint=\'$object->{HINT}\' where id=\'$out[0]\'")->execute;
+		}
+		else{
+			print "Adding Topic: $object->{DESC}\n";
+			$dbh->prepare("insert into doaboo_topics set description=\'$object->{DESC}\',hint=\'$object->{HINT}'")->execute;
+		}
+
 		my $attributes = $object->{ATTRIBUTE};
 		foreach my $attrib (@$attributes) {
 			# Insert Attribute details
