@@ -9,6 +9,10 @@ my $dbh = DBCONN->new;
 my $cgi = CGI->new;
 print $cgi->header;
 
+#Read Params
+my $table='ADM_USERS'; #Default
+$table=$cgi->param('table') if (defined $cgi->param('table'));
+
 ######################
 # Template Definition
 ######################
@@ -23,7 +27,7 @@ my $t = HTML::Template->new(filename => "table1.tmpl",
 ###########
 # Query
 ###########
-my $sql = 'SELECT * FROM machines';
+my $sql = "SELECT * FROM $table limit 30";
 my $sth = $dbh->prepare($sql) or die "Prepare exception: $DBI::errstr";
 $sth->execute() or die "Execute exception: $DBI::errstr";
 
