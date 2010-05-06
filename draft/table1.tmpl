@@ -6,14 +6,21 @@
    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
    <link rel="stylesheet" href="/doaboo/doaboo.css" media="screen" type="text/css">
    <TMPL_INCLUDE NAME="doaboo.js">
+   <!--Menubar-->
+   <script src="/doaboo/menubar/prototype.js" type="text/javascript"></script>
+   <script src="/doaboo/menubar/scriptaculous.js" type="text/javascript"></script>
+   <script src="/doaboo/menubar/menu.js" type="text/javascript"></script>
+   <link  href="/doaboo/menubar/menu.css" rel="stylesheet" type="text/css" />
+   <!--/Menubar-->	
 </head>
 
 <body onload="javascript:AplicarCebra('DataTable');">
 
+<div class="ext font">
+
 <!--Menu with scriptaculous-1.8.3 --->
 <TMPL_INCLUDE NAME="menubar/menu.htm">
-
-<div class="ext font">
+		
 <TMPL_VAR NAME="TITLE">
 
 <center><table id="DataTable" class="data font">

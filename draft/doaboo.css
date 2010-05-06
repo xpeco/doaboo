@@ -11,13 +11,14 @@ body {
 div.ext {
  clear:both;
  margin:auto;
- width: 98%;
- padding: 6px;
- border: 2px solid;
+ width: 99%;
+ padding:0px 10px 0px 0px; /* adjust menubar into the div*/
+ border: 1px solid;
  border-color: red;
  background-color: #ffffff;
  color: #000091;
  font-weight: bold;
+ overflow:visible;
 }
 table.data {
  width:90%;
@@ -64,7 +65,7 @@ div.inner {
  border: 2px solid; 
  border-color:red;
  overflow:hidden;
-}
+}*/
 /*Links*/
 div.links {
  width:100%;
@@ -144,4 +145,3 @@ div.footer {
  font-size: 1.2em;
  color: #efefef;
 }
-*/
