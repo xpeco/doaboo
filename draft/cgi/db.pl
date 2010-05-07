@@ -49,7 +49,7 @@ $t->param(COLUMNS_NUMBER =>  $sth->{NUM_OF_FIELDS});
 # Fields 
 ########################
 my @headings;
-foreach (@{$sth->{NAME}}) {
+foreach (sort @{$sth->{NAME}}) {
         my %rowh;
         $rowh{Nombre} = $_;
         push @headings, \%rowh;
@@ -60,13 +60,16 @@ $t->param(Campos=>\@headings);
 # Instances
 ###########################
 my @instances;
+my $i=0;
 while (my $row = $sth->fetchrow_hashref) {
   for my $col (sort keys %$row) {          
      my %rowh;
      $rowh{Valor} = $row->{$col};
+     #$rowh{Index} = $i; #PTTD This "Index" value would work inside Valores TMPL_LOOP, where "Valor" value 
      push @instances, \%rowh;
   }
-  push @instances, {Newline => '1'};
+  $i++;
+  push @instances, {Newline => '1', Index=> $i};
 }
 $t->param(Valores=>\@instances);
 

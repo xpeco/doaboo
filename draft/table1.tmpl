@@ -37,26 +37,43 @@
    </TMPL_LOOP>
  </tr> 
 
- <!--First Line of the Instances Loop-->
- <tr class="oddline">
-     <td class="control"><input type="checkbox" id="cell"></td>
-     <td class="control">&nbsp;</td>
-     <td class="control">&nbsp;</td>
-
-   <!-- Instances Loop - Cell by Cell -->
-   <TMPL_LOOP NAME="Valores">
-    <TMPL_UNLESS NAME="Newline">
-     <td><TMPL_VAR NAME="Valor"></td>
-    <TMPL_ELSE>   
-     </tr>
-     <TMPL_UNLESS NAME="__LAST__">
-      <tr class="oddline"> <!-- alternative colors applied with JS on body load -->
-       <!-- Control Cells-->
-       <td class="control"><input type="checkbox" id="cell"></td>
-       <td class="control">&nbsp;</td>
-       <td class="control">&nbsp;</td>
-     </TMPL_UNLESS>
-    </TMPL_UNLESS>
+ <!-- Instances Loop - Cell by Cell -->
+ <TMPL_LOOP NAME="Valores">
+     <TMPL_IF NAME="__FIRST__">  
+		 <tr class="oddline" id="tr_0">
+	     <!-- Control Cells -->
+         <td class="control">
+		   <input type="checkbox" name="check_0" onClick="if(this.checked == true){SelectInstance('0','1');} else {SelectInstance('0','0');}" value="<TMPL_VAR NAME="key">" <TMPL_IF NAME="selected">checked</TMPL_IF>>
+	     </td>
+         <td class="control">
+       	   Iconx2
+	     </td>
+         <td class="control">
+           &nbsp;
+	     </td>
+	     <!-- /Control Cells -->				
+	 </TMPL_IF>
+	
+	 <TMPL_IF NAME="Newline">
+	  	</tr>
+	    <TMPL_UNLESS NAME="__LAST__">
+		<tr class="oddline" id="tr_<TMPL_VAR NAME="Index">">
+	    <!-- Control Cells -->
+         <td class="control">
+		   <input type="checkbox" name="check_<TMPL_VAR NAME="Index">" onClick="if(this.checked == true){SelectInstance('<TMPL_VAR NAME="Index">','1');} else {SelectInstance('<TMPL_VAR NAME="Index">','0');} " value="<TMPL_VAR NAME="key">" <TMPL_IF NAME="selected">checked</TMPL_IF>>
+	     </td>
+         <td class="control">
+       	   Iconx2
+	     </td>
+         <td class="control">
+           &nbsp;
+	     </td>
+	    <!-- /Control Cells -->
+	    </TMPL_UNLESS>
+	 <TMPL_ELSE>  
+	    <td><TMPL_VAR NAME="Valor"></td>     	
+	 </TMPL_IF>
+	  	  	    
    </TMPL_LOOP>
 
 </table></center>

@@ -1,5 +1,55 @@
+/*TopBar*/
+div.exttopbar {
+   height: 30px; 
+   width:  100%;
+   margin-bottom: 4px;
+   overflow:hidden;
+   border: 1px dotted;
+   overflow: visible;
+}
+div.nomenubar {
+ 	width:	 66%; 
+ 	height:  100%;
+ 	border: 1px red dashed;
+}
+span.viewsicons {
+	float:  left;
+	width:  100px; 
+	height: 100%;
+	border: 1px green dotted;
+}
+span.pulsobox {
+	float: left;
+	height: 100%;
+	margin-left: 12px;
+	padding: 4px 0px 4px 0px;
+	-moz-border-radius: 6px;
+    -ms-border-radius: 6px;
+}
+span.logout {
+	float:right; 
+	height: 100%;
+	padding: 4px 0px 4px 0px;
+}
+.textbar {
+	font-weight:bold;
+	font-size:0.8em;
+}
+.fieldbar {
+   font-size: 0.8em;
+   height: 10pt;
+   width: 180pt;
+   border: 2pt solid;
+   -moz-border-radius: 6px;
+   -ms-border-radius: 6px;
+}
+
+/*Animated Menubar*/
 #menu {
-	border: 2px green solid;
+	width:  auto; 
+	border: 1px green solid;
+	background: #Bf8dD2;
+	margin-top:2px;
 	-moz-border-radius: 6px; 
 	-ms-border-radius: 6px;
 }
@@ -15,9 +65,8 @@
 
 #menu  ul li {
 	float: left;
-	background: #Bf8dD2;
 	margin:  0;
-	padding: 0 4 0 4;
+	padding: 0 4px 0 4px;
 	font-size: 0.8em;
 	font-variant: small-caps;
 }
@@ -74,7 +123,7 @@
 	font-size: 1.6em;
 }
 
-#menu  ul.level2 li a:hover,#menu  ul.level3 li a:hover {
+#menu  ul.level2 li a:hover, #menu  ul.level3 li a:hover, #menu ul.level1 li a:hover {
 	/*font-weight: normal;*/
 	background-color: #Af9fEf;
 }
