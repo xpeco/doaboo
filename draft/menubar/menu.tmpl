@@ -1,0 +1,136 @@
+	<div style="height:30px;margin-bottom:6px;border: 2px blue dotted;">
+	    <!-- Menu BAR -->
+		<div id="menu" style="float:left;">
+		<ul class="level1" id="root">
+		  <li>
+		    <a href="#">Menu</a>
+		    <ul class="level2">
+		      <li><a href="#">Sub A</a></li>
+		      <li>
+		        <a href="#">Tablas</a>
+		        <ul class="level3">
+		          <li><a href="./db.pl?table=ADM_GROUPS">ADM_GROUPS</a></li>
+		          <li><a href="db.pl?table=ADM_USERS">ADM_USERS</a></li>
+		          <li><a href="/doaboo/db.html" target="_top">External URL</a></li>
+		        </ul>
+		      </li>
+		      <li><a href="#">Sub C</a></li>
+		      <li>
+		        <a href="#">Sub D</a>
+		        <ul class="level3">
+		          <li><a href="#">Level 3 AAA</a></li>
+		          <li><a href="#">Level 3 BBB</a></li>
+		          <li><a href="#">Level 3 CCC</a></li>
+		          <li><a href="#">Level 3 EEE</a></li>
+		        </ul>
+		      </li>
+		    </ul>
+		  </li>
+		  
+		  <li class="sep">|</li>
+		  
+		  <li><a href="#">VIEWS</a>
+		    <ul class="level2">
+		      <li><a href="#">Sub 2A</a></li>
+		      <li><a href="#">Sub 2B</a></li>
+		      <li><a href="#">Sub 2C</a></li>
+		      <li><a href="#">Sub 2D</a></li>
+		    </ul>
+		  </li>
+		  
+		  <li class="sep">|</li>
+		  
+		  <li><a href="#">REPORTS</a>
+		    <ul class="level2">
+		      <li><a href="#">Sub 3A</a></li>
+		      <li><a href="#">Sub 3B</a></li>
+		      <li><a href="#">Sub 3C</a></li>
+		      <li><a href="#">Sub 3D</a></li>
+		    </ul>
+		  </li>
+			
+		  <li class="sep">|</li>
+		  
+		  <li>
+		    <a href="#">RELATIONSHIPS</a>
+		    <ul class="level2">
+		      <li><a href="#">Sub A</a></li>
+		      <li>
+		        <a href="#">Sub B</a>
+		        <ul class="level3">
+		          <li><a href="#">Level 3 One</a></li>
+		          <li><a href="#">Level 3 Two</a></li>
+		          <li><a href="#">Level 3 Three</a></li>
+		        </ul>
+		      </li>
+		      <li><a href="#">Sub C</a></li>
+		      <li><a href="#">Sub D</a></li>
+		    </ul>
+		  </li>
+		  
+		  <li class="sep">|</li>
+		  
+		  <li><a href="#">ACTION ITEMS</a>
+		    <ul class="level2">
+		      <li><a href="#">Sub 5A</a></li>
+		      <li><a href="#">Sub 5B</a></li>
+		      <li><a href="#">Sub 5C</a></li>
+		      <li><a href="#">Sub 5D</a></li>
+		    </ul>
+		  </li>
+		  
+		</ul>
+		</div> 
+		<!-- Menu BAR -->
+
+		<!-- MENU NO BAR -->
+		<div style="float:right;" class="menuNoBarIcon">
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<!--<div class="menuNoBarIcon">-->
+            <TMPL_IF NAME="announce">
+               <img class="menuImage" src="<TMPL_VAR NAME="IMG_menu_announce">.gif" border="0" width="16" height="16" onClick="javascript:var ann=unescape('<TMPL_VAR NAME="ann_text">');alert(ann);" hspace="10">
+            </TMPL_IF>
+            <TMPL_UNLESS NAME="really_hide_menu">
+            	<TMPL_UNLESS NAME="temporary_view">&nbsp;&nbsp;
+				  <TMPL_IF NAME="not_default_view">
+				  	 <a href="javascript:document.tableform.set_default_view.value=1;document.tableform.submit();" title="[[Set as Default View]]"><img src="<TMPL_VAR NAME="IMG_set_default">.gif" border="0" class="iconbar" alt="[[Set as Default View]]"></a></TMPL_IF><TMPL_IF NAME="user_is_owner">&nbsp;&nbsp;<a href="javascript:document.tableform.delete_user_view.value=1;document.tableform.submit();" title="[[Delete User View]]"><img src="<TMPL_VAR NAME="IMG_delete_view">.gif" border="0" class="iconbar" alt="[[Delete User View]]"></a>
+				  </TMPL_IF>
+				 </TMPL_UNLESS>
+				 <TMPL_IF NAME="temporary_view">
+				 	&nbsp;&nbsp;<a href="javascript:PopUp('<TMPL_VAR NAME="real_script_name">?function=SaveTemporaryView&object=<TMPL_VAR NAME="object">&view=<TMPL_VAR NAME="view">&original_view=<TMPL_VAR NAME="original_view">&server_id=<TMPL_VAR NAME="server_id">','','SUBWINDOW',630,408)" title="[[Save View]]"><img src="<TMPL_VAR NAME="IMG_save_view">.gif" border="0" class="iconbar" alt="[[Save View]]"></a>
+				  </TMPL_IF>
+			</TMPL_UNLESS>
+        <!--</div>
+             
+        <div class="menuNoBar" style="text-align:center;">--> <!-- menuNoBar !!!! -->
+        
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		    <INPUT class="fieldBar" type="text" name="pulso_search" id="pulso_search" onKeyPress="return enter(this,event)">&nbsp;
+            <INPUT type="submit" class="buttonBar" value=" Search " onClick="javascript:PopUpPulso('<TMPL_VAR NAME="real_script_name">?function=Pulso','','SUBWINDOW',630,408,'pulso_search');"title="[[Pulso]]">
+        <!--</div>
+        
+        <div class="menuNoBarIcon" style="text-align:right;">-->
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                     <TMPL_UNLESS NAME="hide_wiki">
+                         <TMPL_IF "object_defined">
+                           <input type="button" class="buttonBar" value=" Help " onClick="window.open('WIKI_URL<TMPL_VAR NAME="name">');">
+                         <TMPL_ELSE>
+                         <input type="button" class="buttonBar" value="Documentation" onClick="window.open('WIKI_INIT');">
+                         </TMPL_IF>
+                     </TMPL_UNLESS>
+
+					 <TMPL_IF NAME="no_user">
+                       &nbsp;&nbsp;&nbsp;Session expired
+                     <TMPL_ELSE>
+                       &nbsp;&nbsp;&nbsp;Logged as "<TMPL_VAR NAME="user">"
+                     </TMPL_IF>
+                     <TMPL_UNLESS NAME="hide_logout">
+                        &nbsp;<input type="button" class="buttonBar" value=" Logout" onClick="javascript:SetCookie('user','');SetCookie('password','');document.location='<TMPL_VAR NAME="script_name">?function=Login<TMPL_IF name="show_banner>&show_banner=1</TMPL_IF><TMPL_IF name="hide_logos">&hide_logos=1</TMPL_IF>';">
+                     </TMPL_UNLESS>
+        <!--</div>-->
+		
+		</div> <!-- menuRight -->
+
+		</div>

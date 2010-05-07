@@ -18,7 +18,7 @@ div.ext {
  background-color: #ffffff;
  color: #000091;
  font-weight: bold;
- overflow:visible;
+ /*overflow:visible;*/
 }
 table.data {
  width:90%;
@@ -43,6 +43,19 @@ td.control {
  width: 28px;
  text-align:center;
 }
+div.menuNoBarIcon  {
+  /*border: 0pt hidden; 
+  padding: 6pt 4pt 4pt 6pt; 
+  margin: 0pt 6pt 0pt 0pt; 
+  margin: 4px;*/ 
+  /*font-family: arial, helvetica, sans-serif;*/ 
+  color: #000000; 
+  font-weight: bold; 
+  font-size: 8pt;
+  border: 1px solid;
+  width: 56%;
+}
+
 
 /***********************************/
 /*
