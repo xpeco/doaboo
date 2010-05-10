@@ -1,4 +1,4 @@
-	<div style="height:30px;margin-bottom:6px;border: 2px blue dotted;">
+	<div class="exttopbar">
 	    <!-- Menu BAR -->
 		<div id="menu" style="float:left;">
 		<ul class="level1" id="root">
@@ -29,7 +29,7 @@
 		  
 		  <li class="sep">|</li>
 		  
-		  <li><a href="#">VIEWS</a>
+		  <li><a href="#">Views</a>
 		    <ul class="level2">
 		      <li><a href="#">Sub 2A</a></li>
 		      <li><a href="#">Sub 2B</a></li>
@@ -40,7 +40,7 @@
 		  
 		  <li class="sep">|</li>
 		  
-		  <li><a href="#">REPORTS</a>
+		  <li><a href="#">Reports</a>
 		    <ul class="level2">
 		      <li><a href="#">Sub 3A</a></li>
 		      <li><a href="#">Sub 3B</a></li>
@@ -52,7 +52,7 @@
 		  <li class="sep">|</li>
 		  
 		  <li>
-		    <a href="#">RELATIONSHIPS</a>
+		    <a href="#">Relationships</a>
 		    <ul class="level2">
 		      <li><a href="#">Sub A</a></li>
 		      <li>
@@ -70,7 +70,7 @@
 		  
 		  <li class="sep">|</li>
 		  
-		  <li><a href="#">ACTION ITEMS</a>
+		  <li><a href="#">Action Items</a>
 		    <ul class="level2">
 		      <li><a href="#">Sub 5A</a></li>
 		      <li><a href="#">Sub 5B</a></li>
@@ -83,11 +83,10 @@
 		</div> 
 		<!-- Menu BAR -->
 
-		<!-- MENU NO BAR -->
-		<div style="float:right;" class="menuNoBarIcon">
-		
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<!--<div class="menuNoBarIcon">-->
+		<!-- NO Menu BAR -->
+		<div class="nomenubar" style="float:right;">
+	
+		<span class="viewsicons">
             <TMPL_IF NAME="announce">
                <img class="menuImage" src="<TMPL_VAR NAME="IMG_menu_announce">.gif" border="0" width="16" height="16" onClick="javascript:var ann=unescape('<TMPL_VAR NAME="ann_text">');alert(ann);" hspace="10">
             </TMPL_IF>
@@ -101,36 +100,31 @@
 				 	&nbsp;&nbsp;<a href="javascript:PopUp('<TMPL_VAR NAME="real_script_name">?function=SaveTemporaryView&object=<TMPL_VAR NAME="object">&view=<TMPL_VAR NAME="view">&original_view=<TMPL_VAR NAME="original_view">&server_id=<TMPL_VAR NAME="server_id">','','SUBWINDOW',630,408)" title="[[Save View]]"><img src="<TMPL_VAR NAME="IMG_save_view">.gif" border="0" class="iconbar" alt="[[Save View]]"></a>
 				  </TMPL_IF>
 			</TMPL_UNLESS>
-        <!--</div>
+        </span>
              
-        <div class="menuNoBar" style="text-align:center;">--> <!-- menuNoBar !!!! -->
+        <span class="pulsobox">
+		    <INPUT class="fieldbar" type="text" name="pulso_search" id="pulso_search" onKeyPress="return enter(this,event)">&nbsp;
+            <INPUT type="submit" class="textbar" value=" Search " onClick="javascript:PopUpPulso('<TMPL_VAR NAME="real_script_name">?function=Pulso','','SUBWINDOW',630,408,'pulso_search');"title="Pulso">
+        </span>
         
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		    <INPUT class="fieldBar" type="text" name="pulso_search" id="pulso_search" onKeyPress="return enter(this,event)">&nbsp;
-            <INPUT type="submit" class="buttonBar" value=" Search " onClick="javascript:PopUpPulso('<TMPL_VAR NAME="real_script_name">?function=Pulso','','SUBWINDOW',630,408,'pulso_search');"title="[[Pulso]]">
-        <!--</div>
-        
-        <div class="menuNoBarIcon" style="text-align:right;">-->
-		
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span class="logout">
                      <TMPL_UNLESS NAME="hide_wiki">
                          <TMPL_IF "object_defined">
-                           <input type="button" class="buttonBar" value=" Help " onClick="window.open('WIKI_URL<TMPL_VAR NAME="name">');">
+                           <input type="button" class="textbar" value=" Help " onClick="window.open('WIKI_URL<TMPL_VAR NAME="name">');">
                          <TMPL_ELSE>
-                         <input type="button" class="buttonBar" value="Documentation" onClick="window.open('WIKI_INIT');">
+                         <input type="button" class="textbar" value="Documentation" onClick="window.open('WIKI_INIT');">
                          </TMPL_IF>
                      </TMPL_UNLESS>
 
 					 <TMPL_IF NAME="no_user">
-                       &nbsp;&nbsp;&nbsp;Session expired
+                       &nbsp;&nbsp;&nbsp;<span class="textbar">Session expired</span>
                      <TMPL_ELSE>
-                       &nbsp;&nbsp;&nbsp;Logged as "<TMPL_VAR NAME="user">"
+                       &nbsp;&nbsp;&nbsp;<span class="textbar">Logged as "<TMPL_VAR NAME="user">"</span>
                      </TMPL_IF>
                      <TMPL_UNLESS NAME="hide_logout">
-                        &nbsp;<input type="button" class="buttonBar" value=" Logout" onClick="javascript:SetCookie('user','');SetCookie('password','');document.location='<TMPL_VAR NAME="script_name">?function=Login<TMPL_IF name="show_banner>&show_banner=1</TMPL_IF><TMPL_IF name="hide_logos">&hide_logos=1</TMPL_IF>';">
+                        &nbsp;<input type="button" class="textbar" value=" Logout" onClick="javascript:SetCookie('user','');SetCookie('password','');document.location='<TMPL_VAR NAME="script_name">?function=Login<TMPL_IF name="show_banner>&show_banner=1</TMPL_IF><TMPL_IF name="hide_logos">&hide_logos=1</TMPL_IF>';">
                      </TMPL_UNLESS>
-        <!--</div>-->
+        </span>
+		</div> <!-- No menu Bar -->
+		</div> <!-- exttopbar -->
 		
-		</div> <!-- menuRight -->
-
-		</div>

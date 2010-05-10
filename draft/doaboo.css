@@ -12,13 +12,12 @@ div.ext {
  clear:both;
  margin:auto;
  width: 99%;
- padding:0px 10px 0px 0px; /* adjust menubar into the div*/
+ padding: 0; /* adjust menubar into the div*/
  border: 1px solid;
  border-color: red;
  background-color: #ffffff;
  color: #000091;
  font-weight: bold;
- /*overflow:visible;*/
 }
 table.data {
  width:90%;
@@ -39,122 +38,51 @@ tr.evenline {
  background-color: #8f7d8f;
  border:1px solid;
 }
+tr.oddline:hover { 
+  background-color: #00ff00; 
+}
+tr.evenline:hover { 
+  background-color: #00ffff; 
+}
+tr.highlighted   { 
+  background-color: #4682B4; 
+}
 td.control {
  width: 28px;
  text-align:center;
 }
-div.menuNoBarIcon  {
-  /*border: 0pt hidden; 
-  padding: 6pt 4pt 4pt 6pt; 
-  margin: 0pt 6pt 0pt 0pt; 
-  margin: 4px;*/ 
-  /*font-family: arial, helvetica, sans-serif;*/ 
-  color: #000000; 
-  font-weight: bold; 
-  font-size: 8pt;
-  border: 1px solid;
-  width: 56%;
-}
 
+/******* Pintax.css *********/
+table.sortable thead          { color: black; font-weight: bold; text-decoration: none; }
+table.sortable a.sortheader   { color: black; font-weight: bold; text-decoration: none; }
+table.sortable span.sortarrow { color: black; text-decoration: none; }
 
-/***********************************/
-/*
-div.top {
- height:90px;
- padding: 0px 18px 0px 0px;
- background-color: #bbbbbb;
- background-image:url('http://localhost/mb/images/fnd-cl.jpg');
-}
-div.main {
- height: 550px; 
- background-color: #10348a;
- padding-top:40px;
-}
-div.inner {
- clear:both;
- margin:auto;
- width: 86%;
- height: 500px;  
- border: 2px solid; 
- border-color:red;
- overflow:hidden;
-}*/
-/*Links*/
-div.links {
- width:100%;
- height:20px; 
- background-color: #ffffff;
- padding: 4px 0px 4px 0px;
- font-size: 1.2em;
- text-align:right;
-}
-a.linkitem {
-  text-decoration:none;
-  color: #6a6a6a;
-}
-a.linkitem:hover {
-  text-decoration:none;
-  color: red;
-}
-/*Blocks*/
-div.line1 {
- width: 100%;
- height: 206px;  /*inner height & links &  borders & paddings */
- overflow:hidden;
-}
-div.line2 {
- width: 100%;
- height: 270px;  /*inner height & links &  borders & paddings */
- overflow:hidden;
-}
-div.block {
- height:100%;
- overflow:hidden;
-}
-div.line1left {
- width:40%;
- background-color: #efefef;
- text-align:center;
-}
-div.line1right {
- width:60%; 
- background-color: #e0e0e0;
- text-align:justify;
-}
-div.line2left {
- width:40%; 
- background-color: #efefef;
- text-align:center;
-}
-div.line2right {
- width:60%; 
- background-color: #c0c0c0;
- text-align:justify;
-}
-/*Texts*/
-span.topmsg {
- font-size: 1.4em;
- color: #6a6a6a;
-}
-ul.list {
-  font-size: 1.0em;
-  padding: 20px 24px 20px 24px; 
-  list-style-type: square; /* options: disc, circle, square, decimal, lower-roman, upper-roman, lower-alpha, upper-alpha, none */
-  /*list-style-position: inside;*/
-}
-span.line1msg {
- font-size: 1.4em;
- color: #4a4a4a; /*DEBUG #2a2a2a*/
-}
-span.line2msg {
- font-size: 1.4em;
- color: #4a4a4a; /*DEBUG #2a2a2a*/
-}
-span.right {
- text-align:right;
-}
-div.footer {
- margin-top:16px;
- font-size: 1.2em;
- color: #efefef;
-}
+.tooltip           { width: 200px; color:#000; font:11px/1.3 Arial,sans-serif; text-decoration:none; text-align:center;}
+.tooltip span.top  { padding: 30px 8px  0px; background: url(tooltips/bt.gif) no-repeat top; }
+.tooltip b.bottom  { padding:  3px 8px 15px; background: url(tooltips/bt.gif) no-repeat bottom; color: #548912; }
+
+option.read:disabled { font-family: "western"; font-size: 10pt; color: #000000; background-color:#FFFFFF;}
+
+td.right { text-align:right; padding-right:6px;}
+td.left  { text-align:left;  padding-left:4px; }
+
+#izq{float:left;  text-align:left;  vertical-align:middle;}
+#der{float:right; text-align:right; vertical-align:middle; height:10px; text-decoration:none; font-size: 10px; font-weight:normal; color: #DCDCDC; cursor:e-resize;}
+
+.dhtmlgoodies_contentBox{
+      border:1px solid #317082;
+      height:0px;
+      visibility:hidden;
+      position:absolute;
+      background-color:#E2EBED;
+      overflow:hidden;
+      padding:2px;
+      width:170px;
+      }
+.dhtmlgoodies_content{
+      position:relative;
+      font-family: Trebuchet MS, Lucida Sans Unicode, Arial, sans-serif;
+      width:100%;
+      font-size:1em;
+	  }
+/*********** End Pintax.css *********/	  

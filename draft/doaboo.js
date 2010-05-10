@@ -1,5 +1,74 @@
 <script language="Javascript" type="text/Javascript">
 
+// Alternate Row Colors
+function AplicarCebra (tableid)  {
+   var table   = document.getElementById(tableid);
+   var current = "evenline";   
+   for (var i = 2; i < table.rows.length; i++) {
+     table.rows[i].className = table.rows[i].className.replace(/ oddline/g, '');
+     table.rows[i].className = table.rows[i].className.replace(/ evenline/g, '');
+     table.rows[i].className += " " + current;
+     current =   current == "evenline" ? "oddline" : "evenline";
+   }
+}
+
+function SelectInstance(index,action){
+ var id = 'tr_'+index;	 
+ var tr = document.getElementById(id);
+ if (action == 1) {
+ 	tr.className += ' highlighted';
+ }
+ else {
+ 	tr.className = tr.className.replace(/ highlighted/g, '');
+ }
+ return true;	
+}
+
+
+//Select Instance - PTTD REVIEW!!!
+function SelectInstanceOrig (Object,Checkbox) {
+   tr = Checkbox.parentNode.parentNode;
+   mark_element = document.getElementById ('marked');
+   if (mark_element) {
+      mark_value = parseInt(mark_element.innerHTML);
+   }
+   cookie_text = GetCookie(Object+'_SELECTED');
+   if (cookie_text == null)
+   {
+      SetCookie(Object+'_SELECTED','');
+   }
+   cookie_text = GetCookie(Object+'_UNSELECTED');
+   if (cookie_text == null)
+   {
+      SetCookie(Object+'_UNSELECTED','');
+   }
+   if (Checkbox.checked)
+   {
+      if (mark_element)
+      {
+         mark_value += 1;
+         mark_element.innerHTML = mark_value;
+      }
+      tr.className += ' highlighted';
+      AddToCookie(Object+'_SELECTED',Checkbox.value);
+      RemoveFromCookie(Object+'_UNSELECTED',Checkbox.value);
+      return(true);
+   }
+   else
+   {
+      if (mark_element)
+      {
+         mark_value -= 1;
+         mark_element.innerHTML = mark_value;
+      }
+      tr.className = tr.className.replace(/ highlighted/g, '');
+
+      AddToCookie(Object+'_UNSELECTED',Checkbox.value);
+      RemoveFromCookie(Object+'_SELECTED',Checkbox.value);
+      return(false);
+   }
+}
+
 
 //******************************* end DROPDOWN CONTENT ******************************
 var slideDownInitHeight = new Array();
@@ -55,21 +124,6 @@ var slideDownInitHeight = new Array();
 		
 	}
 //******************************* end DROPDOWN CONTENT ******************************
-
-
-// Alternate Row Colors
-function AplicarCebra (tableid)  {
-   var table   = document.getElementById(tableid);
-   var current = "evenline";   
-   for (var i = 2; i < table.rows.length-1; i++) {
-     table.rows[i].className = table.rows[i].className.replace(/ oddline/g, '');
-     table.rows[i].className = table.rows[i].className.replace(/ evenline/g, '');
-     table.rows[i].className += " " + current;
-     current =   current == "evenline" ? "oddline" : "evenline";
-   }
-}
-
-
 
 //******************************* SELECT/DESELECT ALL ******************************
 function seleccionar_todo(Object)
@@ -373,7 +427,7 @@ function ts_resortTable(lnk,clid) {
     sortfn = ts_sort_caseinsensitive;
     if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d\d\d$/)) sortfn = ts_sort_date;
     if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d$/)) sortfn = ts_sort_date;
-    if (itm.match(/^[£$]/)) sortfn = ts_sort_currency;
+    if (itm.match(/^[ï¿½$]/)) sortfn = ts_sort_currency;
     if (itm.match(/^[\d\.]+$/)) sortfn = ts_sort_numeric;
     SORT_COLUMN_INDEX = column;
     var firstRow = new Array();
