@@ -6,7 +6,7 @@ use warnings;
 use DO;
 $ENV{DOABOOPATH}='/home/peco/doaboo/draft'; # recursive config
 
-my $user=DO->new(login=>'aspower',password=>'123');
+my $user=DO->new(login=>'roessler',password=>'123');
 print "error:$user->{error}\n";
 if ($user->{error}) #if (not $user->{error})
 {
@@ -14,14 +14,16 @@ if ($user->{error}) #if (not $user->{error})
 	print "Group: $user->{group}\n";
 	#my $q=$user->query('select DATE from ALARMS limit 1');
 	
-	my $topic='LIBRARY_PPP_';
+	my $topic='FILER';
 	print "Topic: $topic\n";
 	
-	print "Views: ".$user->getviews($topic,'ARRAY')."\n";
-	print "Reports:".$user->getreports($topic)."\n";
-	print "Actions:".$user->getactions($topic)."\n";
+#	print "Views: ".$user->getviews($topic,'ARRAY')."\n";
+#	print "Reports:".$user->getreports($topic)."\n";
+#	print "Actions:".$user->getactions($topic)."\n";
 
-	print "View details:".$user->getview($topic,'DOA')."\n";
+#	print "View details:".$user->getview($topic,'DAIMLER_V1')."\n";
+
+	print "--".$user->getrecords($topic,'DAIMLER_V1')."\n";
 
 
 }
