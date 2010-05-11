@@ -13,13 +13,24 @@ sub EXGet_Instance_List
 	my $where='where ';
 	foreach my $range(keys %$ranges)
 	{
-		$where.="$range = $ranges->{$range} and\n";
+		if($ranges->{$range}=~/\.\*/)
+		{
+			$where.=" $range like \'%\' and";
+		}
+		elsif($ranges->{$range}=~/\(.*\)/)
+		{
+			$where.=" $range in \'$ranges->{$range}\' and";
+		}
+		else
+		{
+			$where.=" $range = \'$ranges->{$range}\' and";
+		}
 	}
 	$where=~s/ and\Z//;
 	my $query='';
-	if ($where=~/where \Z/)
+	if ($where!~/where \Z/)
 	{
-		$query="select * from $table where $where";
+		$query="select * from $table $where";
 	}
 	else
 	{
@@ -28,7 +39,92 @@ sub EXGet_Instance_List
 	return $user->DO::query($query);
 }
 
-my $r=EXGet_Instance_List('ADM_USERS',{ADM_LOGIN=>$actual_user},'NONE');
-if ($r->[0]->{ADM_LOGIN} ne ''){print "$r->[0]->{ADM_LOGIN}\n";}
-#return EXGet_Range_List('CONTRACT',{CUSTOMER=>$user->[0]->{ADM_ORG}});
+sub EXGet_Instance
+{
+	my ($table, $ranges, $orders, $speed) = @_;
+	my $where='where ';
+	foreach my $range(keys %$ranges)
+	{
+		if($ranges->{$range}=~/\.\*/)
+		{
+			$where.=" $range like \'%\' and";
+		}
+		elsif($ranges->{$range}=~/\(.*\)/)
+		{
+			$where.=" $range in \'$ranges->{$range}\' and";
+		}
+		else
+		{
+			$where.=" $range = \'$ranges->{$range}\' and";
+		}
+	}
+	$where=~s/ and\Z//;
+	my $order='order by ';
+	foreach my $ord(keys %$orders)
+	{
+		$order.=" $ord $orders->{$ord} and";
+	}
+	$order=~s/ and\Z//;
+	my $query='';
+	if ($where!~/where \Z/)
+	{
+		$query="select * from $table $where";
+	}
+	else
+	{
+		$query="select * from $table";
+	}
+	if ($order!~/order by \Z/)
+	{
+		$query.=" $order";
+	}
+	return $user->DO::query($query);
+}
+
+sub EXGet_Range_List
+{
+	my ($table, $ranges, $orders, $speed) = @_;
+	my $where='where ';
+	foreach my $range(keys %$ranges)
+	{
+		if($ranges->{$range}=~/\.\*/)
+		{
+			$where.=" $range like \'%\' and";
+		}
+		elsif($ranges->{$range}=~/\(.*\)/)
+		{
+			$where.=" $range in \'$ranges->{$range}\' and";
+		}
+		else
+		{
+			$where.=" $range = \'$ranges->{$range}\' and";
+		}
+	}
+	$where=~s/ and\Z//;
+	my $query='';
+	if ($where!~/where \Z/)
+	{
+		$query="select * from $table $where";
+	}
+	else
+	{
+		$query="select * from $table";
+	}
+	return $user->DO::query($query,'ARRAY');
+}
+
+my $r;
+
+$r=EXGet_Instance_List('ADM_USERS',{ADM_LOGIN=>$actual_user},'NONE');
+if ($r->[0]->{ADM_LOGIN} ne ''){print "$r->[0]->{ADM_GROUP}\n";}
+
+$r=EXGet_Instance('ADM_USERS',{ADM_LOGIN=>'amassey',ADM_GROUP=>'.*'},{ADM_GROUP=>'ASC'},'NONE');
+if ($r->[0]->{ADM_LOGIN} ne ''){print "$r->[0]->{ADM_GROUP}\n";}
+
+$r=EXGet_Range_List('CONTRACT',{CUSTOMER=>$r->[0]->{ADM_ORG}});
+print "$r\n";
+
+# todo
+# calculates
+
 
