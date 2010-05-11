@@ -19,7 +19,15 @@ sub EXGet_Instance_List
 		}
 		elsif($ranges->{$range}=~/\(.*\)/)
 		{
-			$where.=" $range in \'$ranges->{$range}\' and";
+			if($ranges->{$range} ne '()')
+			{
+				$ranges->{$range}=~s/w*/'/g;$ranges->{$range}=~s/(\A')|('\Z)//g;
+				$where.=" $range in \'$ranges->{$range}\' and";
+			}
+			else
+			{
+				$where.=" $range in () and";
+			}
 		}
 		else
 		{
@@ -51,7 +59,15 @@ sub EXGet_Instance
 		}
 		elsif($ranges->{$range}=~/\(.*\)/)
 		{
-			$where.=" $range in \'$ranges->{$range}\' and";
+			if($ranges->{$range} ne '()')
+			{
+				$ranges->{$range}=~s/w*/'/g;$ranges->{$range}=~s/(\A')|('\Z)//g;
+				$where.=" $range in \'$ranges->{$range}\' and";
+			}
+			else
+			{
+				$where.=" $range in () and";
+			}
 		}
 		else
 		{
