@@ -11,24 +11,75 @@
    <script src="/doaboo/menubar/scriptaculous.js" type="text/javascript"></script>
    <script src="/doaboo/menubar/menu.js" type="text/javascript"></script>
    <link  href="/doaboo/menubar/menu.css" rel="stylesheet" type="text/css" />
-   <!--/Menubar-->	
+   <!--/Menubar-->
+   
+   <!-- XMLHttpRequest -->
+   <script language="javascript" type="text/javascript">  
+  <!--   
+  var xmlhttp;  
+  function showResult(field,str,out)  
+  {  
+   xmlhttp=GetXmlHttpObject();  
+   if (xmlhttp==null)  
+    {  
+    alert ("Browser does not support HTTP Request");  
+    return;  
+    }  
+   var url="/doaboo-cgi/db.pl";  
+   url=url+"?"+field+"="+str;
+   alert(url);  
+   xmlhttp.onreadystatechange=stateChanged(out);  
+   xmlhttp.open("GET",url,true);  
+   xmlhttp.send(null);  
+  }  
+
+  function stateChanged(elemname)  
+  {  
+  if (xmlhttp.readyState==4)  
+  {  
+  document.getElementById(elemname).innerHTML=xmlhttp.responseText;  
+  }  
+  }  
+ 
+  function GetXmlHttpObject()  
+  {  
+  if (window.XMLHttpRequest)  
+    {  
+    // code for IE7+, Firefox, Chrome, Opera, Safari  
+    return new XMLHttpRequest();  
+    }  
+  if (window.ActiveXObject)  
+    {  
+    // code for IE6, IE5  
+    return new ActiveXObject("Microsoft.XMLHTTP");  
+    }  
+  return null;  
+  }  
+  //-->  
+  </script>  	
 </head>
 
 <body onload="javascript:AplicarCebra('DataTable');">
 
-<div class="ext font">
+<div class="ext font" id="external">
 
 <!--Menu with scriptaculous-1.8.3 --->
 <TMPL_INCLUDE NAME="menubar/menu.tmpl">
 		
 <!--<TMPL_VAR NAME="TITLE">-->
 
+<form name="table" action="/doaboo-cgi/db.pl" method="post">
 <center><table id="DataTable" class="data font">
 
  <!--Header line - Campos Loop-->
  <tr class="headerline">
    <!-- Control cells -->
-   <td class="control">Icon</td>
+   <td class="control">
+   	 <!--<input type="hidden" name="userchoice" value="Nextpage">
+	 <img src="" onclick="javascript:document.table.submit();">-->
+   	 <!--<a href="/doaboo-cgi/db.pl?userchoice=Nextpage">Test</a>-->
+	 <img src="/doaboo/images/boxdown.png" onClick="javascript:showResult('userchoice','Nextpage','external');">
+   </td>
    <td class="control">&nbsp;</td>
    <td class="control">Icon</td>
    <!-- Column Names Loop -->
@@ -76,9 +127,9 @@
 	  	  	    
    </TMPL_LOOP>
 
-</table></center>
+</table></center></form>
 
-<div>Showing <TMPL_VAR name="INSTANCES_NUMBER"> results in <TMPL_VAR name="COLUMNS_NUMBER"> columns</div>
+<div>Showing <TMPL_VAR name="Recbypage"> results from a total of <TMPL_VAR name="INSTANCES_NUMBER"> in <TMPL_VAR name="COLUMNS_NUMBER"> columns</div>
 
 </div> <!--ext-->
 </body>

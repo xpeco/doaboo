@@ -9,69 +9,87 @@ my $dbh = DBCONN->new;
 my $cgi = CGI->new;
 print $cgi->header;
 
+#Defaults
+my $tmplfile = 'table1.tmpl';
+my $table      = 'ADM_USERS'; #Default
+my $sql = "SELECT * FROM $table limit 30";
+my $recbypage  = 15;
+my $userchoice;
+
 #Read Params
-my $table='ADM_USERS'; #Default
-$table=$cgi->param('table') if (defined $cgi->param('table'));
+$table      = $cgi->param('table') if (defined $cgi->param('table'));
+$recbypage  = $cgi->param('recbypage') if (defined $cgi->param('recbypage'));
+$userchoice = $cgi->param('userchoice') if (defined $cgi->param('userchoice'));
+
+if (defined $userchoice) {
+ #$tmplfile = ...	
+ if ($userchoice eq 'Nextpage') { 
+ 	$sql = "SELECT * FROM ADM_RESTRICTIONS LIMIT 30" ;
+    # $sql = "SELECT * FROM ADM_USERS WHERE ID>=INDEX" ;
+ }   	
+}
+
 
 ######################
 # Template Definition
 ######################
-my $t = HTML::Template->new(filename => "table1.tmpl",
+my $t = HTML::Template->new(filename => $tmplfile,
                             path     => "$ENV{DOABOOPATH}",
                             die_on_bad_params => 1,
                             case_insensitive => 1,
                             loop_context_vars =>1
                             #associate => $cgi
                             );
-                            
-###########
-# Query
-###########
-my $sql = "SELECT * FROM $table limit 30";
-my $sth = $dbh->prepare($sql) or die "Prepare exception: $DBI::errstr";
-$sth->execute() or die "Execute exception: $DBI::errstr";
-
-########
-# DEBUG
-########
-#my $rows = DBI::dump_results($sth);
 
 ###############
 # General Data
 ###############
-$t->param(TITLE => "Datos obtenidos");
-$t->param(INSTANCES_NUMBER =>  $sth->rows);
-$t->param(COLUMNS_NUMBER =>  $sth->{NUM_OF_FIELDS});
+ $t->param(TITLE => "Datos obtenidos");
+                            
+###########
+# Query
+###########
+if ($sql ne '') {
+ my $sth = $dbh->prepare($sql) or die "Prepare exception: $DBI::errstr";
+ $sth->execute() or die "Execute exception: $DBI::errstr";
+ $t->param(INSTANCES_NUMBER =>  $sth->rows);
+ $t->param(COLUMNS_NUMBER =>  $sth->{NUM_OF_FIELDS});
+ #DEBUG
+ #my $rows = DBI::dump_results($sth);
+ #$sth->{TYPE} NAME, NAME_uc, NAME_lc, NAME_hash, NAME_lc_hash and NAME_uc_HASH.
 
-#$sth->{TYPE} NAME, NAME_uc, NAME_lc, NAME_hash, NAME_lc_hash and NAME_uc_HASH.
 
-########################
-# Fields 
-########################
-my @headings;
-foreach (sort @{$sth->{NAME}}) {
-        my %rowh;
-        $rowh{Nombre} = $_;
-        push @headings, \%rowh;
-}
-$t->param(Campos=>\@headings);
+ ########################
+ # Fields 
+ ########################
+ my @headings;
+ foreach (sort @{$sth->{NAME}}) {
+         my %rowh;
+         $rowh{Nombre} = $_;
+         push @headings, \%rowh;
+ }
+ $t->param(Campos=>\@headings);
 
-###########################
-# Instances
-###########################
-my @instances;
-my $i=0;
-while (my $row = $sth->fetchrow_hashref) {
-  for my $col (sort keys %$row) {          
-     my %rowh;
-     $rowh{Valor} = $row->{$col};
-     #$rowh{Index} = $i; #PTTD This "Index" value would work inside Valores TMPL_LOOP, where "Valor" value 
-     push @instances, \%rowh;
-  }
-  $i++;
-  push @instances, {Newline => '1', Index=> $i};
-}
-$t->param(Valores=>\@instances);
+ ###########################
+ # Instances
+ ###########################
+ my @instances;
+ my $i=0;
+ while ((my $row = $sth->fetchrow_hashref)&&($i < $recbypage)) 
+ {
+   for my $col (sort keys %$row) {          
+      my %rowh;
+      $rowh{Valor} = $row->{$col};
+      #$rowh{Index} = $i; #PTTD This "Index" value would work inside Valores TMPL_LOOP, where "Valor" value 
+      push @instances, \%rowh;
+   }
+   $i++;
+   push @instances, {Newline => '1', Index=> $i};
+ }
+ $t->param(Valores=>\@instances);
+ $t->param(Recbypage => $i);
+
+} #End of if defined $sql
 
 ################
 #TMPL output
