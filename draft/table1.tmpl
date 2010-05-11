@@ -26,18 +26,17 @@
     return;  
     }  
    var url="/doaboo-cgi/db.pl";  
-   url=url+"?"+field+"="+str;
-   alert(url);  
+   url=url+"?"+field+"="+str; 
    xmlhttp.onreadystatechange=stateChanged(out);  
    xmlhttp.open("GET",url,true);  
    xmlhttp.send(null);  
   }  
 
-  function stateChanged(elemname)  
+  function stateChanged(divname)  
   {  
   if (xmlhttp.readyState==4)  
   {  
-  document.getElementById(elemname).innerHTML=xmlhttp.responseText;  
+   document.getElementById(divname).innerHTML=xmlhttp.responseText;  
   }  
   }  
  
@@ -61,7 +60,7 @@
 
 <body onload="javascript:AplicarCebra('DataTable');">
 
-<div class="ext font" id="external">
+<div class="ext font">
 
 <!--Menu with scriptaculous-1.8.3 --->
 <TMPL_INCLUDE NAME="menubar/menu.tmpl">
@@ -75,10 +74,7 @@
  <tr class="headerline">
    <!-- Control cells -->
    <td class="control">
-   	 <!--<input type="hidden" name="userchoice" value="Nextpage">
-	 <img src="" onclick="javascript:document.table.submit();">-->
-   	 <!--<a href="/doaboo-cgi/db.pl?userchoice=Nextpage">Test</a>-->
-	 <img src="/doaboo/images/boxdown.png" onClick="javascript:showResult('userchoice','Nextpage','external');">
+     <a href="/doaboo-cgi/db.pl?end=<TMPL_VAR NAME="Initrecord">">Test-<TMPL_VAR NAME="Initrecord"></a>
    </td>
    <td class="control">&nbsp;</td>
    <td class="control">Icon</td>
@@ -87,24 +83,22 @@
     <td><TMPL_VAR NAME="Nombre"></td>
    </TMPL_LOOP>
  </tr> 
+ 
+ <!-- First line starts. Closed with </tr> inside the instances loop, when Newline detected -->
+ <tr class="oddline" id="tr_<TMPL_VAR NAME="Initrecord">">
+     <!-- Control Cells -->
+     <td class="control">
+       <input type="checkbox" name="check_<TMPL_VAR NAME="Initrecord">" onClick="if(this.checked == true){SelectInstance('<TMPL_VAR NAME="Initrecord">','1');} else {SelectInstance('<TMPL_VAR NAME="Initrecord">','0');}" value="<TMPL_VAR NAME="key">" <TMPL_IF NAME="selected">checked</TMPL_IF>>
+     </td>
+     <td class="control">
+    	   Iconx2
+	 </td>
+     <td class="control">
+       &nbsp;
+	  </td>
 
  <!-- Instances Loop - Cell by Cell -->
  <TMPL_LOOP NAME="Valores">
-     <TMPL_IF NAME="__FIRST__">  
-		 <tr class="oddline" id="tr_0">
-	     <!-- Control Cells -->
-         <td class="control">
-		   <input type="checkbox" name="check_0" onClick="if(this.checked == true){SelectInstance('0','1');} else {SelectInstance('0','0');}" value="<TMPL_VAR NAME="key">" <TMPL_IF NAME="selected">checked</TMPL_IF>>
-	     </td>
-         <td class="control">
-       	   Iconx2
-	     </td>
-         <td class="control">
-           &nbsp;
-	     </td>
-	     <!-- /Control Cells -->				
-	 </TMPL_IF>
-	
 	 <TMPL_IF NAME="Newline">
 	  	</tr>
 	    <TMPL_UNLESS NAME="__LAST__">
@@ -120,16 +114,35 @@
            &nbsp;
 	     </td>
 	    <!-- /Control Cells -->
+        <TMPL_ELSE> <!-- Unless -->
+           <!-- Last Line-->
+           <tr class="headerline">
+             <td class="control">
+             <!--<input type="hidden" name="init" value="TMPL_VAR NAME="Index"">
+ 	         <img src="" onclick="javascript:document.table.submit();">-->
+	         <a href="/doaboo-cgi/db.pl?init=<TMPL_VAR NAME="Index">">Test-<TMPL_VAR NAME="Index"></a>
+	         <!--Not working yet-->
+	         <!--<img src="/doaboo/images/boxdown.png" align="absmiddle" onClick="javascript:showResult('userchoice','Nextpage','external');">-->
+             </td>
+ 	         <td class="control">&nbsp;</td>
+   	         <td class="control">Icon</td>
+   	         <!-- This last line is closed with </tr> outside the instances loop -->
 	    </TMPL_UNLESS>
-	 <TMPL_ELSE>  
+	 <TMPL_ELSE>  <!-- If -->
 	    <td><TMPL_VAR NAME="Valor"></td>     	
 	 </TMPL_IF>
 	  	  	    
-   </TMPL_LOOP>
-
+ </TMPL_LOOP>
+   
+     <!-- Continuation of the last table line: Column Names Loop -->
+   	 <TMPL_LOOP NAME="Campos">
+     <td><input type="text" value="<TMPL_VAR NAME="Nombre">"></td>
+   	 </TMPL_LOOP>
+   </tr>
+   
 </table></center></form>
 
-<div>Showing <TMPL_VAR name="Recbypage"> results from a total of <TMPL_VAR name="INSTANCES_NUMBER"> in <TMPL_VAR name="COLUMNS_NUMBER"> columns</div>
+<div>Showing results <TMPL_VAR name="Initrecord">-<TMPL_VAR name="Endrecord"> from a total of <TMPL_VAR name="INSTANCES_NUMBER"> in <TMPL_VAR name="COLUMNS_NUMBER"> columns</div>
 
 </div> <!--ext-->
 </body>

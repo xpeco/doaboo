@@ -4,7 +4,7 @@
 function AplicarCebra (tableid)  {
    var table   = document.getElementById(tableid);
    var current = "evenline";   
-   for (var i = 2; i < table.rows.length; i++) {
+   for (var i = 2; i < table.rows.length-1; i++) {
      table.rows[i].className = table.rows[i].className.replace(/ oddline/g, '');
      table.rows[i].className = table.rows[i].className.replace(/ evenline/g, '');
      table.rows[i].className += " " + current;

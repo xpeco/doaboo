@@ -10,25 +10,50 @@ my $cgi = CGI->new;
 print $cgi->header;
 
 #Defaults
-my $tmplfile = 'table1.tmpl';
-my $table      = 'ADM_USERS'; #Default
-my $sql = "SELECT * FROM $table limit 30";
-my $recbypage  = 15;
+my $tmplfile  = 'table1.tmpl';
+my $table     = 'ADM_USERS';
+my $recbypage = 15;
+my $init      = 0;
+my $end;
+my $sql;
 my $userchoice;
+my $totalrecords = '100';
 
 #Read Params
-$table      = $cgi->param('table') if (defined $cgi->param('table'));
-$recbypage  = $cgi->param('recbypage') if (defined $cgi->param('recbypage'));
-$userchoice = $cgi->param('userchoice') if (defined $cgi->param('userchoice'));
+$table       = $cgi->param('table') if (defined $cgi->param('table'));
+$init        = $cgi->param('init')  if (defined $cgi->param('init'));
+$end         = $cgi->param('end')   if (defined $cgi->param('end'));
+$recbypage   = $cgi->param('recbypage') if (defined $cgi->param('recbypage'));
+$userchoice  = $cgi->param('userchoice') if (defined $cgi->param('userchoice'));
 
-if (defined $userchoice) {
- #$tmplfile = ...	
- if ($userchoice eq 'Nextpage') { 
- 	$sql = "SELECT * FROM ADM_RESTRICTIONS LIMIT 30" ;
-    # $sql = "SELECT * FROM ADM_USERS WHERE ID>=INDEX" ;
- }   	
+#################################
+# PageUp / PageDown processing
+#################################
+if ((defined $end)&&($end gt $recbypage)) {
+  #the user clicked on up_records
+  $init = $end - $recbypage;	
+}
+else {
+  $end  = $init + $recbypage;	
+  if ($end gt $totalrecords) { $end = $totalrecords; } #PTTD REVIEW!!! 
 }
 
+########
+#DEBUG
+########
+my $fields;
+if ($table eq 'ADM_USERS')  {$fields = 'ADM_LOGIN, ADM_NAME, ADM_GROUP, ADM_ENABLE, ADM_INST_PER_PAGE';}
+if ($table eq 'ADM_GROUPS') {$fields = '*';}
+
+
+########
+#DBQuery
+########
+$sql  = "SELECT $fields FROM $table LIMIT $init,$end"; 
+
+#if (defined $userchoice) {
+ #$tmplfile = ...		
+#}
 
 ######################
 # Template Definition
@@ -52,8 +77,9 @@ my $t = HTML::Template->new(filename => $tmplfile,
 if ($sql ne '') {
  my $sth = $dbh->prepare($sql) or die "Prepare exception: $DBI::errstr";
  $sth->execute() or die "Execute exception: $DBI::errstr";
- $t->param(INSTANCES_NUMBER =>  $sth->rows);
- $t->param(COLUMNS_NUMBER =>  $sth->{NUM_OF_FIELDS});
+ #$t->param(INSTANCES_NUMBER =>  $sth->rows); #Change by the total records of the table/query #PTTD
+ $t->param(INSTANCES_NUMBER =>  $totalrecords); #Change by the total records of the table/query #PTTD
+ $t->param(COLUMNS_NUMBER   =>  $sth->{NUM_OF_FIELDS});
  #DEBUG
  #my $rows = DBI::dump_results($sth);
  #$sth->{TYPE} NAME, NAME_uc, NAME_lc, NAME_hash, NAME_lc_hash and NAME_uc_HASH.
@@ -74,9 +100,8 @@ if ($sql ne '') {
  # Instances
  ###########################
  my @instances;
- my $i=0;
- while ((my $row = $sth->fetchrow_hashref)&&($i < $recbypage)) 
- {
+ my $i=$init;  
+ while ((my $row = $sth->fetchrow_hashref)&&($i < $init+$recbypage)) {
    for my $col (sort keys %$row) {          
       my %rowh;
       $rowh{Valor} = $row->{$col};
@@ -84,10 +109,12 @@ if ($sql ne '') {
       push @instances, \%rowh;
    }
    $i++;
+   #$t->param(Initrecord => $init);
    push @instances, {Newline => '1', Index=> $i};
  }
  $t->param(Valores=>\@instances);
- $t->param(Recbypage => $i);
+ $t->param(Initrecord => $init);
+ $t->param(Endrecord  => $init+$recbypage);
 
 } #End of if defined $sql
 
@@ -95,6 +122,8 @@ if ($sql ne '') {
 #TMPL output
 ################
 print $t->output;
+
+
 
 
 #############
