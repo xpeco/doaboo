@@ -49,7 +49,7 @@ sub getrecords{
 # Description should be eq to desc at doaboo!
 	my $fields=$self->{db}->DBCONN::rawget("select ADM_VIEW_FIELDS.NAME as name, ADM_VIEW_FIELDS.RANGE_TYPE as range,ADM_VIEW_FIELDS.ORDER as `order`, ADM_VIEW_FIELDS.SHOW as `show`, doaboo_attributes.type as type from ADM_VIEW_FIELDS,ADM_VIEWS,doaboo_attributes where ADM_VIEWS.OBJECT=\'$topic\' and ADM_VIEWS.NAME=\'$view\' and \(\(USER_VIEW=\'$self->{login}\' or GROUP_VIEW IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or \(USER_VIEW=\'\' and GROUP_VIEW=\'\'\)\) and ADM_VIEW_FIELDS.ADM_VIEW=concat\(\'[[\',ADM_VIEWS.OBJECT,\']][[\',ADM_VIEWS.NAME,\']]\'\) and doaboo_attributes.description=ADM_VIEW_FIELDS.DESC order by ADM_VIEW_FIELDS.POSITION ASC");
 
-# Step 2: compose fields section of the query. Add the calculated ('' as calculated). Which fields of the View are calculated?... doaboo_attributes
+# Step 2: compose fields section of the query. Add the calculated ('' as calculated). Which fields of the View are calculated?... doaboo_attributes. NOT!
 # Step 3: improve fields with caption and relationships (?). Relationships should be automanage by foreign keys, but for the captions is a 'pseudo-calculated'... Maybe this is the last step.
 	my $select_topics=$topic;
 	my $select_fields='';
@@ -66,7 +66,6 @@ sub getrecords{
 			elsif ($f->{'type'} eq 'RELATION')
 			{
 				#$select_fields.="$f->{'ADM_VIEW_FIELDS.NAME'} as ,";
-				$select_topics.="$f->{name},";
 			}
 			else
 			{
@@ -100,11 +99,36 @@ print "SELECT FIELDS: $select_fields\n";
 
 # Step 7: calculated the calculates = eval and the captions
 
+	#my $data= $user->DO::query($query);
+   # Add evaluates
+   #my $fields=$user->DO::query("select name,calculated_logic from doaboo_attributes where topic in \(select id from doaboo_topics where name=\'$table\'\) and type='CALCULATED'");
+   #foreach my $d(@$data)
+   #{
+      #foreach my $field(@$fields)
+      #{
+      #   $d->{$field->{name}}=eval $field->{calculated_logic};
+      #}
+   #}
+   #return $data;
+
+
+
+
 # WE AVOID restrictions based on Calculates. We avoid loops
 
 
 	return '1';
 }
+
+sub getallrecords{
+	my $self=shift;
+	my $topic=shift;
+	my $result=$self->{db}->DBCONN::rawget("select * from $topic");
+
+	return $result;
+}
+
+
 
 sub getreports{
 	my $self=shift;
