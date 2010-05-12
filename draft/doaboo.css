@@ -29,6 +29,7 @@ table.data {
 tr.headerline {
  background-color: #888888;
  color: #efefef;
+ height:28px;
 }
 tr.oddline {
  background-color: #8fb08f; /*#8fbe8f;*/ /*Para iluminar: #0fbb0f */
@@ -48,7 +49,7 @@ tr.highlighted   {
   background-color: #4682B4; 
 }
 td.control {
- width: 28px;
+ width:  28px;
  text-align:center;
 }
 

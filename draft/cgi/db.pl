@@ -12,30 +12,35 @@ print $cgi->header;
 #Defaults
 my $tmplfile  = 'table1.tmpl';
 my $table     = 'ADM_USERS';
-my $recbypage = 15;
+my $recbypage = 10;
 my $init      = 0;
 my $end;
 my $sql;
-my $userchoice;
-my $totalrecords = '100';
+#my $userchoice;
+my $totalrecords = '50'; #DEBUG
 
 #Read Params
 $table       = $cgi->param('table') if (defined $cgi->param('table'));
 $init        = $cgi->param('init')  if (defined $cgi->param('init'));
 $end         = $cgi->param('end')   if (defined $cgi->param('end'));
-$recbypage   = $cgi->param('recbypage') if (defined $cgi->param('recbypage'));
-$userchoice  = $cgi->param('userchoice') if (defined $cgi->param('userchoice'));
+$recbypage   = $cgi->param('recbypage')  if (defined $cgi->param('recbypage'));
+#$userchoice  = $cgi->param('userchoice') if (defined $cgi->param('userchoice'));
+
 
 #################################
 # PageUp / PageDown processing
 #################################
-if ((defined $end)&&($end gt $recbypage)) {
+if ((defined $end)&&($end > $recbypage)) {
   #the user clicked on up_records
   $init = $end - $recbypage;	
 }
 else {
-  $end  = $init + $recbypage;	
-  if ($end gt $totalrecords) { $end = $totalrecords; } #PTTD REVIEW!!! 
+  $end  = $init + $recbypage;
+}
+#last page: select only the latest records
+if ($end > $totalrecords) { 
+  $end       = $totalrecords; 
+  $recbypage = $totalrecords-$init; 
 }
 
 ########
@@ -45,12 +50,9 @@ my $fields;
 if ($table eq 'ADM_USERS')  {$fields = 'ADM_LOGIN, ADM_NAME, ADM_GROUP, ADM_ENABLE, ADM_INST_PER_PAGE';}
 if ($table eq 'ADM_GROUPS') {$fields = '*';}
 
-
-########
-#DBQuery
-########
-$sql  = "SELECT $fields FROM $table LIMIT $init,$end"; 
-
+##############
+#USERCHOICES
+##############
 #if (defined $userchoice) {
  #$tmplfile = ...		
 #}
@@ -72,14 +74,15 @@ my $t = HTML::Template->new(filename => $tmplfile,
  $t->param(TITLE => "Datos obtenidos");
                             
 ###########
-# Query
+# DB Query
 ###########
+$sql  = "SELECT $fields FROM $table LIMIT $init,$end";
 if ($sql ne '') {
  my $sth = $dbh->prepare($sql) or die "Prepare exception: $DBI::errstr";
  $sth->execute() or die "Execute exception: $DBI::errstr";
- #$t->param(INSTANCES_NUMBER =>  $sth->rows); #Change by the total records of the table/query #PTTD
- $t->param(INSTANCES_NUMBER =>  $totalrecords); #Change by the total records of the table/query #PTTD
- $t->param(COLUMNS_NUMBER   =>  $sth->{NUM_OF_FIELDS});
+ #$t->param(INSTANCES_NUMBER => $sth->rows); #Change by the total records of the table/query #PTTD
+ $t->param(RECORDS_NUMBER => $totalrecords); #Change by the total records of the table/query #PTTD
+ $t->param(COLUMNS_NUMBER => $sth->{NUM_OF_FIELDS});
  #DEBUG
  #my $rows = DBI::dump_results($sth);
  #$sth->{TYPE} NAME, NAME_uc, NAME_lc, NAME_hash, NAME_lc_hash and NAME_uc_HASH.
@@ -97,25 +100,32 @@ if ($sql ne '') {
  $t->param(Campos=>\@headings);
 
  ###########################
- # Instances
+ # Records
  ###########################
- my @instances;
+ my @records;
  my $i=$init;  
- while ((my $row = $sth->fetchrow_hashref)&&($i < $init+$recbypage)) {
+ my $z=$init+$recbypage;
+ while ((my $row = $sth->fetchrow_hashref)&&($i < $z)) {
    for my $col (sort keys %$row) {          
       my %rowh;
       $rowh{Valor} = $row->{$col};
       #$rowh{Index} = $i; #PTTD This "Index" value would work inside Valores TMPL_LOOP, where "Valor" value 
-      push @instances, \%rowh;
+      push @records, \%rowh;
    }
    $i++;
-   #$t->param(Initrecord => $init);
-   push @instances, {Newline => '1', Index=> $i};
+   #the Index TMPL_VAR is used for the down_records link 
+   #in the last page, this link should not be shown
+   if ($i != $totalrecords) { 
+    push @records, {Newline => '1', Index => $i};
+   }
+   else {
+   	push @records, {Newline => '1', Norecords => 1};
+   }
  }
- $t->param(Valores=>\@instances);
+ $t->param(Valores    => \@records);
  $t->param(Initrecord => $init);
- $t->param(Endrecord  => $init+$recbypage);
-
+ $t->param(Endrecord  => $z);
+ $t->param(Showfrom   => $init+1); #counter starts by 1 for the user ("Showing from" message)
 } #End of if defined $sql
 
 ################

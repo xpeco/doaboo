@@ -12,7 +12,7 @@ function AplicarCebra (tableid)  {
    }
 }
 
-function SelectInstance(index,action){
+function SelectRecord(index,action){
  var id = 'tr_'+index;	 
  var tr = document.getElementById(id);
  if (action == 1) {
