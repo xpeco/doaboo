@@ -10,6 +10,7 @@ my $actual_user='spa';
 sub EXGet_Instance_List
 {
 	my ($table, $ranges, $speed) = @_;
+
 	my $where='where ';
 	foreach my $range(keys %$ranges)
 	{
@@ -44,7 +45,18 @@ sub EXGet_Instance_List
 	{
 		$query="select * from $table";
 	}
-	return $user->DO::query($query);
+	my $data=$user->DO::query($query);
+
+	# Add evaluates
+	my $fields=$user->DO::query("select name,calculated_logic from doaboo_attributes where topic in \(select id from doaboo_topics where name=\'$table\'\) and type='CALCULATED'");
+	foreach my $d(@$data)
+	{
+		foreach my $field(@$fields)
+		{
+			$d->{$field->{name}}=eval $field->{calculated_logic};
+		}
+	}
+	return $data;
 }
 
 sub EXGet_Instance
@@ -94,7 +106,17 @@ sub EXGet_Instance
 	{
 		$query.=" $order";
 	}
-	return $user->DO::query($query);
+	my $data= $user->DO::query($query);
+	# Add evaluates
+	my $fields=$user->DO::query("select name,calculated_logic from doaboo_attributes where topic in \(select id from doaboo_topics where name=\'$table\'\) and type='CALCULATED'");
+	foreach my $d(@$data)
+	{
+		foreach my $field(@$fields)
+		{
+			$d->{$field->{name}}=eval $field->{calculated_logic};
+		}
+	}
+	return $data;
 }
 
 sub EXGet_Range_List
@@ -139,8 +161,3 @@ if ($r->[0]->{ADM_LOGIN} ne ''){print "$r->[0]->{ADM_GROUP}\n";}
 
 $r=EXGet_Range_List('CONTRACT',{CUSTOMER=>$r->[0]->{ADM_ORG}});
 print "$r\n";
-
-# todo
-# calculates
-
-
