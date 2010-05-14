@@ -7,11 +7,11 @@ use HTML::Template;
 
 my $dbh = DBCONN->new;
 my $cgi = CGI->new;
-print $cgi->header;
 
 #Defaults
 my $tmplfile  = 'table1.tmpl';
 my $table     = 'ADM_USERS';
+my $tab		  = 't1';
 my $recbypage = 10;
 my $init      = 0;
 my $end;
@@ -21,6 +21,7 @@ my $totalrecords = '50'; #DEBUG
 
 #Read Params
 $table       = $cgi->param('table') if (defined $cgi->param('table'));
+$tab         = $cgi->param('tab')   if (defined $cgi->param('tab'));
 $init        = $cgi->param('init')  if (defined $cgi->param('init'));
 $end         = $cgi->param('end')   if (defined $cgi->param('end'));
 $recbypage   = $cgi->param('recbypage')  if (defined $cgi->param('recbypage'));
@@ -30,10 +31,12 @@ $recbypage   = $cgi->param('recbypage')  if (defined $cgi->param('recbypage'));
 #################################
 # PageUp / PageDown processing
 #################################
-if ((defined $end)&&($end > $recbypage)) {
+if ((defined $end)&&($end eq "")) { $end =0;} #PTTD REVIEW!!! 
+#print "END:$end - RCP:$recbypage\n";
+if ($end > $recbypage) {
   #the user clicked on up_records
-  $init = $end - $recbypage;	
-}
+  $init = $end - $recbypage;
+}	
 else {
   $end  = $init + $recbypage;
 }
@@ -46,9 +49,11 @@ if ($end > $totalrecords) {
 ########
 #DEBUG
 ########
-my $fields;
-if ($table eq 'ADM_USERS')  {$fields = 'ADM_LOGIN, ADM_NAME, ADM_GROUP, ADM_ENABLE, ADM_INST_PER_PAGE';}
-if ($table eq 'ADM_GROUPS') {$fields = '*';}
+my $fields; 
+if ($table eq 'FILER')       {$fields = 'SYSTEM_ID, STATUS, STATUS_DATE, SERIAL_NUM, LOCATION_REL';}
+if ($table eq 'ADM_VIEWS' )  {$fields = 'BASE_VIEW,USER_VIEW,GROUP_VIEW,OBJECT,NAME';}
+if ($table eq 'ADM_USERS' )  {$fields = 'ADM_LOGIN,ADM_GROUP,ADM_NAME';}
+if ($table eq 'ADM_GROUPS')  {$fields = '*';}
 
 ##############
 #USERCHOICES
@@ -57,21 +62,47 @@ if ($table eq 'ADM_GROUPS') {$fields = '*';}
  #$tmplfile = ...		
 #}
 
+#In every option except "Object Change" or "Unmark All", the selected checkboxes must be saved in Cookie
+#In those other two cases, the cookie must be cleaned
+my @selected = $cgi->param('record');
+my $cookie_value = '';
+my $cookie_sel = $cgi->cookie('selected_recs');
+if (defined $cookie_sel) {
+  $cookie_value = $cookie_sel; #accumulate previous selected records (stored in cookie before)
+}
+foreach my $record (@selected) {
+   print "REC: $record \n";
+   if (grep(/^$record$/, $cookie_value)) { print "FOUND:$record - ";} #PTTD DOESNT WORK!!!!!!!!
+   else { $cookie_value .= $record.','; } #accumulate new selected records (marked in the table form)
+}
+@selected = split(/,/,$cookie_value); #for the records loop, to mark those selected records
+$cookie_sel = $cgi->cookie (-name =>'selected_recs',
+    -value  =>$cookie_value,
+    -expires=>'+4h',
+    -path   =>'/');
+#Print header including cookies
+print $cgi->header(-cookie=>"$cookie_sel"); #PTTD detect if not defined, avoid warning
+
+
 ######################
 # Template Definition
 ######################
+#global_vars to 1 if we want to share them inside/outside loops i.e.
 my $t = HTML::Template->new(filename => $tmplfile,
                             path     => "$ENV{DOABOOPATH}",
                             die_on_bad_params => 1,
-                            case_insensitive => 1,
-                            loop_context_vars =>1
+                            global_vars       => 0,
+                            case_insensitive  => 1,
+                            loop_context_vars => 1
                             #associate => $cgi
                             );
 
 ###############
 # General Data
 ###############
- $t->param(TITLE => "Datos obtenidos");
+#$t->param(TITLE => "Datos obtenidos");
+$t->param(TAB   => $tab);
+$t->param(Table => $table);
                             
 ###########
 # DB Query
@@ -105,6 +136,7 @@ if ($sql ne '') {
  my @records;
  my $i=$init;  
  my $z=$init+$recbypage;
+ my $sel=0;
  while ((my $row = $sth->fetchrow_hashref)&&($i < $z)) {
    for my $col (sort keys %$row) {          
       my %rowh;
@@ -112,11 +144,14 @@ if ($sql ne '') {
       #$rowh{Index} = $i; #PTTD This "Index" value would work inside Valores TMPL_LOOP, where "Valor" value 
       push @records, \%rowh;
    }
+   #Counter increment
    $i++;
-   #the Index TMPL_VAR is used for the down_records link 
-   #in the last page, this link should not be shown
-   if ($i != $totalrecords) { 
-    push @records, {Newline => '1', Index => $i};
+   #Check if the record must appear as selected
+   if ( grep(/^$i$/, @selected) ) { $sel = 1; } else { $sel = 0; } 
+   #In the last page, this link should not be shown
+   if ($i != $totalrecords) {
+    #The Index TMPL_VAR is used for the down_records link  
+    push @records, {Newline => '1', Index => $i, Selected => $sel};
    }
    else {
    	push @records, {Newline => '1', Norecords => 1};
@@ -238,5 +273,14 @@ print $t->output;
 # #OR
 # print join ", ", @{$sth->{NAME}}; 
 ##########################################
-
+###########################################################
+#PTTD ELIMINATE
+#my $cookie_name; 
+#$cookie_name = $table.'_SELECTED';
+#my $recordcheckedCookie  = $cgi->cookie($cookie_name);
+#print "COOKIE: $cookie_name -- $recordcheckedCookie \n";
+#$cookie_name = $table.'_UNSELECTED';
+#my $recorduncheckedCookie = $cgi->cookie($cookie_name);
+#print "COOKIE: $cookie_name -- $recorduncheckedCookie \n";
+#############################################################
 
