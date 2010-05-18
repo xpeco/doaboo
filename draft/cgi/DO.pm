@@ -138,15 +138,17 @@ sub getstored{
 	if($self->{factions} eq 'ALLOWANCE')
 	{
 		print "list of fields allowed - \n";
-		$fields=$self->{db}->DBCONN::rawget("select name from doaboo_attributes where topic=\'$topic\' and name not in \(select ADM_RESTRICTION_DETAIL from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=name and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)",'ARRAY'); 
+		$fields=$self->{db}->DBCONN::rawget("select name from doaboo_attributes where topic in \(select id from doaboo_topics where name=\'$topic\'\) and name not in \(select ADM_RESTRICTION_DETAIL from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=name and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)",'ARRAY'); 
 	}
 	else
 	{
-		$fields=$self->{db}->DBCONN::rawget("select name from doaboo_attributes where topic=\'$topic\' and name in \(select ADM_RESTRICTION_DETAIL from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=doaboo_attributes.name and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)",'ARRAY'); 
+		$fields=$self->{db}->DBCONN::rawget("select name from doaboo_attributes where topic in \(select id from doaboo_topics where name=\'$topic\'\) and name in \(select ADM_RESTRICTION_DETAIL from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=doaboo_attributes.name and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)",'ARRAY'); 
 	}
 	$fields=~s/(^\()|(\)\Z)//g;
 
-	my $query="select $fields from $topic where $where limit 1;\n";
+	my $query="select $fields from $topic where $where limit 1;";
+print "$query\n";
+
 	my $result=$self->{db}->DBCONN::rawget($query,'ARRAY');
 	return $result;
 }
