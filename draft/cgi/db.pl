@@ -11,7 +11,7 @@ my $cgi = CGI->new;
 #Defaults
 my $tmplfile  = 'table1.tmpl';
 my $table     = 'ADM_USERS';
-my $tab		  = 't1';
+my $tab       = 't1';
 my $recbypage = 10;
 my $init      = 0;
 my $end;
@@ -63,20 +63,26 @@ if ($table eq 'ADM_GROUPS')  {$fields = '*';}
 #}
 
 #In every option except "Object Change" or "Unmark All", the selected checkboxes must be saved in Cookie
-#In those other two cases, the cookie must be cleaned
-my @selected = $cgi->param('record');
+#In those other two cases, the cookie must be cleaned: PTTD: TO DO
 my $cookie_value = '';
-my $cookie_sel = $cgi->cookie('selected_recs');
-if (defined $cookie_sel) {
-  $cookie_value = $cookie_sel; #accumulate previous selected records (stored in cookie before)
-}
-foreach my $record (@selected) {
-   print "REC: $record \n";
-   if (grep(/^$record$/, $cookie_value)) { print "FOUND:$record - ";} #PTTD DOESNT WORK!!!!!!!!
-   else { $cookie_value .= $record.','; } #accumulate new selected records (marked in the table form)
-}
-@selected = split(/,/,$cookie_value); #for the records loop, to mark those selected records
-$cookie_sel = $cgi->cookie (-name =>'selected_recs',
+my $cookie_name  = 'recs_'.$tab.'_'.$table;
+my $cookie_sel   = $cgi->cookie($cookie_name); #Read the established cookie
+#If necessary, update the cookie with new values
+#if (NOT ObjectChange NOT UnmarkAll) { #PTTD
+   my @selected = $cgi->param('record');
+   if (defined $cookie_sel) {
+     $cookie_value = $cookie_sel; #accumulate previous selected records (stored in cookie before)
+   }
+   #Include new selected records but not those already present in the cookie value list (format a,b,c,...z,)
+   foreach my $record (@selected) {
+      if (not grep(/$record,/, $cookie_value)) { 
+        	$cookie_value .= $record.',';
+        }
+   }
+   @selected = split(/,/,$cookie_value); #for the records loop, to mark those selected records
+#}
+#Finally set the cookie
+$cookie_sel = $cgi->cookie (-name =>$cookie_name,
     -value  =>$cookie_value,
     -expires=>'+4h',
     -path   =>'/');
@@ -158,7 +164,9 @@ if ($sql ne '') {
    }
  }
  $t->param(Valores    => \@records);
- $t->param(Initrecord => $init);
+ #Check if the record must appear as selected
+ if ( grep(/^$init$/, @selected) ) { $sel = 1; } else { $sel = 0; } 
+ $t->param(Initrecord => $init, Selected => $sel);
  $t->param(Endrecord  => $z);
  $t->param(Showfrom   => $init+1); #counter starts by 1 for the user ("Showing from" message)
 } #End of if defined $sql
