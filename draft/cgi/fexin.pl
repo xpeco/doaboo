@@ -46,16 +46,28 @@ sub EXGet_Instance_List
 		$query="select * from $table";
 	}
 	my $data=$user->DO::query($query);
-
+print "$where\n";
 	# Add evaluates
-	my $fields=$user->DO::query("select name,calculated_logic from doaboo_attributes where topic in \(select id from doaboo_topics where name=\'$table\'\) and type='CALCULATED'");
-	foreach my $d(@$data)
-	{
-		foreach my $field(@$fields)
-		{
-			$d->{$field->{name}}=eval $field->{calculated_logic};
-		}
-	}
+	# build edited/stored variables
+#	my $stored=$user->DO::query("select * from \'$table\' $where");
+#	my $fields=$user->DO::query("select * from doaboo_attributes where topic in \(select id from doaboo_topics where name=\'$table\'\) and type <> 'CALCULATED'");
+
+#	my $stored;
+#	foreach my $field(@$field)
+#	{
+#		foreach my $st(@$stored)
+#		{
+#				$stored->{$field->{name}}=$st->{$field->{name}};
+#		}
+#	}
+#	$fields=$user->DO::query("select name,calculated_logic from doaboo_attributes where topic in \(select id from doaboo_topics where name=\'$table\'\) and type='CALCULATED'");
+#	foreach my $d(@$data)
+#	{
+#		foreach my $field(@$fields)
+#		{
+#			$d->{$field->{name}}=eval $field->{calculated_logic};
+#		}
+#	}
 	return $data;
 }
 
@@ -151,13 +163,14 @@ sub EXGet_Range_List
 	return $user->DO::query($query,'ARRAY');
 }
 
+
 my $r;
 
 $r=EXGet_Instance_List('ADM_USERS',{ADM_LOGIN=>$actual_user},'NONE');
 if ($r->[0]->{ADM_LOGIN} ne ''){print "$r->[0]->{ADM_GROUP}\n";}
 
-$r=EXGet_Instance('ADM_USERS',{ADM_LOGIN=>'amassey',ADM_GROUP=>'.*'},{ADM_GROUP=>'ASC'},'NONE');
-if ($r->[0]->{ADM_LOGIN} ne ''){print "$r->[0]->{ADM_GROUP}\n";}
+#$r=EXGet_Instance('ADM_USERS',{ADM_LOGIN=>'amassey',ADM_GROUP=>'.*'},{ADM_GROUP=>'ASC'},'NONE');
+#if ($r->[0]->{ADM_LOGIN} ne ''){print "$r->[0]->{ADM_GROUP}\n";}
 
-$r=EXGet_Range_List('CONTRACT',{CUSTOMER=>$r->[0]->{ADM_ORG}});
-print "$r\n";
+#$r=EXGet_Range_List('CONTRACT',{CUSTOMER=>$r->[0]->{ADM_ORG}});
+#print "$r\n";
