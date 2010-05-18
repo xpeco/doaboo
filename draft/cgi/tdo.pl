@@ -24,8 +24,10 @@ if ($user->{error}) #if (not $user->{error})
 #	print "Actions:".$user->getactions($topic)."\n";
 
 #	print "View details:".$user->getview($topic,'DAIMLER_V1')."\n";
+	my $id="NUMBER='1'";
+	print "Stored: ".$user->getstored($topic,$id)."\n";
 
-	print "--".$user->getrecords($topic,'DAIMLER_V1')."\n";
+#	print "--".$user->getrecords($topic,'DAIMLER_V1')."\n";
 
 
 }
