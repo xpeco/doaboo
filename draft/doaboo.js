@@ -12,19 +12,81 @@ function AplicarCebra (tableid)  {
    }
 }
 
+//ActivateTab selected
+function ActivateTab(id,total){
+ for (var i = 1; i <= total; i++) {
+ 	var tabid = 't' + i;
+	if (tabid != id) {
+		var taboff = document.getElementById(tabid);
+		taboff.className = taboff.className.replace(/ active-tab/g, '');
+	} 
+ }	
+ var tabon = document.getElementById(id);
+ tabon.className += ' active-tab';
+ return true;
+}
+
+// Select Record 
 function SelectRecord(index,action){
  var id = 'tr_'+index;	 
  var tr = document.getElementById(id);
- if (action == 1) {
+ //var cookie_text;
+ if (action == 1) { //select record
  	tr.className += ' highlighted';
+	//cookie_text = GetCookie(Object+'_SELECTED');
+    //if (cookie_text == null) {
+	//	SetCookie(Object + '_SELECTED', index);
+	//}
+	//else {
+	//	cookie_text = cookie_text + ',' + cookie_value;
+	//}
  }
- else {
+ else { //unselect record
  	tr.className = tr.className.replace(/ highlighted/g, '');
+ 	//cookie_text = GetCookie(Object+'_UNSELECTED');
+    //if (cookie_text == null) {
+	//	SetCookie(Object + '_UNSELECTED', index);
+	//}
+	//else {
+	//	cookie_text = cookie_text + ',' + cookie_value;
+	//}
  }
  return true;	
 }
 
+//CookieExpirationDate
+function getCookieExpirDate() {
+ var expdate = new Date()
+ var milisec = expdate.getTime(); //Get the milliseconds since Jan 1, 1970
+ milisec += 7200*1000;  //7200*1000 expires in 2 hours(milliseconds)
+ expdate.setTime(milisec);
+ return expdate.toGMTString();
+}
 
+//SetCookie
+function SetCookie(cookie_name,cookie_value) {
+  cookie_text=cookie_value;
+  var expiration = getCookieExpirDate();
+  document.cookie = cookie_name + '=' + escape(cookie_text) + '; ' + 'expires='+expiration+'; secure; ';
+}
+
+//GetCookie - PTTD REVIEW
+function GetCookie(cookie_name) {
+  if (document.cookie.length > 0) {
+    begin = document.cookie.indexOf(cookie_name+'=');
+    if (begin != -1) {
+      begin += cookie_name.length+1;
+      end = document.cookie.indexOf(';', begin);
+      if (end == -1) end = document.cookie.length;
+      return unescape(document.cookie.substring(begin, end));
+    }
+  }
+  return null;
+}
+
+
+//----------------------------------------------
+//----------------------------------------------
 //Select Instance - PTTD REVIEW!!!
 function SelectInstanceOrig (Object,Checkbox) {
    tr = Checkbox.parentNode.parentNode;
@@ -69,6 +131,8 @@ function SelectInstanceOrig (Object,Checkbox) {
    }
 }
 
+//-----------------------------------
+//-----------------------------------
 
 //******************************* end DROPDOWN CONTENT ******************************
 var slideDownInitHeight = new Array();

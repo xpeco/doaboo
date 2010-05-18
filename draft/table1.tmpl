@@ -58,32 +58,28 @@
   </script>  	
 </head>
 
-<body onload="javascript:AplicarCebra('DataTable');">
+<body onload="javascript:AplicarCebra('DataTable');ActivateTab('<TMPL_VAR NAME="tab">','4'); ">
 
 <div class="ext font">
 
 <!--Menu with scriptaculous-1.8.3 --->
 <TMPL_INCLUDE NAME="menubar/menu.tmpl">
 		
-<!--<TMPL_VAR NAME="TITLE">-->
-
-<!--<div id="banner">&nbsp;</div>-->
- 
-  <ul id="tabs">
-  	<!-- LOOP VIEWS with param ACTIVE/INACTIVE and VIEWNAME-->
+<ul id="tabs">
+  	<!-- LOOP VIEWS with param TABLE, VIEWNAME... - PTTD -->
 	<li>
-		<a class="active-tab" href="/doaboo-cgi/dp.pl?view=view1">View 1</a>
+		<a id="t1" href="/doaboo-cgi/db.pl?table=ADM_USERS&tab=t1">ADM_USERS</a>
 	</li>
 	<li>
-		<a  class="inactive" href="/doaboo-cgi/dp.pl?view=view2">View 2</a>
+		<a id="t2" href="/doaboo-cgi/db.pl?table=ADM_GROUPS&tab=t2">ADM_GROUPS</a>
 	</li>
 	<li>
-		<a  class="inactive" href="/doaboo-cgi/dp.pl?view=view3">View 3</a>
+		<a id="t3" href="/doaboo-cgi/db.pl?table=ADM_VIEWS&tab=t3">ADM_VIEWS</a>
 	</li>
 	<li>
-		<a  class="inactive" href="/doaboo-cgi/dp.pl?view=view4">View 4</a>
+		<a id="t4" href="/doaboo-cgi/db.pl?table=FILER&tab=t4">FILER</a>
 	</li>
- </ul>
+</ul>
 
 <div class="tabsdiv">
 <form name="tableform" action="/doaboo-cgi/db.pl" method="post">
@@ -111,7 +107,7 @@
  <tr class="oddline" id="tr_<TMPL_VAR NAME="Initrecord">">
      <!-- Control Cells -->
      <td class="control">
-       <!-- DEBUG _TMPL_VAR NAME="InitRecord"_:--><input type="checkbox" name="check_<TMPL_VAR NAME="Initrecord">" onClick="if(this.checked == true){SelectRecord('<TMPL_VAR NAME="Initrecord">','1');} else {SelectRecord('<TMPL_VAR NAME="Initrecord">','0');}" value="<TMPL_VAR NAME="key">" <TMPL_IF NAME="selected">checked</TMPL_IF>>
+       <!-- DEBUG _TMPL_VAR NAME="InitRecord"_:--><input type="checkbox" name="record" id="check_<TMPL_VAR NAME="Initrecord">" value="<TMPL_VAR NAME="Initrecord">" onClick="if(this.checked == true){SelectRecord('<TMPL_VAR NAME="Initrecord">','1');} else {SelectRecord('<TMPL_VAR NAME="Initrecord">','0');}" <TMPL_IF NAME="Selected">checked</TMPL_IF>>
      </td>
      <td class="control">
     	   Iconx2
@@ -128,7 +124,7 @@
 		<tr class="oddline" id="tr_<TMPL_VAR NAME="Index">">
 	    <!-- Control Cells -->
          <td class="control">
-		   <!--DEBUG _TMPL_VAR NAME="Index"_:--><input type="checkbox" name="check_<TMPL_VAR NAME="Index">" onClick="if(this.checked == true){SelectRecord('<TMPL_VAR NAME="Index">','1');} else {SelectRecord('<TMPL_VAR NAME="Index">','0');} " value="<TMPL_VAR NAME="key">" <TMPL_IF NAME="selected">checked</TMPL_IF>>
+		   <!--DEBUG _TMPL_VAR NAME="Index"_:--><input type="checkbox" name="record" id="check_<TMPL_VAR NAME="Index">" value="<TMPL_VAR NAME="Index">" onClick="if(this.checked == true){SelectRecord('<TMPL_VAR NAME="Index">','1');} else {SelectRecord('<TMPL_VAR NAME="Index">','0');}" <TMPL_IF NAME="Selected">checked</TMPL_IF>>
 	     </td>
          <td class="control">
        	   Iconx2
@@ -168,9 +164,13 @@
    
 </table></center></form>
 
-<div>Showing results <TMPL_VAR name="Showfrom">-<TMPL_VAR name="Endrecord"> from a total of <TMPL_VAR name="RECORDS_NUMBER"> in <TMPL_VAR name="COLUMNS_NUMBER"> columns</div>
-</div> <!-- tabs -->
-
+<div>
+	  Showing results <TMPL_VAR name="Showfrom">-<TMPL_VAR name="Endrecord"> from a total of <TMPL_VAR name="RECORDS_NUMBER"> in <TMPL_VAR name="COLUMNS_NUMBER"> columns of <TMPL_VAR name="Table">
+	  &nbsp;&nbsp;&nbsp;&nbsp;
+	  <a href="db.pl">Icon Show only marked</a>
+</div>	
+	
+</div> <!--tabsdiv-->
 </div> <!--ext-->
 </body>
 </html>
