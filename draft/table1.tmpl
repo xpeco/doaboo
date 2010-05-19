@@ -58,7 +58,7 @@
   </script>  	
 </head>
 
-<body onload="javascript:AplicarCebra('DataTable');ActivateTab('<TMPL_VAR NAME="tab">','4'); ">
+<body onload="javascript:AplicarCebra('DataTable');ActivateTab('<TMPL_VAR NAME="Activetab">','4'); ">
 
 <div class="ext font">
 
@@ -83,6 +83,7 @@
 
 <div class="tabsdiv">
 <form name="tableform" action="/doaboo-cgi/db.pl" method="post">
+<input type ="hidden" name="tab" value="<TMPL_VAR NAME="Activetab">">
 <br><center><table id="DataTable" class="data font">
 
  <!--Header line - Campos Loop-->
@@ -107,7 +108,19 @@
  <tr class="oddline" id="tr_<TMPL_VAR NAME="Initrecord">">
      <!-- Control Cells -->
      <td class="control">
-       <!-- DEBUG _TMPL_VAR NAME="InitRecord"_:--><input type="checkbox" name="record" id="check_<TMPL_VAR NAME="Initrecord">" value="<TMPL_VAR NAME="Initrecord">" onClick="if(this.checked == true){SelectRecord('<TMPL_VAR NAME="Initrecord">','1');} else {SelectRecord('<TMPL_VAR NAME="Initrecord">','0');}" <TMPL_IF NAME="Selected">checked</TMPL_IF>>
+       <TMPL_VAR NAME="InitRecord">:
+	   <input type="checkbox" name="record" id="check_<TMPL_VAR NAME="Initrecord">" 
+	          value="<TMPL_VAR NAME="Initrecord">"	
+			  onClick="if(this.checked == true) { 
+			             SelectRecord('<TMPL_VAR NAME="Initrecord">','1'); 
+						} else { 
+						 SelectRecord('<TMPL_VAR NAME="Initrecord">','0'); 
+					    };" 
+			  <TMPL_IF NAME="Selected">
+			  	checked 
+				<script>SelectRecord('<TMPL_VAR NAME="Initrecord">','1','<TMPL_VAR NAME="Table">','<TMPL_VAR NAME="Tab">');</script>
+			  </TMPL_IF> 
+			  <!-->--><!-- close input -->
      </td>
      <td class="control">
     	   Iconx2
@@ -124,7 +137,19 @@
 		<tr class="oddline" id="tr_<TMPL_VAR NAME="Index">">
 	    <!-- Control Cells -->
          <td class="control">
-		   <!--DEBUG _TMPL_VAR NAME="Index"_:--><input type="checkbox" name="record" id="check_<TMPL_VAR NAME="Index">" value="<TMPL_VAR NAME="Index">" onClick="if(this.checked == true){SelectRecord('<TMPL_VAR NAME="Index">','1');} else {SelectRecord('<TMPL_VAR NAME="Index">','0');}" <TMPL_IF NAME="Selected">checked</TMPL_IF>>
+		   <TMPL_VAR NAME="Index">:
+		   <input type="checkbox" name="record" id="check_<TMPL_VAR NAME="Index">" 
+		          value="<TMPL_VAR NAME="Index">" 
+				  onClick="if(this.checked == true) { 
+				             SelectRecord('<TMPL_VAR NAME="Index">','1'); 
+						    } else { 
+							 SelectRecord('<TMPL_VAR NAME="Index">','0'); 
+						    }"  
+				  <TMPL_IF NAME="Selected">
+				   checked 
+				   <script>MarkRecord('<TMPL_VAR NAME="Index">','1');</script>
+				  </TMPL_IF> 
+				  <!-->--> <!-- close input -->
 	     </td>
          <td class="control">
        	   Iconx2
@@ -140,7 +165,6 @@
                <input type="hidden" name="init" id="init" value="<TMPL_VAR NAME="Index">">	
 			   <TMPL_UNLESS NAME="Norecords"> 
  	             <img src="/doaboo/images/boxdown.png" onclick="javascript:document.getElementById('end').value='';document.tableform.submit();">	
-	             <!--<a href="/doaboo-cgi/db.pl?init=_TMPL_VAR NAME="Index"_">T</a>-->
 			     <!--Not working yet: XMLHttpRequest: need to divide db.pl in parts -->
 	             <!--<img src="/doaboo/images/boxdown.png" align="absmiddle" onClick="javascript:showResult('userchoice','Nextpage','external');">-->
 			   </TMPL_UNLESS>

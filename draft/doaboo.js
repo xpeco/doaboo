@@ -26,30 +26,37 @@ function ActivateTab(id,total){
  return true;
 }
 
-// Select Record 
-function SelectRecord(index,action){
+// Mark/Unmark Record 
+function MarkRecord(index,action){
  var id = 'tr_'+index;	 
  var tr = document.getElementById(id);
- //var cookie_text;
- if (action == 1) { //select record
+ if (action == 1) {
  	tr.className += ' highlighted';
-	//cookie_text = GetCookie(Object+'_SELECTED');
-    //if (cookie_text == null) {
-	//	SetCookie(Object + '_SELECTED', index);
-	//}
-	//else {
-	//	cookie_text = cookie_text + ',' + cookie_value;
-	//}
+ } else {
+    tr.className = tr.className.replace(/ highlighted/g, '');	
  }
- else { //unselect record
- 	tr.className = tr.className.replace(/ highlighted/g, '');
- 	//cookie_text = GetCookie(Object+'_UNSELECTED');
-    //if (cookie_text == null) {
-	//	SetCookie(Object + '_UNSELECTED', index);
-	//}
-	//else {
-	//	cookie_text = cookie_text + ',' + cookie_value;
-	//}
+ return true;	
+}
+
+// Select / Unselect Record
+// mark record if selected and set or unset Cookie 
+function SelectRecord(index,action){
+ var cookie_text;
+ //Select record
+ if (action == 1) { 
+ 	MarkRecord(index,'1'); //line color
+	cookie_text = GetCookie('sel_recs');
+	cookie_text = cookie_text + ',' + index;
+	SetCookie('sel_recs', cookie_text);
+	//si esta en unsel, quitarlo
+ }
+ //Unselect record
+ else { 
+ 	MarkRecord(index,'0'); //line color
+ 	cookie_text = GetCookie('unsel_recs');
+    cookie_text = cookie_text + ',' + index;
+	SetCookie('unsel_recs'); 
+	//si esta en sel, quitarlo
  }
  return true;	
 }

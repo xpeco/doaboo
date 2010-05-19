@@ -12,7 +12,7 @@ my $cgi = CGI->new;
 my $tmplfile  = 'table1.tmpl';
 my $table     = 'ADM_USERS';
 my $tab       = 't1';
-my $recbypage = 10;
+my $recbypage = 6;
 my $init      = 0;
 my $end;
 my $sql;
@@ -31,7 +31,7 @@ $recbypage   = $cgi->param('recbypage')  if (defined $cgi->param('recbypage'));
 #################################
 # PageUp / PageDown processing
 #################################
-if ((defined $end)&&($end eq "")) { $end =0;} #PTTD REVIEW!!! 
+if ((defined $end)&&($end eq "")) { $end =0;} #PTTD REVIEW APACHE LOG WARNINGS UNDEFINED!!! 
 #print "END:$end - RCP:$recbypage\n";
 if ($end > $recbypage) {
   #the user clicked on up_records
@@ -68,7 +68,7 @@ my $cookie_value = '';
 my $cookie_name  = 'recs_'.$tab.'_'.$table;
 my $cookie_sel   = $cgi->cookie($cookie_name); #Read the established cookie
 #If necessary, update the cookie with new values
-#if (NOT ObjectChange NOT UnmarkAll) { #PTTD
+#if (NOT ObjectChange NOT UnmarkAll) { #PTTD	
    my @selected = $cgi->param('record');
    if (defined $cookie_sel) {
      $cookie_value = $cookie_sel; #accumulate previous selected records (stored in cookie before)
@@ -76,10 +76,11 @@ my $cookie_sel   = $cgi->cookie($cookie_name); #Read the established cookie
    #Include new selected records but not those already present in the cookie value list (format a,b,c,...z,)
    foreach my $record (@selected) {
       if (not grep(/$record,/, $cookie_value)) { 
-        	$cookie_value .= $record.',';
+        	$cookie_value .= $record.','; print "<br>Including:$record<br>"; #PTTD
         }
+        else { print "$record/"; } #PTTD
    }
-   @selected = split(/,/,$cookie_value); #for the records loop, to mark those selected records
+   @selected = split(/,/,$cookie_value); #for the records loop, to mark those selected records #PTTD MAINTAIN
 #}
 #Finally set the cookie
 $cookie_sel = $cgi->cookie (-name =>$cookie_name,
@@ -87,8 +88,8 @@ $cookie_sel = $cgi->cookie (-name =>$cookie_name,
     -expires=>'+4h',
     -path   =>'/');
 #Print header including cookies
-print $cgi->header(-cookie=>"$cookie_sel"); #PTTD detect if not defined, avoid warning
-
+#print $cgi->header(-cookie=>"$cookie_sel"); #PTTD detect if not defined, avoid warning ##PTTD MOVED TO JS
+print $cgi->header(); #DEBUG
 
 ######################
 # Template Definition
@@ -107,8 +108,9 @@ my $t = HTML::Template->new(filename => $tmplfile,
 # General Data
 ###############
 #$t->param(TITLE => "Datos obtenidos");
-$t->param(TAB   => $tab);
-$t->param(Table => $table);
+print "TAB=$tab: ";
+$t->param(Activetab => $tab);
+$t->param(Table     => $table);
                             
 ###########
 # DB Query
@@ -153,7 +155,7 @@ if ($sql ne '') {
    #Counter increment
    $i++;
    #Check if the record must appear as selected
-   if ( grep(/^$i$/, @selected) ) { $sel = 1; } else { $sel = 0; } 
+   if ( grep(/^$i$/, @selected) ) { $sel = 1; print "$i/"; } else { $sel = 0; } #PTTD 
    #In the last page, this link should not be shown
    if ($i != $totalrecords) {
     #The Index TMPL_VAR is used for the down_records link  
@@ -165,7 +167,7 @@ if ($sql ne '') {
  }
  $t->param(Valores    => \@records);
  #Check if the record must appear as selected
- if ( grep(/^$init$/, @selected) ) { $sel = 1; } else { $sel = 0; } 
+ if ( grep(/^$init$/, @selected) ) { $sel = 1; print "$i/"; } else { $sel = 0; } 
  $t->param(Initrecord => $init, Selected => $sel);
  $t->param(Endrecord  => $z);
  $t->param(Showfrom   => $init+1); #counter starts by 1 for the user ("Showing from" message)
