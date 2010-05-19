@@ -45,6 +45,13 @@ sub rawget
 		if($list eq ')'){$list='()';} # if no results come from the Q
 		return $list;
 	}
+	elsif ($format eq 'SQL'){
+   	my $list='';
+		while(my @e=$do->fetchrow_array){$list.='`'.$e[0].'`,';}
+		$list=~s/\,\Z//;
+		return $list;
+	}
+
 	else {return $do->fetchall_arrayref({});}
 }
 
