@@ -22,24 +22,24 @@ foreach my $file (@source_XMLs) {
 }
 my $dbh = DB_UPDATE ->new();
 for ($i=0;$i<@XMLin;$i++) {
-   my $objects= $XMLin[$i]->{MODULE}->{OBJECT};
-   foreach my $object (@$objects) {
+	my $objects= $XMLin[$i]->{MODULE}->{OBJECT};
+   	foreach my $object (@$objects) {
 		my $object_id=$dbh->DB_UPDATE::get_id($object,'topics');
-	   $dbh->DB_UPDATE::record($object,$object_id,'topics');
+		$dbh->DB_UPDATE::record($object,$object_id,'topics');
 		$object_id=$dbh->DB_UPDATE::get_id($object,'topics');
 		my $attributes = $object->{ATTRIBUTE};
-      foreach my $attrib (@$attributes) {
+      		foreach my $attrib (@$attributes) {
 			my $attribute_id=$dbh->DB_UPDATE::get_id($attrib,'attributes');
-		   $dbh->DB_UPDATE::record($attrib,$attribute_id,'attributes',$object_id);
+			$dbh->DB_UPDATE::record($attrib,$attribute_id,'attributes',$object_id);
 			$attribute_id=$dbh->DB_UPDATE::get_id($attrib,'attributes');
-      }
+      		}
 		my $methods = $object->{METHOD};
 		foreach my $method (@$methods) {
 			my $method_id=$dbh->DB_UPDATE::get_id($method,'actions');
 			$dbh->DB_UPDATE::record($method,$method_id,'actions',$object_id);
 			$method_id=$dbh->DB_UPDATE::get_id($method,'actions');
 			my $fields = $method->{FIELD};
-         foreach my $field (@$fields) {
+         		foreach my $field (@$fields) {
 				my $field_id=$dbh->DB_UPDATE::get_id($field,'fields');
 				$dbh->DB_UPDATE::record($field,$field_id,'fields',$object_id,$method_id);
 			}
@@ -54,9 +54,9 @@ for ($i=0;$i<@XMLin;$i++) {
 	}
 }
 for ($i=0;$i<@XMLin;$i++) {
-   my $scripts=$XMLin[$i]->{MODULE}->{SCRIPT};
-   foreach my $script(@$scripts) {
-      my $script_id=$dbh->DB_UPDATE::get_id($script,'scripts');
-      $dbh->DB_UPDATE::record($script,$script_id,'scripts');
-   }
+	my $scripts=$XMLin[$i]->{MODULE}->{SCRIPT};
+   	foreach my $script(@$scripts) {
+      		my $script_id=$dbh->DB_UPDATE::get_id($script,'scripts');
+      		$dbh->DB_UPDATE::record($script,$script_id,'scripts');
+   	}
 }
