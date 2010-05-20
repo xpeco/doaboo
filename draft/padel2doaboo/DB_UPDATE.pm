@@ -62,6 +62,27 @@ sub record {
 		       $code=~s/\"/\\\"/g;
 		       $code=~s/\./\\\./g;
 		       $code=~s/\*/\\\*/g;
+		       my @code = split(/;/, $code);
+		       foreach $code(@code) {
+			       $code=~s/\n/ /g;
+			       $code=~s/^\s+//;
+			       $code=~s/\s+$//;
+		       }
+		       $code = join("; ", @code);
+		       @code = split(/{/, $code);
+		       foreach $code(@code) {
+		 	       $code=~s/\n/ /g;
+			       $code=~s/^\s+//;
+			       $code=~s/\s+$//;
+		       }
+		       $code = join("\{ ", @code);
+		       @code = split(/}/, $code);
+		       foreach $code(@code) {
+			       $code=~s/\n/ /g;
+			       $code=~s/^\s+//;
+			       $code=~s/\s+$//;
+		       }
+		       $code = join("\} ", @code);
 		       $string="$string"." ,$table='Y', $table"."_logic=\"$code\"";
                }
        }
@@ -73,6 +94,27 @@ sub record {
                $code=~s/\"/\\\"/g;
                $code=~s/\./\\\./g;
                $code=~s/\*/\\\*/g;
+	       my @code = split(/;/, $code);
+	       foreach $code(@code) {
+		 $code=~s/\n/ /g;
+		 $code=~s/^\s+//;
+		 $code=~s/\s+$//;
+	       }
+	       $code = join("; ", @code);
+	       @code = split(/{/, $code);
+	       foreach $code(@code) {
+		 $code=~s/\n/ /g;
+	         $code=~s/^\s+//;
+	         $code=~s/\s+$//;
+	       }
+	       $code = join("\{ ", @code);
+	       @code = split(/}/, $code);
+	       foreach $code(@code) {
+	         $code=~s/\n/ /g;
+	         $code=~s/^\s+//;
+		 $code=~s/\s+$//;
+	       }
+	       $code = join("\} ", @code);
                $string="$string"." ,calculated_logic=\"$code\"";
        }
        if ((defined $topic_id) and (($format eq 'attributes') or ($format eq 'actions'))) {
@@ -114,6 +156,27 @@ sub record {
 		       $code=~s/\"/\\\"/g;
 		       $code=~s/\./\\\./g;
 		       $code=~s/\*/\\\*/g;
+		       my @code = split(/;/, $code);
+		       foreach $code(@code) {
+		           $code=~s/\n/ /g;
+		           $code=~s/^\s+//;
+		           $code=~s/\s+$//;
+	               }
+	               $code = join("; ", @code);
+	               @code = split(/{/, $code);
+	               foreach $code(@code) {
+		           $code=~s/\n/ /g;
+	                   $code=~s/^\s+//;
+	                   $code=~s/\s+$//;
+	               }
+	               $code = join("\{ ", @code);
+	               @code = split(/}/, $code);
+	               foreach $code(@code) {
+	                   $code=~s/\n/ /g;
+	                   $code=~s/^\s+//;
+		           $code=~s/\s+$//;
+	               }
+	               $code = join("\} ", @code);
 		       $string="$string"." , step"."$i"."=\"$code\"";
 	       }
        }
@@ -125,6 +188,27 @@ sub record {
 	       $code=~s/\"/\\\"/g;
 	       $code=~s/\./\\\./g;
 	       $code=~s/\*/\\\*/g;
+	       my @code = split(/;/, $code);
+	       foreach $code(@code) {
+		 $code=~s/\n/ /g;
+		 $code=~s/^\s+//;
+		 $code=~s/\s+$//;
+	       }
+	       $code = join("; ", @code);
+	       @code = split(/{/, $code);
+	       foreach $code(@code) {
+		 $code=~s/\n/ /g;
+	         $code=~s/^\s+//;
+	         $code=~s/\s+$//;
+	       }
+	       $code = join("\{ ", @code);
+	       @code = split(/}/, $code);
+	       foreach $code(@code) {
+	         $code=~s/\n/ /g;
+	         $code=~s/^\s+//;
+		 $code=~s/\s+$//;
+	       }
+	       $code = join("\} ", @code);
 	       $string="$string"." , logic=\"$code\"";
        }
        if (defined $item->{SCRIPT_ACTION}->{BLOCK}[0]) {
@@ -135,6 +219,27 @@ sub record {
 	       $code=~s/\"/\\\"/g;
 	       $code=~s/\./\\\./g;
 	       $code=~s/\*/\\\*/g;
+	       my @code = split(/;/, $code);
+	       foreach $code(@code) {
+		 $code=~s/\n/ /g;
+		 $code=~s/^\s+//;
+		 $code=~s/\s+$//;
+	       }
+	       $code = join("; ", @code);
+	       @code = split(/{/, $code);
+	       foreach $code(@code) {
+		 $code=~s/\n/ /g;
+	         $code=~s/^\s+//;
+	         $code=~s/\s+$//;
+	       }
+	       $code = join("\{ ", @code);
+	       @code = split(/}/, $code);
+	       foreach $code(@code) {
+	         $code=~s/\n/ /g;
+	         $code=~s/^\s+//;
+		 $code=~s/\s+$//;
+	       }
+	       $code = join("\} ", @code);
 	       $string="$string"." , logic=\"$code\"";
        }
        if (defined $item->{PARENT}) {
