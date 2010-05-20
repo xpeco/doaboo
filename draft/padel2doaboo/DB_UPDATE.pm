@@ -180,40 +180,9 @@ sub record {
 		       $string="$string"." , step"."$i"."=\"$code\"";
 	       }
        }
-       if (($format eq 'attributes') and (defined $item->{BLOCK}[0])) {
+       if (defined $item->{BLOCK}[0]) {
 	       my $code='';
-	       $code= $item->{$elem}->{BLOCK}[0];
-	       $code=~s/\\/\\\\/g;
-	       $code=~s/\'/\\\'/g;
-	       $code=~s/\"/\\\"/g;
-	       $code=~s/\./\\\./g;
-	       $code=~s/\*/\\\*/g;
-	       my @code = split(/;/, $code);
-	       foreach $code(@code) {
-		 $code=~s/\n/ /g;
-		 $code=~s/^\s+//;
-		 $code=~s/\s+$//;
-	       }
-	       $code = join("; ", @code);
-	       @code = split(/{/, $code);
-	       foreach $code(@code) {
-		 $code=~s/\n/ /g;
-	         $code=~s/^\s+//;
-	         $code=~s/\s+$//;
-	       }
-	       $code = join("\{ ", @code);
-	       @code = split(/}/, $code);
-	       foreach $code(@code) {
-	         $code=~s/\n/ /g;
-	         $code=~s/^\s+//;
-		 $code=~s/\s+$//;
-	       }
-	       $code = join("\} ", @code);
-	       $string="$string"." , logic=\"$code\"";
-       }
-       if (defined $item->{SCRIPT_ACTION}->{BLOCK}[0]) {
-	       my $code='';
-	       $code= $item->{SCRIPT_ACTION}->{BLOCK}[0];
+	       $code= $item->{BLOCK}[0];
 	       $code=~s/\\/\\\\/g;
 	       $code=~s/\'/\\\'/g;
 	       $code=~s/\"/\\\"/g;
