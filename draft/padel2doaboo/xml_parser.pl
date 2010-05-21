@@ -8,7 +8,7 @@ use Data::Dumper;
 
 
 my $xs = new XML::Simple(forcearray =>['SOURCE','ADDON']);
-my $xfile = $xs->XMLin("application.xml");
+my $xfile = $xs->XMLin("application.xml",SuppressEmpty=>'');
 my @source_XMLs;
 my @XMLin;
 my $list=$xfile->{SOURCE};
@@ -16,7 +16,7 @@ foreach my $source(@$list){;push(@source_XMLs,$source);}
 my $i=0;
 foreach my $file (@source_XMLs) {
    my $xs1= new XML::Simple (keeproot=>1, forcearray=>['OBJECT','ATTRIBUTE','METHOD','FIELD','BLOCK','MENU','SCRIPT']);
-   my $result=eval{$XMLin[$i]=$xs1->XMLin($file) || die "can't XMLin $file: $!";};
+   my $result=eval{$XMLin[$i]=$xs1->XMLin($file,SuppressEmpty=>'') || die "can't XMLin $file: $!";};
    if($result==0){print "$@";if(<STDIN>){};exit();}
    $i++;
 }
