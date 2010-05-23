@@ -114,3 +114,6 @@ function RemoveFromCookie (cookie_name,cookie_value) {
     }
   }
 }
+
+
+</script>
