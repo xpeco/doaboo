@@ -141,7 +141,7 @@ if ($sql ne '') {
  }
  $t->param(Valores    => \@records);
  #Check if the record must appear as selected
- if ( grep(/^$init$/, @selected) ) { $sel = 1; print "$i/"; } else { $sel = 0; } 
+ if ( grep(/^$init$/, @selected) ) { $sel = 1; } else { $sel = 0; } 
  $t->param(Initrecord => $init, Selected => $sel);
  $t->param(Endrecord  => $z);
  $t->param(Showfrom   => $init+1); #counter starts by 1 for the user ("Showing from" message)
