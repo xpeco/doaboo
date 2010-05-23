@@ -99,7 +99,7 @@ span.logout {
 }
 
 /* End IE5-Mac hack */
-#menu  ul.level2, #menu ul.level3 {
+#menu  ul.subtree, #menu ul.subtree2 {
 	position: absolute;
 	top: 0px;
 	left: 0px;
@@ -110,7 +110,7 @@ span.logout {
 	background: #8f7dD2;
 }
 
-#menu  ul.level2 li, #menu ul.level3 li {
+#menu  ul.subtree li, #menu ul.subtree2 li {
 	border-bottom: 1px solid #fff;
 	float: none;
 	margin: 0;
@@ -118,12 +118,12 @@ span.logout {
 	width: 150px;
 }
 
-#menu  ul.level2 li a, #menu ul.level3 li a {
+#menu  ul.subtree li a, #menu ul.subtree2 li a {
 	padding: 5px 9px 5px 5px;
 	font-size: 1.6em;
 }
 
-#menu  ul.level2 li a:hover, #menu  ul.level3 li a:hover, #menu ul.level1 li a:hover {
+#menu  ul.subtree li a:hover, #menu  ul.subtree2 li a:hover, #menu ul.tree li a:hover {
 	/*font-weight: normal;*/
 	background-color: #Af9fEf;
 }
