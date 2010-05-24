@@ -62,34 +62,8 @@ if ($table eq 'ADM_GROUPS')  {$fields = '*';}
  #$tmplfile = ...		
 #}
 
-#In every option except "Object Change" or "Unmark All", the selected checkboxes must be saved in Cookie
-#In those other two cases, the cookie must be cleaned: PTTD: TO DO
-my $cookie_value = '';
-my $cookie_name  = 'recs_'.$tab.'_'.$table;
-my $cookie_sel   = $cgi->cookie($cookie_name); #Read the established cookie
-#If necessary, update the cookie with new values
-#if (NOT ObjectChange NOT UnmarkAll) { #PTTD	
-   my @selected = $cgi->param('record');
-   if (defined $cookie_sel) {
-     $cookie_value = $cookie_sel; #accumulate previous selected records (stored in cookie before)
-   }
-   #Include new selected records but not those already present in the cookie value list (format a,b,c,...z,)
-   foreach my $record (@selected) {
-      if (not grep(/$record,/, $cookie_value)) { 
-        	$cookie_value .= $record.','; print "<br>Including:$record<br>"; #PTTD
-        }
-        else { print "$record/"; } #PTTD
-   }
-   @selected = split(/,/,$cookie_value); #for the records loop, to mark those selected records #PTTD MAINTAIN
-#}
-#Finally set the cookie
-$cookie_sel = $cgi->cookie (-name =>$cookie_name,
-    -value  =>$cookie_value,
-    -expires=>'+4h',
-    -path   =>'/');
-#Print header including cookies
-#print $cgi->header(-cookie=>"$cookie_sel"); #PTTD detect if not defined, avoid warning ##PTTD MOVED TO JS
-print $cgi->header(); #DEBUG
+print $cgi->header(); 
+
 
 ######################
 # Template Definition
@@ -107,8 +81,6 @@ my $t = HTML::Template->new(filename => $tmplfile,
 ###############
 # General Data
 ###############
-#$t->param(TITLE => "Datos obtenidos");
-print "TAB=$tab: ";
 $t->param(Activetab => $tab);
 $t->param(Table     => $table);
                             
@@ -141,6 +113,8 @@ if ($sql ne '') {
  ###########################
  # Records
  ###########################
+ my $sel_recs = $cgi->cookie('sel_recs'); #Read the established cookie
+ my @selected = split(/,/,$sel_recs);
  my @records;
  my $i=$init;  
  my $z=$init+$recbypage;
@@ -155,7 +129,7 @@ if ($sql ne '') {
    #Counter increment
    $i++;
    #Check if the record must appear as selected
-   if ( grep(/^$i$/, @selected) ) { $sel = 1; print "$i/"; } else { $sel = 0; } #PTTD 
+   if ( grep(/^$i$/, @selected) ) { $sel = 1;} else { $sel = 0; }  
    #In the last page, this link should not be shown
    if ($i != $totalrecords) {
     #The Index TMPL_VAR is used for the down_records link  
@@ -167,7 +141,7 @@ if ($sql ne '') {
  }
  $t->param(Valores    => \@records);
  #Check if the record must appear as selected
- if ( grep(/^$init$/, @selected) ) { $sel = 1; print "$i/"; } else { $sel = 0; } 
+ if ( grep(/^$init$/, @selected) ) { $sel = 1; } else { $sel = 0; } 
  $t->param(Initrecord => $init, Selected => $sel);
  $t->param(Endrecord  => $z);
  $t->param(Showfrom   => $init+1); #counter starts by 1 for the user ("Showing from" message)
@@ -293,4 +267,31 @@ print $t->output;
 #my $recorduncheckedCookie = $cgi->cookie($cookie_name);
 #print "COOKIE: $cookie_name -- $recorduncheckedCookie \n";
 #############################################################
+#In every option except "Object Change" or "Unmark All", the selected checkboxes must be saved in Cookie
+#In those other two cases, the cookie must be cleaned: PTTD: TO DO
+#my $cookie_value = '';
+#my $cookie_name  = 'recs_'.$tab.'_'.$table;
+#my $cookie_sel   = $cgi->cookie('sel_recs'); #Read the established cookie
+#If necessary, update the cookie with new values
+#if (NOT ObjectChange NOT UnmarkAll) { #PTTD	
+#   my @selected = $cgi->param('record');
+#   if (defined $cookie_sel) {
+#     $cookie_value = $cookie_sel; #accumulate previous selected records (stored in cookie before)
+#   }
+# Include new selected records but not those already present in the cookie value list (format a,b,c,...z,)
+#   foreach my $record (@selected) {
+#      if (not grep(/$record,/, $cookie_value)) { 
+#        	$cookie_value .= $record.','; print "<br>Including:$record<br>"; #PTTD
+#        }
+#        else { print "$record/"; } #PTTD
+#   }
+#   @selected = split(/,/,$cookie_sel); #for the records loop, to mark those selected records #PTTD MAINTAIN
+#}
+#Finally set the cookie
+#$cookie_sel = $cgi->cookie (-name =>$cookie_name,
+#    -value  =>$cookie_value,
+#    -expires=>'+4h',
+#    -path   =>'/');
+#Print header including cookies
+#print $cgi->header(-cookie=>"$cookie_sel"); #PTTD detect if not defined, avoid warning ##PTTD MOVED TO JS
 

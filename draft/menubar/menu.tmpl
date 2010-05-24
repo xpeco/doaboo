@@ -1,23 +1,31 @@
 	<div class="exttopbar">
 	    <!-- Menu BAR -->
 		<div id="menu" style="float:left;">
-		<ul class="level1" id="root">
+		<ul class="tree" id="root">
 		  <li>
 		    <a href="#">Menu</a>
-		    <ul class="level2">
+		    <ul class="subtree">
 		      <li><a href="#">Sub A</a></li>
 		      <li>
 		        <a href="#">Tablas</a>
-		        <ul class="level3">
+		        <ul class="subtree2">
 		          <li><a href="./db.pl?table=ADM_GROUPS&tab=t2">ADM_GROUPS</a></li>
-		          <li><a href="./db.pl?table=FILER&tab=t4">FILER</a></li>
+		          <li>
+		          	 <a href="./db.pl?table=FILER&tab=t4">FILER</a>
+ 					 <ul class="subtree2">
+		               <li><a href="#">Level 4 AAA</a></li>
+		               <li><a href="#">Level 4 BBB</a></li>
+		               <li><a href="#">Level 4 CCC</a></li>
+		               <li><a href="#">Level 4 EEE</a></li>
+		             </ul>				   
+				  </li> 
 		          <li><a href="./db.pl?table=ADM_VIEWS&tab=t3">ADM_VIEWS</a></li>
 		        </ul>
 		      </li>
 		      <li><a href="#">Sub C</a></li>
 		      <li>
 		        <a href="#">Sub D</a>
-		        <ul class="level3">
+		        <ul class="subtree2">
 		          <li><a href="#">Level 3 AAA</a></li>
 		          <li><a href="#">Level 3 BBB</a></li>
 		          <li><a href="#">Level 3 CCC</a></li>
@@ -30,7 +38,7 @@
 		  <li class="sep">|</li>
 		  
 		  <li><a href="#">Views</a>
-		    <ul class="level2">
+		    <ul class="subtree">
 		      <li><a href="#">Sub 2A</a></li>
 		      <li><a href="#">Sub 2B</a></li>
 		      <li><a href="#">Sub 2C</a></li>
@@ -41,7 +49,7 @@
 		  <li class="sep">|</li>
 		  
 		  <li><a href="#">Reports</a>
-		    <ul class="level2">
+		    <ul class="subtree">
 		      <li><a href="#">Sub 3A</a></li>
 		      <li><a href="#">Sub 3B</a></li>
 		      <li><a href="#">Sub 3C</a></li>
@@ -53,11 +61,11 @@
 		  
 		  <li>
 		    <a href="#">Relationships</a>
-		    <ul class="level2">
+		    <ul class="subtree">
 		      <li><a href="#">Sub A</a></li>
 		      <li>
 		        <a href="#">Sub B</a>
-		        <ul class="level3">
+		        <ul class="subtree">
 		          <li><a href="#">Level 3 One</a></li>
 		          <li><a href="#">Level 3 Two</a></li>
 		          <li><a href="#">Level 3 Three</a></li>
@@ -71,7 +79,7 @@
 		  <li class="sep">|</li>
 		  
 		  <li><a href="#">Action Items</a>
-		    <ul class="level2">
+		    <ul class="subtree">
 		      <li><a href="#">Sub 5A</a></li>
 		      <li><a href="#">Sub 5B</a></li>
 		      <li><a href="#">Sub 5C</a></li>
