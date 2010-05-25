@@ -86,5 +86,4 @@ else {
 #Print output
 ##############
 print $cgi->header( -cookie=>$cookie );
-#print $cgi->header(); #DEBUG  
 print $t->output;

@@ -32,8 +32,6 @@ $recbypage   = $cgi->param('recbypage')  if (defined $cgi->param('recbypage'));
 # PageUp / PageDown processing
 #################################
 if ((not defined $end)||($end eq "")) { $end = 0; }
-#if ($end eq "") { $end =0;} #PTTD REVIEW APACHE LOG WARNINGS UNDEFINED!!! 
-#print "END:$end - RCP:$recbypage\n";
 if ($end > $recbypage) {
   #the user clicked on up_records
   $init = $end - $recbypage;
