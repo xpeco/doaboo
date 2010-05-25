@@ -30,15 +30,16 @@ my $t = HTML::Template->new(filename => $tmpl,
 #############
 #Read Params
 #############
+#Clear former session if it exists, i.e. after a Logout operation
 if (defined $cgi->cookie('CGISESSID')) {
-  #clear former session if it exists, i.e. after a Logout operation
   my $sess = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
   $sess->clear();
   $cookie_ses =  $cgi->cookie('CGISESSID' => '');
   if (defined $cgi->cookie('sel_recs')) {
-   $cookie_sel =  $cgi->cookie('sel_recs'  => '');#CDA 	
+   $cookie_sel =  $cgi->cookie('sel_recs'  => '');#CDA #Move this to db.pl???? 	
   }
 }
+#Get user data when login form fullfilled
 else {
   $login = $cgi->param('login') if (defined $cgi->param('login'));
   $passw = $cgi->param('pass')  if (defined $cgi->param('pass'));
