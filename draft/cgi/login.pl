@@ -10,12 +10,23 @@ my $cgi  = CGI->new;
 my $tmpl = 'login.tmpl'; 
 my $user;
 my $cookie; 
+my $login;
+my $passw;
 
 #############
 #Read Params
 #############
-my $login = $cgi->param('login') if (defined $cgi->param('login'));
-my $passw = $cgi->param('pass')  if (defined $cgi->param('pass'));
+if (defined $cgi->cookie('CGISESSID')) {
+  #clear former session if it exists, i.e. after a Logout operation
+  my $sess = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
+  $sess->clear();
+  $cookie =  $cgi->cookie(CGISESSID => '');
+}
+else {
+  $login = $cgi->param('login') if (defined $cgi->param('login'));
+  $passw = $cgi->param('pass')  if (defined $cgi->param('pass'));
+}
+
 
 ####################################
 #User check and start session if OK
@@ -25,9 +36,8 @@ if ((defined $login)&&(defined $passw)) {
    $user = DO->new(login=>$login,password=>$passw);
    #DEBUG, always enter
    $user->{error} = 0;
-   #User OK => start session, save user struct, set table.tmpl as output 
+   #User OK => start session and save user struct 
    if (not $user->{error}) {
-     $tmpl  = "table1.tmpl";	
      #Define session: passing the $cgi object, it will try to retrieve the session id from either the cookie 
      #or query string and initialize the session accordingly (not creating a new one each time). 
      #The name of the cookie and query string parameters are assumed to be CGISESSID  by default.
@@ -35,7 +45,6 @@ if ((defined $login)&&(defined $passw)) {
      my $session = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
      #Store data into the session
      $session->param("UserStruct", \%$user);
-     $session->param('UserLogin',$login);#DEBUG
      #Store session ID in a cookie
      $cookie =  $cgi->cookie(CGISESSID => $session->id);
      #Expiration time #CDA: or specific element only $session->expire(login, '+10m');
