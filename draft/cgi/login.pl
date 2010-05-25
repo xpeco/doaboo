@@ -5,8 +5,6 @@ use DO;
 use CGI;
 use CGI::Session;
 use HTML::Template;
-use TABLE;
-use DBCONN;
 
 my $cgi  = CGI->new;
 my $tmpl = 'login.tmpl'; 
