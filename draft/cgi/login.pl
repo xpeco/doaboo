@@ -34,8 +34,8 @@ if ((defined $login)&&(defined $passw)) {
      #The default storing method is File (undef as 1st param) but MYSQL is also available (see docs)
      my $session = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
      #Store data into the session
-     #print "USER DATA in login.pl: \$user -- $user -- $user->{name} \n"; #CDA
      $session->param("UserStruct", \%$user);
+     $session->param('UserLogin',$login);#DEBUG
      #Store session ID in a cookie
      $cookie =  $cgi->cookie(CGISESSID => $session->id);
      #Expiration time #CDA: or specific element only $session->expire(login, '+10m');

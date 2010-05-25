@@ -72,8 +72,11 @@ print $cgi->header();
 my $ses_id  = $cgi->cookie("CGISESSID") || undef; 
 my $session = new CGI::Session(undef, $ses_id, {Directory=>'/tmp'});
 my $user    = $session->param("UserStruct");
-#my $userdata = %{$user};
-#print "USER DATA in db.pl: \$user -- $user -- $userdata->{name} \n"; #CDA
+my $login   = $session->param('UserLogin'); #DEBUG
+print "USER DATA in db.pl: Session: $ses_id  <br>\n"; #DEBUG
+for my $datum (sort keys %$user) {          
+ print "$datum=$user->{$datum} / \n";
+}
 
 
 ######################
