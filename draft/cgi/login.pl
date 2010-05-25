@@ -9,7 +9,8 @@ use HTML::Template;
 my $cgi  = CGI->new;
 my $tmpl = 'login.tmpl'; 
 my $user;
-my $cookie; 
+my $cookie_ses;
+my $cookie_sel; #CDA 
 my $login;
 my $passw;
 
@@ -20,7 +21,10 @@ if (defined $cgi->cookie('CGISESSID')) {
   #clear former session if it exists, i.e. after a Logout operation
   my $sess = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
   $sess->clear();
-  $cookie =  $cgi->cookie(CGISESSID => '');
+  $cookie_ses =  $cgi->cookie('CGISESSID' => '');
+  if (defined $cgi->cookie('sel_recs')) {
+   $cookie_sel =  $cgi->cookie('sel_recs'  => '');#CDA 	
+  }
 }
 else {
   $login = $cgi->param('login') if (defined $cgi->param('login'));
@@ -46,7 +50,7 @@ if ((defined $login)&&(defined $passw)) {
      #Store data into the session
      $session->param("UserStruct", \%$user);
      #Store session ID in a cookie
-     $cookie =  $cgi->cookie(CGISESSID => $session->id);
+     $cookie_ses =  $cgi->cookie(CGISESSID => $session->id);
      #Expiration time #CDA: or specific element only $session->expire(login, '+10m');
      $session->expire('+2h');       
    } 
@@ -87,7 +91,7 @@ else {
     #Redirect output:
     #my $url = "/doaboo-cgi/db.pl?table=itopic&tab=t1"; #DEBUG
     my $url = "/doaboo-cgi/db.pl?table=ADM_USERS&tab=t1";
-    print $cgi->header( -cookie=>$cookie );
+    print $cgi->header( -cookie=> $cookie_ses );
     print $cgi->redirect( -URL => $url);
   }
 }
@@ -95,5 +99,6 @@ else {
 ##############
 #Print output
 ##############
-print $cgi->header( -cookie=>$cookie );
+print $cgi->header(-cookie=>[$cookie_ses,$cookie_sel], -path=>"/doaboo-cgi/"); #CDA eliminate path
+print "Cookies: $cookie_ses - $cookie_sel - ENV: $ENV{DOABOOPATH}";
 print $t->output;
