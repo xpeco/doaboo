@@ -6,129 +6,46 @@ use CGI;
 use CGI::Session;
 use HTML::Template;
 
-my $dbh = DBCONN->new;
-my $cgi = CGI->new;
-print $cgi->header();
- 
-#######################
-#Get Data from Session
-#######################
-my $ses_id  = $cgi->cookie("CGISESSID") || undef; 
-if (not defined $ses_id) {
-    my $url = "/doaboo-cgi/login.pl";
-    print $cgi->redirect( -URL => $url);	
-}
-my $session = new CGI::Session(undef, $ses_id, {Directory=>'/tmp'});
-my $user    = $session->param("UserStruct");
-
-#DEBUG
-print "Session: $ses_id - \n";
-for my $datum (sort keys %$user) {          
- print "$datum=$user->{$datum} / \n";
-}
-
-##################
-#Defaults #DEBUG
-##################
-my $tmplfile  = 'table1.tmpl';
-my $table     = 'ADM_USERS';
-my $tab       = 't1';
-my $init      = 0;
-my $end;
-my $totalrecords = '50'; #DEBUG
-#my $userchoice;
-
-##############
-#Read Params
-##############
-$table       = $cgi->param('table') if (defined $cgi->param('table'));
-$tab         = $cgi->param('tab')   if (defined $cgi->param('tab'));
-$init        = $cgi->param('init')  if (defined $cgi->param('init'));
-$end         = $cgi->param('end')   if (defined $cgi->param('end'));
-#$userchoice  = $cgi->param('userchoice') if (defined $cgi->param('userchoice'));
-
-
-################################################################
-#DEBUG: get FIELDS and other data. It will come in $user struct
-################################################################
-my $recbypage = 6;
-my $fields; 
-if ($table eq 'FILER')       {$fields = 'SYSTEM_ID, STATUS, STATUS_DATE, SERIAL_NUM, LOCATION_REL';}
-if ($table eq 'ADM_VIEWS' )  {$fields = 'BASE_VIEW,USER_VIEW,GROUP_VIEW,OBJECT,NAME';}
-if ($table eq 'ADM_USERS' )  {$fields = 'ADM_LOGIN,ADM_GROUP,ADM_NAME';}
-if ($table eq 'ADM_GROUPS')  {$fields = '*';}
-
-
-###########################################################
-# PageUp / PageDown processing: it depends on user choices
-###########################################################
-if ((not defined $end)||($end eq "")) { $end = 0; }
-if ($end > $recbypage) {
-  #the user clicked on up_records
-  $init = $end - $recbypage;
-}	
-else {
-  $end  = $init + $recbypage;
-}
-#last page: select only the latest records
-if ($end > $totalrecords) { 
-  $end       = $totalrecords; 
-  $recbypage = $totalrecords-$init; 
-}
-
-#####################
-#Build the DB query
-#####################
-my $db_sql;
-$db_sql  = "SELECT $fields FROM $table LIMIT $init,$end"; #DEBUG: given by DO function
-
-
-##############
-#USERCHOICES
-##############
-#if (defined $userchoice) {
- #$tmplfile = ...		
-#}
-
-######################
-# Template Definition
-######################
-#global_vars to 1 if we want to share them inside/outside loops i.e.
-my $template = HTML::Template->new(filename => $tmplfile,
-                            path     => "$ENV{DOABOOPATH}",
-                            die_on_bad_params => 1,
-                            global_vars       => 0,
-                            case_insensitive  => 1,
-                            loop_context_vars => 1
-                            #associate => $cgi
-                            );
-                            
-###############
-# General Data
-###############
-$template->param(Activetab => $tab);
-$template->param(Table     => $table);
-$template->param(user      => $user->{login});
-
-######################################################
-#Get Records and Fill Table template with the results
-######################################################
-if (defined $db_sql) {
- GetRecs_FillTable($template,$db_sql);
-}
-
-################
-#TMPL output
-################
-print $template->output;           
+my $cgi_h = CGI->new;
+print $cgi_h->header();
                             
 ################################
 # SUBROUTINES
 ################################
-sub GetRecs_FillTable {
-  my $t   = shift;
-  my $sql = shift;
-  #if ($sql ne '') {
+sub GetRecsForTable {
+    my $t   = shift;
+    my $sql = shift;
+    my $cgi = shift;
+  
+  	#####################
+  	#User params
+  	#####################
+  	my $init = 0;
+    my $end; #undef as default 
+  	my $recbypage    = '6';  #DEBUG: given by Session param
+  	my $totalrecords = '50'; #DEBUG: given by DO function
+  	$init = $cgi->param('init')  if (defined $cgi->param('init'));
+	$end  = $cgi->param('end')   if (defined $cgi->param('end'));
+	
+  	###########################################################
+    # PageUp / PageDown processing: it depends on user choices
+    ###########################################################    
+    if ((not defined $end)||($end eq "")) { $end = 0; }
+    if ($end > $recbypage) {
+      #the user clicked on up_records
+      $init = $end - $recbypage;
+    }	
+    else {
+      $end  = $init + $recbypage;
+    }
+    #last page: select only the latest records
+    if ($end > $totalrecords) { 
+      $end       = $totalrecords; 
+      $recbypage = $totalrecords-$init; 
+    }
+  	$sql = $sql." LIMIT $init,$end";
+  	
+  	my $dbh = DBCONN->new;
     my $sth = $dbh->prepare($sql) or die "Prepare exception: $DBI::errstr";
     $sth->execute() or die "Execute exception: $DBI::errstr";
     #$t->param(INSTANCES_NUMBER => $sth->rows); #Change by the total records of the table/query #PTTD
@@ -153,8 +70,8 @@ sub GetRecs_FillTable {
     ###########################
     # Records
     ###########################
-    my $sel_recs = $cgi->cookie('sel_recs'); #Read the established cookie
-    my @selected = split(/,/,$sel_recs);
+    my $sel_recs = $cgi->cookie('sel_recs') if (defined $cgi->cookie('sel_recs')); #Read the established cookie
+    my @selected = split(/,/,$sel_recs) if (defined $sel_recs);
     my @records;
     my $i=$init;  
     my $z=$init+$recbypage;
@@ -172,7 +89,7 @@ sub GetRecs_FillTable {
       if ( grep(/^$i$/, @selected) ) { $sel = 1;} else { $sel = 0; }  
       #In the last page, this link should not be shown
       if ($i != $totalrecords) {
-       #The Index TMPL_VAR is used for the down_records link  
+       #The Index TMPL_VAR is used for the down_records link 
        push @records, {Newline => '1', Index => $i, Selected => $sel};
       }
       else {
@@ -187,7 +104,102 @@ sub GetRecs_FillTable {
     $t->param(Showfrom   => $init+1); #counter starts by 1 for the user ("Showing from" message)
    #} #End of if $sql ne ''
 
-} #sub GetRecs_FillTable
+} #end of sub
 
+
+
+##########################################################
+# Main
+##########################################################
+
+#######################
+#Get Data from Session
+#######################
+my $ses_id  = $cgi_h->cookie("CGISESSID") || undef; 
+if (not defined $ses_id) {
+    my $url = "/doaboo-cgi/login.pl";
+    print $cgi_h->redirect( -URL => $url);	
+}
+my $session = new CGI::Session(undef, $ses_id, {Directory=>'/tmp'});
+my $user    = $session->param("UserStruct");
+
+#DEBUG
+print "Session: $ses_id - \n" if (defined $ses_id);
+#for my $datum (sort keys %$user) {          
+ #print "$datum=$user->{$datum} / \n";
+#}
+
+##################
+#Defaults #DEBUG
+##################
+my $tmplfile  = 'table1.tmpl';
+my $table     = 'ADM_USERS';
+my $tab       = 't1';
+#my $userchoice;
+
+##############
+#Read Params
+##############
+$table       = $cgi_h->param('table') if (defined $cgi_h->param('table'));
+$tab         = $cgi_h->param('tab')   if (defined $cgi_h->param('tab'));
+#$userchoice  = $cgi_h->param('userchoice') if (defined $cgi_h->param('userchoice'));
+
+
+################################################################
+#DEBUG: get FIELDS and other data. It will come in $user struct
+################################################################
+my $fields; 
+if ($table eq 'FILER')       {$fields = 'SYSTEM_ID, STATUS, STATUS_DATE, SERIAL_NUM, LOCATION_REL';}
+if ($table eq 'ADM_VIEWS' )  {$fields = 'BASE_VIEW,USER_VIEW,GROUP_VIEW,OBJECT,NAME';}
+if ($table eq 'ADM_USERS' )  {$fields = 'ADM_LOGIN,ADM_GROUP,ADM_NAME';}
+if ($table eq 'ADM_GROUPS')  {$fields = '*';}
+
+
+#####################
+#Build the DB query
+#####################
+my $db_sql;
+$db_sql  = "SELECT $fields FROM $table"; #DEBUG: given by DO function
+
+
+##############
+#USERCHOICES
+##############
+#if (defined $userchoice) {
+ #$tmplfile = ...		
+#}
+
+######################
+# Template Definition
+######################
+#global_vars to 1 if we want to share them inside/outside loops i.e.
+my $template = HTML::Template->new(filename => $tmplfile,
+                            path     => "$ENV{DOABOOPATH}",
+                            die_on_bad_params => 1,
+                            global_vars       => 0,
+                            case_insensitive  => 1,
+                            loop_context_vars => 1
+                            #associate => $cgi_h
+                            );
+                            
+###############
+# General Data
+###############
+$template->param(Activetab => $tab);
+$template->param(Table     => $table);
+$template->param(user      => $user->{login});
+
+######################################################
+#Get Records and Fill Table template with the results
+######################################################
+if (defined $db_sql) {
+ GetRecsForTable($template,$db_sql,$cgi_h);
+}
+
+################
+#TMPL output
+################
+print $template->output;           
+                            
 
 
