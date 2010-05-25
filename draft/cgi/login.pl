@@ -14,6 +14,19 @@ my $cookie_sel; #CDA
 my $login;
 my $passw;
 
+######################
+# Template Definition
+######################
+#Global_vars to 1 if we want to share them inside/outside loops i.e.
+my $t = HTML::Template->new(filename => $tmpl,
+                            path     => "$ENV{DOABOOPATH}",
+                            die_on_bad_params => 1,
+                            global_vars       => 0,
+                            case_insensitive  => 1,
+                            loop_context_vars => 1
+                            #associate => $session
+                            );
+
 #############
 #Read Params
 #############
@@ -31,16 +44,15 @@ else {
   $passw = $cgi->param('pass')  if (defined $cgi->param('pass'));
 }
 
-
-####################################
-#User check and start session if OK
-####################################
+############
+#User check 
+############
 if ((defined $login)&&(defined $passw)) {
    #Check user and get user struct
    $user = DO->new(login=>$login,password=>$passw);
    #DEBUG, always enter
    $user->{error} = 0;
-   #User OK => start session and save user struct 
+   #User OK => start session, save user struct on it and redirect output 
    if (not $user->{error}) {
      #Define session: passing the $cgi object, it will try to retrieve the session id from either the cookie 
      #or query string and initialize the session accordingly (not creating a new one each time). 
@@ -49,56 +61,28 @@ if ((defined $login)&&(defined $passw)) {
      my $session = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
      #Store data into the session
      $session->param("UserStruct", \%$user);
+     #Expiration time #CDA: or specific element only $session->expire(login, '+10m');
+     $session->expire('+2h');
      #Store session ID in a cookie
      $cookie_ses =  $cgi->cookie(CGISESSID => $session->id);
-     #Expiration time #CDA: or specific element only $session->expire(login, '+10m');
-     $session->expire('+2h');       
+     #Redirect output:
+     #my $url = "/doaboo-cgi/db.pl?table=$user->{itopic}&tab=t1"; #DEBUG
+     my $url = "/doaboo-cgi/db.pl?table=ADM_USERS&tab=t1";
+     print $cgi->header( -cookie=> $cookie_ses );
+     print $cgi->redirect( -URL => $url);       
+   }
+   else {
+   	 $t->param(Message => 'Error in Login');
    } 
-} 
-
-######################
-# Template Definition
-######################
-#Global_vars to 1 if we want to share them inside/outside loops i.e.
-my $t = HTML::Template->new(filename => $tmpl,
-                            path     => "$ENV{DOABOOPATH}",
-                            die_on_bad_params => 1,
-                            global_vars       => 0,
-                            case_insensitive  => 1,
-                            loop_context_vars => 1
-                            #associate => $session
-                            );
-                            
-####################
-#Generate output
-####################
-#Initial screen
-if (not defined $user->{error}) {
-	$t->param(Message => 'Space for the logo');		
 }
 else {
-  #Error in user authentication, back to the login screen	
-  if ($user->{error}) {
-    $t->param(Message => 'Error in Login');		
-  }
-  #User correct, redirect to table.tmpl with init userdata
-  else {
-    #$t->param(Username    => $user->{name});
-    #$t->param(Initable    => $user->{itopic});
-    #$t->param(Initview    => $user->{iview});
-    #$t->param(Recsperpage => $user->{ipp});
-    #$t->param(Language    => $user->{language});
-    #Redirect output:
-    #my $url = "/doaboo-cgi/db.pl?table=itopic&tab=t1"; #DEBUG
-    my $url = "/doaboo-cgi/db.pl?table=ADM_USERS&tab=t1";
-    print $cgi->header( -cookie=> $cookie_ses );
-    print $cgi->redirect( -URL => $url);
-  }
-}
+  $t->param(Message => 'Space for the logo');	
+} 
 
+                          
 ##############
 #Print output
 ##############
-print $cgi->header(-cookie=>[$cookie_ses,$cookie_sel], -path=>"/doaboo-cgi/"); #CDA eliminate path
+print $cgi->header(-cookie=>[$cookie_ses,$cookie_sel], -path=>"/doaboo-cgi/"); #CDA eliminate path!!
 print "Cookies: $cookie_ses - $cookie_sel - ENV: $ENV{DOABOOPATH}";
 print $t->output;
