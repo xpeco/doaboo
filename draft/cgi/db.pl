@@ -31,7 +31,8 @@ $recbypage   = $cgi->param('recbypage')  if (defined $cgi->param('recbypage'));
 #################################
 # PageUp / PageDown processing
 #################################
-if ((defined $end)&&($end eq "")) { $end =0;} #PTTD REVIEW APACHE LOG WARNINGS UNDEFINED!!! 
+if ((not defined $end)||($end eq "")) { $end = 0; }
+#if ($end eq "") { $end =0;} #PTTD REVIEW APACHE LOG WARNINGS UNDEFINED!!! 
 #print "END:$end - RCP:$recbypage\n";
 if ($end > $recbypage) {
   #the user clicked on up_records
@@ -62,7 +63,17 @@ if ($table eq 'ADM_GROUPS')  {$fields = '*';}
  #$tmplfile = ...		
 #}
 
+#####################
+#Print HTTP header
+#####################
 print $cgi->header(); 
+
+#DEBUG
+my $ses_id  = $cgi->cookie("CGISESSID") || undef; 
+my $session = new CGI::Session(undef, $ses_id, {Directory=>'/tmp'});
+my $user    = $session->param("UserStruct");
+#my $userdata = %{$user};
+#print "USER DATA in db.pl: \$user -- $user -- $userdata->{name} \n"; #CDA
 
 
 ######################
@@ -151,147 +162,4 @@ if ($sql ne '') {
 #TMPL output
 ################
 print $t->output;
-
-
-
-
-#############
-# DEBUG - OK
-#############
-#print "Field0: $headings[0]->{Nombre}<br>";
-#print "Field1: $headings[1]->{Nombre}<br>";
-#print "Field2: $headings[2]->{Nombre}<br>";
-#print "<br>";
-
-#####################################################################
-# Registers - IT WORKS FOR TABLE BUT IT'S TOO COMPLICATED / TWISTY
-#####################################################################
-#my @results;
-#my @registers;
-#my $instances = $sth->fetchall_arrayref({});
-#my $i=0;
-#foreach (@$instances) {
-#  foreach (@{$sth->{NAME}}) {
-#  	    push @registers, {Valor => \@$instances};	    
-#	    my %rowh;
-#	    #print "DATA: $i: $registers[$i]->{Valor}[$i]->{$_} <br>";
-#       $rowh{Valor} = $registers[$i]->{Valor}[$i]->{$_};
-#       push @results, \%rowh;
-#	    #print "$i: $rowh{Valor}<br>";
-#  }
-#  #Marker for new lines
-#  push @results, {newline => '1'};
-#  #Markes for odd/even lines -- LOOP __ODD__ non valid 'cause it's a single loop
-#  #if (($i > 1) && ($i % 2 != 0)) { push @results, {oddline => '1'}; }
-#  $i++;
-#}
-#$t->param(Valores=>\@results);
-
-
-##########################
-# PREVIOUS TESTS
-##########################
-#################
-# Values OK
-#################
-# my $values = $sth->fetchall_hashref('serialn');
-# foreach my $val (keys %$values) {
-# print "$values->{$val}->{id},$val,$values->{$val}->{type} <br>";
-# }
-# print "<br>";
-##########################
-# With the HTML wired OK
-# print "<tr><th>$sth->{NAME}->[0]</th><th>$sth->{NAME}->[1]</th></tr>";
-# while (my @row = $sth->fetchrow_array) {
-#    print "<tr><td> $row[0] </td><td> $row[1] </td> <td> $row[2] </td></tr>\n";
-# }
-##################################
-
-##############################################################
-# Short Notation
-###############################################################
-# In the .tmpl it is necessary to write the fields name (serialn, id... DB COLUMNS)
-# $t->param(ROWS => $dbh->selectall_arrayref('SELECT * FROM machines LIMIT 20', { Slice => {} }));
-#############################################################
-# Long Notation
-#############################################################
-# my @rows;
-# while (my @data_row = $sth->fetchrow_array) {
-#        my %row;
-#        $row{PRODUCTCODE} = $data_row[0];
-#        $row{PRODUCT} = $data_row[1];
-#        push @rows, \%row;
-# }
-# $template->param(ROWS=>\@rows);
-############################################################
-# PINTUS.pm sub Table:
-# my $result;
-# $result->{fields} = [];
-# foreach $field (@$fields) {
-#      if ($field->{SHOW} ne 'N') {
-#        if (PULSERA::CheckAccess({element=>'field',object=>$in_params->{object},detail=>$field->{NAME}})) {
-#          $result->{fields}->[$i]->{name} = $field->{NAME};
-#          $result->{fields}->[$i]->{desc} = $field->{DESC};
-##############################################################
-# TESTS non valid HTML::Template
-###############################################################
-# $t->param(
-#    Campos => [
-#      { Nombre => 'Uno'},
-#      { Nombre => 'Dos'},
-#    ]
-# );
-# my $i=0; my $var;
-# foreach my $val (@{$sth->{NAME}}) {
-# 	 $var.="{Nombre=> $val},";
-#    $i++;
-# }
-# print "VAR: $var <br>";
-#########################################
-# TESTS OK 
-#########################################
-# print "<br>Table Fields:<br>\n";
-# foreach my $valor (@{$sth->{NAME}}) {
-#   print "$valor <br>";
-# }
-# #OR
-# print join ", ", @{$sth->{NAME}}; 
-##########################################
-###########################################################
-#PTTD ELIMINATE
-#my $cookie_name; 
-#$cookie_name = $table.'_SELECTED';
-#my $recordcheckedCookie  = $cgi->cookie($cookie_name);
-#print "COOKIE: $cookie_name -- $recordcheckedCookie \n";
-#$cookie_name = $table.'_UNSELECTED';
-#my $recorduncheckedCookie = $cgi->cookie($cookie_name);
-#print "COOKIE: $cookie_name -- $recorduncheckedCookie \n";
-#############################################################
-#In every option except "Object Change" or "Unmark All", the selected checkboxes must be saved in Cookie
-#In those other two cases, the cookie must be cleaned: PTTD: TO DO
-#my $cookie_value = '';
-#my $cookie_name  = 'recs_'.$tab.'_'.$table;
-#my $cookie_sel   = $cgi->cookie('sel_recs'); #Read the established cookie
-#If necessary, update the cookie with new values
-#if (NOT ObjectChange NOT UnmarkAll) { #PTTD	
-#   my @selected = $cgi->param('record');
-#   if (defined $cookie_sel) {
-#     $cookie_value = $cookie_sel; #accumulate previous selected records (stored in cookie before)
-#   }
-# Include new selected records but not those already present in the cookie value list (format a,b,c,...z,)
-#   foreach my $record (@selected) {
-#      if (not grep(/$record,/, $cookie_value)) { 
-#        	$cookie_value .= $record.','; print "<br>Including:$record<br>"; #PTTD
-#        }
-#        else { print "$record/"; } #PTTD
-#   }
-#   @selected = split(/,/,$cookie_sel); #for the records loop, to mark those selected records #PTTD MAINTAIN
-#}
-#Finally set the cookie
-#$cookie_sel = $cgi->cookie (-name =>$cookie_name,
-#    -value  =>$cookie_value,
-#    -expires=>'+4h',
-#    -path   =>'/');
-#Print header including cookies
-#print $cgi->header(-cookie=>"$cookie_sel"); #PTTD detect if not defined, avoid warning ##PTTD MOVED TO JS
 

@@ -27,18 +27,19 @@ if ((defined $login)&&(defined $passw)) {
    $user->{error} = 0;
    #User OK => start session, save user struct, set table.tmpl as output 
    if (not $user->{error}) {
-    $tmpl  = "table1.tmpl";	
-    #Define session: passing the $cgi object, it will try to retrieve the session id from either the cookie 
-    #or query string and initialize the session accordingly (not creating a new one each time). 
-    #The name of the cookie and query string parameters are assumed to be CGISESSID  by default.
-    #The default storing method is File (undef as 1st param) but MYSQL is also available (see docs)
-    my $session = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
-    #Store data into the session
-    $session->param("UserStruct", \$user);
-    #Store session ID in a cookie
-    $cookie =  $cgi->cookie(CGISESSID => $session->id);
-    #Expiration time #CDA: or specific element only $session->expire(login, '+10m');
-    $session->expire('+2h');       
+     $tmpl  = "table1.tmpl";	
+     #Define session: passing the $cgi object, it will try to retrieve the session id from either the cookie 
+     #or query string and initialize the session accordingly (not creating a new one each time). 
+     #The name of the cookie and query string parameters are assumed to be CGISESSID  by default.
+     #The default storing method is File (undef as 1st param) but MYSQL is also available (see docs)
+     my $session = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
+     #Store data into the session
+     #print "USER DATA in login.pl: \$user -- $user -- $user->{name} \n"; #CDA
+     $session->param("UserStruct", \%$user);
+     #Store session ID in a cookie
+     $cookie =  $cgi->cookie(CGISESSID => $session->id);
+     #Expiration time #CDA: or specific element only $session->expire(login, '+10m');
+     $session->expire('+2h');       
    } 
 } 
 
