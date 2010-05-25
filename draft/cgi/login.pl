@@ -68,17 +68,18 @@ else {
   if ($user->{error}) {
     $t->param(Message => 'Error in Login');		
   }
-  #User correct, define the parameters for table.tmpl
+  #User correct, redirect to table.tmpl with init userdata
   else {
-  	#Parameters for table.tmpl and do initial user query
-    #my $init_db_query = DO->InitUserTable($user);
     #$t->param(Username    => $user->{name});
     #$t->param(Initable    => $user->{itopic});
     #$t->param(Initview    => $user->{iview});
     #$t->param(Recsperpage => $user->{ipp});
     #$t->param(Language    => $user->{language});
-    #Or redirect output:
-    #print Location... db.pl?table=itopic&tab=t1 #CDA
+    #Redirect output:
+    #my $url = "/doaboo-cgi/db.pl?table=itopic&tab=t1"; #DEBUG
+    my $url = "/doaboo-cgi/db.pl?table=ADM_USERS&tab=t1";
+    print $cgi->header( -cookie=>$cookie );
+    print $cgi->redirect( -URL => $url);
   }
 }
 
