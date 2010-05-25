@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-15">
+   <title>DOABOO LOGIN</title>
+   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+   <link rel="stylesheet"    href="/doaboo/doaboo.css" media="screen" type="text/css">
+</head>
+
+<body>
+
+<div class="ext font">
+
+<form name="loginform" action="/doaboo-cgi/login.pl" method="post">
+   <center>
+   <TMPL_VAR NAME="Message">
+   <table id="DataTable" class="login font">
+   <tr>
+  		<td><span>Login: </span></td><td><input type ="text" name="login" value=""></td>
+   </tr>
+   <tr>
+  	    <td><span>Password: </span></td><td><input type ="password" name="pass" value=""></td>
+   </tr>
+   <tr>
+   	   <td colspan="2"><input type="submit" value=" OK "></td> 
+   </tr>
+   </table>
+   </center>
+</form>
+
+<div>
+	 Footer / Logos
+</div>	
+	
+</div> <!--ext-->
+</body>
+</html>
