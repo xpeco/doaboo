@@ -7,8 +7,29 @@ use HTML::Template;
 
 my $dbh = DBCONN->new;
 my $cgi = CGI->new;
+print $cgi->header();
+ 
+#######################
+#Get Data from Session
+#######################
+my $ses_id  = $cgi->cookie("CGISESSID") || undef; 
+if (not defined $ses_id) {
+    my $url = "/doaboo-cgi/login.pl";
+    print $cgi->redirect( -URL => $url);	
+}
+my $session = new CGI::Session(undef, $ses_id, {Directory=>'/tmp'});
+my $user    = $session->param("UserStruct");
+my $login   = $session->param('UserLogin'); #DEBUG
 
-#Defaults
+#DEBUG
+print "Session: $ses_id - \n"; #DEBUG
+for my $datum (sort keys %$user) {          
+ print "$datum=$user->{$datum} / \n";
+}
+
+##################
+#Defaults #DEBUG
+##################
 my $tmplfile  = 'table1.tmpl';
 my $table     = 'ADM_USERS';
 my $tab       = 't1';
@@ -16,10 +37,12 @@ my $recbypage = 6;
 my $init      = 0;
 my $end;
 my $sql;
-#my $userchoice;
 my $totalrecords = '50'; #DEBUG
+#my $userchoice;
 
+##############
 #Read Params
+##############
 $table       = $cgi->param('table') if (defined $cgi->param('table'));
 $tab         = $cgi->param('tab')   if (defined $cgi->param('tab'));
 $init        = $cgi->param('init')  if (defined $cgi->param('init'));
@@ -45,9 +68,9 @@ if ($end > $totalrecords) {
   $recbypage = $totalrecords-$init; 
 }
 
-########
-#DEBUG
-########
+###########################
+#DEBUG: get FIELDS to show
+###########################
 my $fields; 
 if ($table eq 'FILER')       {$fields = 'SYSTEM_ID, STATUS, STATUS_DATE, SERIAL_NUM, LOCATION_REL';}
 if ($table eq 'ADM_VIEWS' )  {$fields = 'BASE_VIEW,USER_VIEW,GROUP_VIEW,OBJECT,NAME';}
@@ -60,21 +83,6 @@ if ($table eq 'ADM_GROUPS')  {$fields = '*';}
 #if (defined $userchoice) {
  #$tmplfile = ...		
 #}
-
-#####################
-#Print HTTP header
-#####################
-print $cgi->header(); 
-
-#DEBUG
-my $ses_id  = $cgi->cookie("CGISESSID") || undef; 
-my $session = new CGI::Session(undef, $ses_id, {Directory=>'/tmp'});
-my $user    = $session->param("UserStruct");
-my $login   = $session->param('UserLogin'); #DEBUG
-print "USER DATA in db.pl: Session: $ses_id  <br>\n"; #DEBUG
-for my $datum (sort keys %$user) {          
- print "$datum=$user->{$datum} / \n";
-}
 
 
 ######################
@@ -158,6 +166,7 @@ if ($sql ne '') {
  $t->param(Endrecord  => $z);
  $t->param(Showfrom   => $init+1); #counter starts by 1 for the user ("Showing from" message)
 } #End of if defined $sql
+
 
 ################
 #TMPL output
