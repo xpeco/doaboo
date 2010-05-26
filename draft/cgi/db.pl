@@ -102,6 +102,7 @@ sub GetRecsForTable {
     $t->param(Initrecord => $init, Selected => $sel);
     $t->param(Endrecord  => $z);
     $t->param(Showfrom   => $init+1); #counter starts by 1 for the user ("Showing from" message)
+    $t->param(Totalselec => $#selected+1);
    #} #End of if $sql ne ''
 
 } #end of sub
