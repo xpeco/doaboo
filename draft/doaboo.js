@@ -67,11 +67,21 @@ function SelectRecord(index,action){
 		cookie_text = cookie_text + index + ',';
 	}
 	SetCookie('sel_recs',cookie_text);
+	//Increase selected records number
+	var totalselrecs = document.getElementById('totalselrecs');
+	var totsel = parseInt(totalselrecs.innerHTML);
+    totsel += 1;
+	totalselrecs.innerHTML = totsel;	
  }
  //Unselect record
  else { 
  	MarkRecord(index,'0'); //line color
     RemoveFromCookie('sel_recs',index);
+	//Decrease selected records number
+	var totalselrecs = document.getElementById('totalselrecs');
+	var totsel = parseInt(totalselrecs.innerHTML);
+    totsel -= 1;
+	totalselrecs.innerHTML = totsel;	
  }
  return true;	
 }
