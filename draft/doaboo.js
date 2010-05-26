@@ -89,7 +89,7 @@ function getCookieExpirDate() {
 function SetCookie(cookie_name,cookie_value) {
   cookie_text=cookie_value;
   var expiration = getCookieExpirDate();
-  document.cookie = cookie_name + '=' + escape(cookie_text) + '; ' + 'expires='+expiration+'; ';
+  document.cookie = cookie_name + '=' + escape(cookie_text) + '; ' + 'expires='+expiration+'; ' ;
 }
 
 //GetCookie

@@ -8,11 +8,10 @@ use HTML::Template;
 
 my $cgi  = CGI->new;
 my $tmpl = 'login.tmpl'; 
-my $user;
-my $cookie_ses;
-my $cookie_sel; #CDA 
-my $login;
-my $passw;
+my $user;   #user struct given by DO user function
+my $cookie; #session cookie 
+my $login;  #form value
+my $passw;  #form value
 
 ######################
 # Template Definition
@@ -34,10 +33,7 @@ my $t = HTML::Template->new(filename => $tmpl,
 if (defined $cgi->cookie('CGISESSID')) {
   my $sess = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
   $sess->clear();
-  $cookie_ses =  $cgi->cookie('CGISESSID' => '');
-  if (defined $cgi->cookie('sel_recs')) {
-   $cookie_sel =  $cgi->cookie('sel_recs'  => '');#CDA #Move this to db.pl???? 	
-  }
+  $cookie =  $cgi->cookie('CGISESSID' => '');
 }
 #Get user data when login form fullfilled
 else {
@@ -65,11 +61,11 @@ if ((defined $login)&&(defined $passw)) {
      #Expiration time #CDA: or specific element only $session->expire(login, '+10m');
      $session->expire('+2h');
      #Store session ID in a cookie
-     $cookie_ses =  $cgi->cookie(CGISESSID => $session->id);
+     $cookie =  $cgi->cookie(CGISESSID => $session->id);
      #Redirect output:
      #my $url = "/doaboo-cgi/db.pl?table=$user->{itopic}&tab=t1"; #DEBUG
      my $url = "/doaboo-cgi/db.pl?table=ADM_USERS&tab=t1";
-     print $cgi->header( -cookie=> $cookie_ses );
+     print $cgi->header( -cookie=> $cookie );
      print $cgi->redirect( -URL => $url);       
    }
    else {
@@ -84,6 +80,5 @@ else {
 ##############
 #Print output
 ##############
-print $cgi->header(-cookie=>[$cookie_ses,$cookie_sel], -path=>"/doaboo-cgi/"); #CDA eliminate path!!
-print "Cookies: $cookie_ses - $cookie_sel - ENV: $ENV{DOABOOPATH}";
+print $cgi->header( -cookie=> $cookie );
 print $t->output;

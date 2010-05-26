@@ -130,7 +130,7 @@
                        &nbsp;&nbsp;&nbsp;<span class="textbar">Logged as "<TMPL_VAR NAME="user">"</span>
                      </TMPL_IF>
                      <TMPL_UNLESS NAME="hide_logout">
-                        &nbsp;<input type="button" class="textbar" value=" Logout " onClick="javascript:document.location='/doaboo-cgi/login.pl';"> 
+                        &nbsp;<input type="button" class="textbar" value=" Logout " onClick="javascript:SetCookie('sel_recs','');document.location='/doaboo-cgi/login.pl';"> 
                      </TMPL_UNLESS>
         </span>
 		</div> <!-- No menu Bar -->

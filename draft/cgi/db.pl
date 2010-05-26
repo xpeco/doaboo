@@ -124,7 +124,7 @@ my $session = new CGI::Session(undef, $ses_id, {Directory=>'/tmp'});
 my $user    = $session->param("UserStruct");
 
 #DEBUG
-print "Session: $ses_id - \n" if (defined $ses_id);
+#print "Session: $ses_id - \n" if (defined $ses_id);
 #for my $datum (sort keys %$user) {          
  #print "$datum=$user->{$datum} / \n";
 #}
