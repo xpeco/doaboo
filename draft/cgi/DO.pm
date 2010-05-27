@@ -92,6 +92,7 @@ print "########################\n";
 	my $select_topics=$topic;
 	my $select_fields='';
 	my $select_where='';
+	my $select_order='';
 
 # compose where adding more tables
 
@@ -112,6 +113,10 @@ print "########################\n";
 					#$select_where.="$topicname->[0]->{name}.$f->{name} in (\'$f->{expression}\') and";
 					$select_where.="`$f->{name}` in (\'$f->{expression}\') and";
 				}
+				if ($f->{order} ne '')
+				{
+					$select_order.="`$f->{name}` $f->{order}, ";
+				}
 			}
 			else
 			{
@@ -129,7 +134,10 @@ print "########################\n";
 					{
 						$select_where.="`$f->{name}` in (\'$f->{expression}\') and";
 					}
-
+				}
+				if ($f->{order} ne '')
+				{
+					$select_order.="`$f->{name}` $f->{order}, ";
 				}
 			}
 		}
@@ -137,6 +145,8 @@ print "########################\n";
 
 	$select_where=~s/and\Z//;
 	$select_fields=~s/\, \Z//;
+	$select_order=~s/\, \Z//;
+
 #	foreach my $t(@topics)
 #	{
 #		$select_topics.=$t.',';
@@ -176,6 +186,10 @@ print "########################\n";
 	$select_where=~s/^and //;
 
 	my $query="select $select_fields from $select_topics where $select_where";
+	if ($select_order ne '')
+	{
+		$query.=" order by $select_order";
+	}
 	return $query;
 }
 
