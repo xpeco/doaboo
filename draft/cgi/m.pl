@@ -13,7 +13,12 @@ sub foo
 	my $subentries=$dbh->DBCONN::rawget("select * from doaboo_menus where parent=\'$parent\'"); # query
 	foreach my $subentry(@$subentries)
 	{
-		print "	$subentry->{description}\n";
+		if(defined ($subentry->{description})){
+				print "	$subentry->{description}\n";
+		}
+		else{
+				print "	$subentry->{name}\n";
+		}
 		foo($subentry->{name});
 	}
 }
@@ -22,6 +27,11 @@ my $entries=$dbh->DBCONN::rawget('select * from doaboo_menus where parent=\'ROOT
 
 foreach my $entry(@$entries)
 {
-	print "$entry->{description}\n";
+	if(defined ($entry->{description})){
+			print "	$entry->{description}\n";
+	}
+	else{
+			print "	$entry->{name}\n";
+	}
 	foo($entry->{name});
 }
