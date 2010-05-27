@@ -130,7 +130,7 @@
                        &nbsp;&nbsp;&nbsp;<span class="textbar">Logged as "<TMPL_VAR NAME="user">"</span>
                      </TMPL_IF>
                      <TMPL_UNLESS NAME="hide_logout">
-                        &nbsp;<input type="button" class="textbar" value=" Logout" onClick="javascript:SetCookie('user','');SetCookie('password','');document.location='<TMPL_VAR NAME="script_name">?function=Login<TMPL_IF name="show_banner>&show_banner=1</TMPL_IF><TMPL_IF name="hide_logos">&hide_logos=1</TMPL_IF>';">
+                        &nbsp;<input type="button" class="textbar" value=" Logout " onClick="javascript:SetCookie('sel_recs','');document.location='/doaboo-cgi/login.pl';"> 
                      </TMPL_UNLESS>
         </span>
 		</div> <!-- No menu Bar -->

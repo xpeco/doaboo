@@ -13,6 +13,7 @@ div.ext {
  margin:auto;
  width: 99%;
  padding: 0; /* adjust menubar into the div*/
+ padding-bottom: 6px; /* tabs */
  border: 1px solid;
  border-color: red;
  background-color: #ffffff;
@@ -51,6 +52,15 @@ tr.highlighted   {
 td.control {
  width:  28px;
  text-align:center;
+}
+/* LOGIN */
+table.login {
+ border:1px solid;
+ background-color: #ebebeb;
+ color: #222222;
+ margin: 8px;
+ padding: 16px;
+ text-align: center;
 }
 /* TABS */
 div.tabsdiv {	

@@ -38,8 +38,22 @@ function MarkRecord(index,action){
  return true;	
 }
 
+//Remove From Cookie
+function RemoveFromCookie (cookie_name,cookie_value) {
+  cookie_text=GetCookie(cookie_name);
+  if (cookie_text != null) {
+    begin=cookie_text.indexOf(cookie_value+',');
+    if (begin != -1) {
+      end=cookie_text.indexOf(',',begin+1);
+      end=end+1;
+      cookie_text=cookie_text.substring(0,begin)+cookie_text.substring(end,cookie_text.length);
+      document.cookie = cookie_name + '=' + escape(cookie_text);
+    }
+  }
+}
+
 // Select / Unselect Record
-// mark record if selected and set or unset Cookie 
+// Mark record if selected and set or unset Cookie 
 function SelectRecord(index,action){
  var cookie_text;
  //Select record
@@ -47,25 +61,16 @@ function SelectRecord(index,action){
  	MarkRecord(index,'1'); //line color
 	cookie_text = GetCookie('sel_recs');
 	if (cookie_text == null) {
-		cookie_text = index;
-	}
-	else {
-		cookie_text = cookie_text + ',' + index;
-	}
-	SetCookie('sel_recs',cookie_text);
-	RemoveFromCookie('unsel_recs',index);
- }
- //Unselect record
- else { 
- 	MarkRecord(index,'0'); //line color
- 	cookie_text = GetCookie('unsel_recs');
-    if (cookie_text == null) {
 		cookie_text = index+',';
 	}
 	else {
 		cookie_text = cookie_text + index + ',';
 	}
-	SetCookie('unsel_recs',cookie_text);
+	SetCookie('sel_recs',cookie_text);
+ }
+ //Unselect record
+ else { 
+ 	MarkRecord(index,'0'); //line color
     RemoveFromCookie('sel_recs',index);
  }
  return true;	
@@ -84,7 +89,7 @@ function getCookieExpirDate() {
 function SetCookie(cookie_name,cookie_value) {
   cookie_text=cookie_value;
   var expiration = getCookieExpirDate();
-  document.cookie = cookie_name + '=' + escape(cookie_text) + '; ' + 'expires='+expiration+'; ';
+  document.cookie = cookie_name + '=' + escape(cookie_text) + '; ' + 'expires='+expiration+'; ' ;
 }
 
 //GetCookie
@@ -100,20 +105,5 @@ function GetCookie(cookie_name) {
   }
   return null;
 }
-
-//Remove From Cookie
-function RemoveFromCookie (cookie_name,cookie_value) {
-  cookie_text=GetCookie(cookie_name);
-  if (cookie_text != null) {
-    begin=cookie_text.indexOf(cookie_value+',');
-    if (begin != -1) {
-      end=cookie_text.indexOf(',',begin+1);
-      end=end+1;
-      cookie_text=cookie_text.substring(0,begin)+cookie_text.substring(end,cookie_text.length);
-      document.cookie = cookie_name + '=' + escape(cookie_text);
-    }
-  }
-}
-
 
 </script>
