@@ -70,13 +70,15 @@
  <tr class="headerline">
    <!-- Control cells -->
    <td class="control">
+     <img src="/doaboo/images/markall.png" onclick="javascript:SelectAllRecs('<TMPL_VAR name="Showfrom">','<TMPL_VAR name="Endrecord">','1'); ">
+   </td>
+   <td class="control">
    	 <input type="hidden" name="end" id="end" value="<TMPL_VAR NAME="Initrecord">">   
    	 <TMPL_IF NAME="Initrecord"> <!-- the UP button not shown if Initrecord is 0 (first page) -->
  	    <img src="/doaboo/images/boxup.png" onclick="javascript:document.getElementById('init').value='0';document.tableform.submit();">	
         <!--<a href="/doaboo-cgi/db.pl?end=_TMPL_VAR NAME="Initrecord"_">T</a>-->
 	 </TMPL_IF>
-   </td>
-   <td class="control">&nbsp;</td>
+   </td>	
    <td class="control">Icon</td>
    <!-- Column Names Loop -->
    <TMPL_LOOP NAME="Campos">
@@ -140,29 +142,29 @@
            <img src="/doaboo/images/delete.png" onclick="javascript:$('tr_'+<TMPL_VAR NAME="Index">).hide();">
 	     </td>
 	    <!-- /Control Cells -->
-        <TMPL_ELSE> <!-- Unless -->
-           <!-- Last Line-->
-           <tr class="headerline">
-             <td class="control">
-               <input type="hidden" name="init" id="init" value="<TMPL_VAR NAME="Index">">	
-			   <TMPL_UNLESS NAME="Norecords"> 
- 	             <img src="/doaboo/images/boxdown.png" onclick="javascript:document.getElementById('end').value='';document.tableform.submit();">	
-			     <!--Not working yet: XMLHttpRequest: need to divide db.pl in parts -->
-	             <!--<img src="/doaboo/images/boxdown.png" align="absmiddle" onClick="javascript:showResult('userchoice','Nextpage','external');">-->
-			   </TMPL_UNLESS>
-	       
-             </td>
- 	         <td class="control">&nbsp;</td>
-   	         <td class="control">Icon</td>
-   	         <!-- This last line is closed with </tr> outside the records loop -->
+		<TMPL_ELSE>
+		  <!-- Value used for the boxdown / AvPage button -->	
+		  <input type="hidden" name="init" id="init" value="<TMPL_VAR NAME="Index">">	
 	    </TMPL_UNLESS>
 	 <TMPL_ELSE>  <!-- If -->
 	    <td><TMPL_VAR NAME="Valor"></td>     	
-	 </TMPL_IF>
-	  	  	    
- </TMPL_LOOP>
-   
-     <!-- Continuation of the last table line: Column Names Loop -->
+	 </TMPL_IF>  	  	    
+ </TMPL_LOOP> <!-- /End of Records Loop -->
+  
+ <!-- Last Line-->
+ <tr class="headerline">
+ 	<input type="hidden" name="init" id="init" value="<TMPL_VAR NAME="Index">">
+  	<td class="control">
+      <img src="/doaboo/images/unmarkall.png" onclick="javascript:SelectAllRecs('<TMPL_VAR name="Showfrom">','<TMPL_VAR name="Endrecord">','0'); ">				     
+    </td>
+    <td class="control">          
+	  <TMPL_UNLESS NAME="Norecords"> 
+ 	     <img src="/doaboo/images/boxdown.png" onclick="javascript:document.getElementById('end').value='';document.tableform.submit();">	
+		 <!--Not working yet: XMLHttpRequest: need to divide db.pl in parts -->
+	     <!--<img src="/doaboo/images/boxdown.png" align="absmiddle" onClick="javascript:showResult('userchoice','Nextpage','external');">-->
+	  </TMPL_UNLESS>
+     </td>
+   	 <td class="control">Icon</td>  
    	 <TMPL_LOOP NAME="Campos">
      <td><input type="text" value="<TMPL_VAR NAME="Nombre">"></td>
    	 </TMPL_LOOP>

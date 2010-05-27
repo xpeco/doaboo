@@ -88,6 +88,35 @@ function SelectRecord(index,action){
  return true;	
 }
 
+
+function SelectAllRecs(from,end,action)
+{
+ //Select
+ if (action == 1) {
+ 	for (i = from-1; i < end; i++) {
+	   var record = document.getElementById('tr_'+i);
+	   var checkb = document.getElementById('check_'+i);
+	   if  (!checkb.checked) {
+	   	checkb.checked = 1;
+ 		SelectRecord(i,'1');
+ 	   }
+ 	}
+ }
+ //Unselect
+ else {
+ 	for (i = from-1; i < end; i++) {
+	   var record = document.getElementById('tr_'+i);
+	   var checkb = document.getElementById('check_'+i);
+	   if (checkb.checked) {
+		 checkb.checked=0;
+		 SelectRecord(i,'0');
+		}
+	}
+ }
+} 
+
+
+
 //CookieExpirationDate
 function getCookieExpirDate() {
  var expdate = new Date()

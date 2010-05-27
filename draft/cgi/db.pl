@@ -93,7 +93,7 @@ sub GetRecsForTable {
        push @records, {Newline => '1', Index => $i, Selected => $sel};
       }
       else {
-   	   push @records, {Newline => '1', Norecords => 1};
+   	   $t->param(Norecords  => 1);
       }
     }
     $t->param(Valores    => \@records);
