@@ -133,16 +133,16 @@ my $user    = $session->param("UserStruct");
 ##################
 #Defaults #DEBUG
 ##################
-my $tmplfile  = 'table1.tmpl';
+my $tmplfile  = 'table.tmpl';
 my $table     = 'ADM_USERS';
-my $tab       = 't1';
+#my $tab       = 't1';
 #my $userchoice;
 
 ##############
 #Read Params
 ##############
 $table       = $cgi_h->param('table') if (defined $cgi_h->param('table'));
-$tab         = $cgi_h->param('tab')   if (defined $cgi_h->param('tab'));
+#$tab         = $cgi_h->param('tab')   if (defined $cgi_h->param('tab'));
 #$userchoice  = $cgi_h->param('userchoice') if (defined $cgi_h->param('userchoice'));
 
 
@@ -186,9 +186,13 @@ my $template = HTML::Template->new(filename => $tmplfile,
 ###############
 # General Data
 ###############
-$template->param(Activetab => $tab);
+#$template->param(Activetab => $tab);
 $template->param(Table     => $table);
 $template->param(user      => $user->{login});
+#Browser size adjustment	
+if ((defined $ENV{'HTTP_REFERER'})&&($ENV{'HTTP_REFERER'} =~ m/login.pl/)) { 
+  $template->param(Adjust => 1);
+}
 
 ######################################################
 #Get Records and Fill Table template with the results

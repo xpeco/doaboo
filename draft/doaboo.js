@@ -12,7 +12,8 @@ function AplicarCebra (tableid)  {
    }
 }
 
-//ActivateTab selected
+//ActivateTab selected #DEBUG
+/*
 function ActivateTab(id,total){
  for (var i = 1; i <= total; i++) {
  	var tabid = 't' + i;
@@ -25,6 +26,7 @@ function ActivateTab(id,total){
  tabon.className += ' active-tab';
  return true;
 }
+*/
 
 // Mark/Unmark Record 
 function MarkRecord(index,action){
@@ -116,4 +118,51 @@ function GetCookie(cookie_name) {
   return null;
 }
 
+//Browser Size //Review idem with scriptaculous
+function getBrowserWindowSize()
+{
+ var myWidth = 0, myHeight = 0;
+ if( typeof( window.innerWidth ) == 'number' )
+ {
+  //Non-IE
+  myWidth = window.innerWidth;
+  myHeight = window.innerHeight; 
+ }
+ else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) )
+ {
+  //IE 6+ in 'standards compliant mode'
+  myWidth = document.documentElement.clientWidth;
+  myHeight = document.documentElement.clientHeight;
+ }
+ else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) )
+ {
+  //IE 4 compatible
+  myWidth = document.body.clientWidth;
+  myHeight = document.body.clientHeight;
+ }
+
+ return {width:myWidth, height:myHeight};
+}
+
+function AdjustWidth(){
+ var browser = getBrowserWindowSize();
+ if (browser.width < 1274) {
+   $('nomenubar').setStyle({width: '64%'});
+   $('viewiconsspan').setStyle({ margin: '0 0 0 4px' });
+   $('pulsoboxspan').setStyle({ margin: '0 0 0 12px' });
+ }
+ if (browser.width < 1200) {
+ 	$('nomenubar').setStyle({width: '54%'})
+  	$('infobutton').hide();  
+	$('pulsoboxspan').setStyle({ margin: '0 0 0 2px' });
+	$('pulso_search').setStyle({ width: '120px', margin: '0 0 0 0px' });	
+ } 
+ if (browser.width < 950) {
+   $('userspan').hide();
+   $('nomenubar').setStyle({width: '80%'}); 
+   $('pulsoboxspan').setStyle({ margin: '0 0 0 15px' });
+   $('pulso_search').setStyle({ width: '100px' });
+   $('exttopbar').setStyle({ margin: '0 0 40px 0' });
+ }
+}
 </script>

@@ -63,8 +63,8 @@ if ((defined $login)&&(defined $passw)) {
      #Store session ID in a cookie
      $cookie =  $cgi->cookie(CGISESSID => $session->id);
      #Redirect output:
-     #my $url = "/doaboo-cgi/db.pl?table=$user->{itopic}&tab=t1"; #DEBUG
-     my $url = "/doaboo-cgi/db.pl?table=ADM_USERS&tab=t1";
+     #my $url = "/doaboo-cgi/db.pl?table=$user->{itopic}"; #DEBUG
+     my $url = "/doaboo-cgi/db.pl";
      print $cgi->header( -cookie=> $cookie );
      print $cgi->redirect( -URL => $url);       
    }
