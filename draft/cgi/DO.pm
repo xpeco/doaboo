@@ -79,19 +79,21 @@ sub getrecords{
 
 # Step 1: get fields and its types from View. No permissions, if the user can see the view also he can see its fields.
 # Description should be eq to desc at doaboo!
-	my $fields=$self->{db}->DBCONN::rawget("select ADM_VIEW_FIELDS.NAME as name, ADM_VIEW_FIELDS.RANGE_TYPE as range, ADM_VIEW_FIELDS.RANGE as expression, ADM_VIEW_FIELDS.ORDER as `order`, ADM_VIEW_FIELDS.SHOW as `show`, doaboo_attributes.type as type, relation, topic from ADM_VIEW_FIELDS,ADM_VIEWS,doaboo_attributes where doaboo_attributes.type <> 'CALCULATED\' and ADM_VIEWS.OBJECT=\'$topic\' and ADM_VIEWS.NAME=\'$view\' and \(\(USER_VIEW=\'$self->{login}\' or GROUP_VIEW IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or \(USER_VIEW=\'\' and GROUP_VIEW=\'\'\)\) and ADM_VIEW_FIELDS.ADM_VIEW=concat\(\'[[\',ADM_VIEWS.OBJECT,\']][[\',ADM_VIEWS.NAME,\']]\'\) and doaboo_attributes.description=ADM_VIEW_FIELDS.DESC order by ADM_VIEW_FIELDS.POSITION ASC");
-#print "########################\n";
-#print "select ADM_VIEW_FIELDS.NAME as name, ADM_VIEW_FIELDS.RANGE_TYPE as range, ADM_VIEW_FIELDS.RANGE as expression, ADM_VIEW_FIELDS.ORDER as `order`, ADM_VIEW_FIELDS.SHOW as `show`, doaboo_attributes.type as type, relation, topic from doaboo_topics,ADM_VIEW_FIELDS,ADM_VIEWS,doaboo_attributes where doaboo_attributes.type <> 'CALCULATED\' and ADM_VIEWS.OBJECT=\'$topic\' and ADM_VIEWS.NAME=\'$view\' and \(\(USER_VIEW=\'$self->{login}\' or GROUP_VIEW IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or \(USER_VIEW=\'\' and GROUP_VIEW=\'\'\)\) and ADM_VIEW_FIELDS.ADM_VIEW=concat\(\'[[\',ADM_VIEWS.OBJECT,\']][[\',ADM_VIEWS.NAME,\']]\'\) and doaboo_attributes.description=ADM_VIEW_FIELDS.DESC order by ADM_VIEW_FIELDS.POSITION ASC\n";
+	my $qq="select ADM_VIEW_FIELDS.NAME as name, ADM_VIEW_FIELDS.RANGE_TYPE as range, ADM_VIEW_FIELDS.RANGE as `expression`, ADM_VIEW_FIELDS.ORDER as `order`, ADM_VIEW_FIELDS.SHOW as `show`, doaboo_attributes.type as type, relation, topic from ADM_VIEW_FIELDS,ADM_VIEWS,doaboo_attributes where doaboo_attributes.type <> \'CALCULATED\' and ADM_VIEWS.OBJECT=\'$topic\' and ADM_VIEWS.NAME=\'$view\' and \(\(USER_VIEW=\'$self->{login}\' or GROUP_VIEW IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or \(USER_VIEW=\'\' and GROUP_VIEW=\'\'\)\) and ADM_VIEW_FIELDS.ADM_VIEW=concat\(\'[[\',ADM_VIEWS.OBJECT,\']][[\',ADM_VIEWS.NAME,\']]\'\) and doaboo_attributes.name=ADM_VIEW_FIELDS.NAME and doaboo_attributes.topic in \(select id from doaboo_topics where name=ADM_VIEWS.OBJECT\) order by ADM_VIEW_FIELDS.POSITION ASC";
 
-#print "########################\n";
 
-# Step 2: compose fields section of the query. Add the calculated ('' as calculated). Which fields of the View are calculated?... doaboo_attributes. NOT!
-# Step 3: improve fields with caption and relationships (?). Relationships should be automanage by foreign keys, but for the captions is a 'pseudo-calculated'... Maybe this is the last step.
+	my $fields=$self->{db}->DBCONN::rawget($qq);
+print "########################\n";
+print "$qq\n";
+print "########################\n";
+
 	my @topics;
-	push(@topics,$topic);
-	my $select_topics='';
+#	push(@topics,$topic);
+	my $select_topics=$topic;
 	my $select_fields='';
 	my $select_where='';
+
+# compose where adding more tables
 
 	foreach my $f(@$fields)
 	{
@@ -99,21 +101,35 @@ sub getrecords{
 		{
 			if ($f->{type} eq 'RELATION')
 			{
-				my $topicname=$self->{db}->DBCONN::rawget("select name from doaboo_topics where id=\'$f->{relation}\' limit 1");
-				$select_fields.="$topicname->[0]->{name}.$f->{name}, ";
-				push(@topics,$topicname->[0]->{name}) if (not grep(/^$topicname->[0]->{name}$/,@topics));
+				#my $topicname=$self->{db}->DBCONN::rawget("select name from doaboo_topics where id=\'$f->{relation}\' limit 1");
+				#$select_fields.="$topicname->[0]->{name}.$f->{name}, ";
+				$select_fields.="`$f->{name}`, ";
+
+				#push(@topics,$topicname->[0]->{name}) if (not grep(/^$topicname->[0]->{name}$/,@topics));
 
 				if ($f->{range} eq 'EXPRESSION')
-				{print "DENT: $topicname->[0]->{name}\n";
-					$select_where.="$topicname->[0]->{name}.$f->{name} in (\'$f->{expression}\') and";
+				{
+					#$select_where.="$topicname->[0]->{name}.$f->{name} in (\'$f->{expression}\') and";
+					$select_where.="`$f->{name}` in (\'$f->{expression}\') and";
 				}
 			}
 			else
 			{
-				$select_fields.="$topic.$f->{name}, ";
+				#$select_fields.="$topic.$f->{name}, ";
+				$select_fields.="`$f->{name}`, ";
 				if ($f->{range} eq 'EXPRESSION')
-				{print "DENTRO\n";
-					$select_where.="$topic.$f->{name} in (\'$f->{expression}\') and";
+				{
+					#$select_where.="$topic.$f->{name} in (\'$f->{expression}\') and";
+					if($f->{expression}=~/^!.*/)
+					{
+						$f->{expression}=~s/^!//;
+						$select_where.="`$f->{name}` not in (\'$f->{expression}\') and";
+					}
+					else
+					{
+						$select_where.="`$f->{name}` in (\'$f->{expression}\') and";
+					}
+
 				}
 			}
 		}
@@ -121,26 +137,43 @@ sub getrecords{
 
 	$select_where=~s/and\Z//;
 	$select_fields=~s/\, \Z//;
-	foreach my $t(@topics)
-	{
-		$select_topics.=$t.',';
-	}
-	$select_topics=~s/\,\Z//;
+#	foreach my $t(@topics)
+#	{
+#		$select_topics.=$t.',';
+#	}
+#	$select_topics=~s/\,\Z//;
+
+
 #print "SELECT FIELDS: $select_fields\n";
 # Step 3: improve fields with caption and relationships (?). Relationships should be automanage by foreign keys, but for the captions is a 'pseudo-calculated'... Maybe this is the last step.
 
 # Step 4: get restricions by instance, composing the where section of the query. The result of an eval restrictions.
 #$self->{group} instead of Customer
+
 	my $restrictions=$self->{db}->DBCONN::rawget("select ADM_RESTRICTION_DETAIL,ADM_RESTRICTION_CODE from ADM_RESTRICTIONS where ADM_RESTRICTION_OBJECTS=\'$topic\' and ADM_RESTRICTION_GROUP=\'Customer\' and ADM_RESTRICTION_ELEMENT=\'INSTANCE\'");
 	foreach my $r(@$restrictions)
 	{
-		my $eval='EE';#=eval $r->{ADM_RESTRICTION_CODE};
+		# Add Fake PulsAGo
+		$r->{ADM_RESTRICTION_CODE}="use FEXIN;my \$actual_user='$self->{login}';".$r->{ADM_RESTRICTION_CODE};
+		$r->{ADM_RESTRICTION_CODE}=~s/EXGet/FEXIN::EXGet/g;
+
+		my $eval=eval $r->{ADM_RESTRICTION_CODE};
+		# Rebuild (A) by ('A') to be SQL compatible
+		$eval=~s/\(/\(\'/;
+		$eval=~s/\)/\'\)/;
+		$eval=~s/\,/\'\,\'/g;
+
 		print "-------------\n";
 		print "$r->{ADM_RESTRICTION_CODE}\n";
 		print "-------------\n";
+		print "-------------\n";
+		print "$eval\n";
+		print "-------------\n";
+
 		$select_where.="and $r->{ADM_RESTRICTION_DETAIL} in $eval";
 
 	}
+	$select_where=~s/^and //;
 
 	my $query="select $select_fields from $select_topics where $select_where";
 	return $query;

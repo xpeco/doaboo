@@ -1,15 +1,13 @@
 #!/usr/bin/perl
+package FEXIN;
 use strict;
 use warnings;
-
-use DO;
-$ENV{DOABOOPATH}='/home/peco/doaboo/draft'; # recursive config
-my $user=DO->new(login=>'roessler',password=>'123');
-my $actual_user='spa';
+use DBCONN;
 
 sub EXGet_Instance_List
 {
 	my ($table, $ranges, $speed) = @_;
+   my $dbh=DBCONN->new(); # connect
 
 	my $where='where ';
 	foreach my $range(keys %$ranges)
@@ -45,8 +43,7 @@ sub EXGet_Instance_List
 	{
 		$query="select * from $table";
 	}
-	my $data=$user->DO::query($query);
-print "$where\n";
+	my $data=$dbh->DBCONN::rawget($query);
 	# Add evaluates
 	# build edited/stored variables
 #	my $stored=$user->DO::query("select * from \'$table\' $where");
@@ -74,6 +71,8 @@ print "$where\n";
 sub EXGet_Instance
 {
 	my ($table, $ranges, $orders, $speed) = @_;
+   my $dbh=DBCONN->new(); # connect
+
 	my $where='where ';
 	foreach my $range(keys %$ranges)
 	{
@@ -118,9 +117,9 @@ sub EXGet_Instance
 	{
 		$query.=" $order";
 	}
-	my $data= $user->DO::query($query);
+	my $data= $dbh->DBCONN::rawget($query);
 	# Add evaluates
-	my $fields=$user->DO::query("select name,calculated_logic from doaboo_attributes where topic in \(select id from doaboo_topics where name=\'$table\'\) and type='CALCULATED'");
+	my $fields=$dbh->DBCONN::rawget("select name,calculated_logic from doaboo_attributes where topic in \(select id from doaboo_topics where name=\'$table\'\) and type='CALCULATED'");
 	foreach my $d(@$data)
 	{
 		foreach my $field(@$fields)
@@ -134,6 +133,8 @@ sub EXGet_Instance
 sub EXGet_Range_List
 {
 	my ($table, $ranges, $orders, $speed) = @_;
+   my $dbh=DBCONN->new(); # connect
+
 	my $where='where ';
 	foreach my $range(keys %$ranges)
 	{
@@ -160,14 +161,8 @@ sub EXGet_Range_List
 	{
 		$query="select * from $table";
 	}
-	return $user->DO::query($query,'ARRAY');
+	return $dbh->DBCONN::rawget($query,'ARRAY');
 }
-
-
-my $r=EXGet_Instance_List('ADM_USERS',{ADM_LOGIN=>$actual_user},'NONE');
-if ($r->[0]->{ADM_LOGIN} ne ''){print "$r->[0]->{ADM_GROUP}\n";}
-#$r=EXGet_Instance('ADM_USERS',{ADM_LOGIN=>'amassey',ADM_GROUP=>'.*'},{ADM_GROUP=>'ASC'},'NONE');
-#if ($r->[0]->{ADM_LOGIN} ne ''){print "$r->[0]->{ADM_GROUP}\n";}
-
-#$r=EXGet_Range_List('CONTRACT',{CUSTOMER=>$r->[0]->{ADM_ORG}});
-#print "$r\n";
+$ENV{DOABOOPATH}='/home/peco/doaboo/draft';
+print "Using FEXIN\n";
+1;

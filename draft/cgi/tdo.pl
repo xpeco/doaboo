@@ -6,7 +6,7 @@ use warnings;
 use DO;
 $ENV{DOABOOPATH}='/home/peco/doaboo/draft'; # recursive config
 
-my $user=DO->new(login=>'roessler',password=>'123');
+my $user=DO->new(login=>'spa',password=>'123');
 #my $fields=$user->DO::query("select type from doaboo_attributes where topic in \(select id from doaboo_topics where name='CUSTOMER'\)");
 #print "F: $fields->[0]->{NAME}\n";
 print "error:$user->{error}\n";
@@ -26,7 +26,7 @@ if ($user->{error}) #if (not $user->{error})
 		print "	$view->{DESC}\n";
 	}
 	print "View Detail:\n";
-	my $viewdet=$user->getview($topic,'DAIMLER_V1');
+	my $viewdet=$user->getview($topic,'9991_ASUP_MISSING');
 	foreach my $view(@$viewdet)
 	{
 		print "	$view->{DESC}\n";
@@ -56,5 +56,5 @@ if ($user->{error}) #if (not $user->{error})
 #	my $id="NUMBER='1'";
 #	print "Stored: ".$user->getstored($topic,$id)."\n";
 
-	print "--".$user->getrecords($topic,'DAIMLER_V1')."\n";
+	print "--".$user->getrecords($topic,'9991_ASUP_MISSING')."\n";
 }
