@@ -88,13 +88,59 @@ function SelectRecord(index,action){
  return true;	
 }
 
+//Select/Unselect all the records (not only those shown in page)
+//action=1 for Select, action=0 for Unselect
+function SelectAllRecs(from,end,total,action)
+{
+ //Select 
+ if (action == 1) {
+ 	//Mark (color) those viewed/shown
+ 	for (i = from-1; i < end; i++) {
+	   var checkb = document.getElementById('check_'+i);
+	   if  (!checkb.checked) {
+	   	checkb.checked = 1;
+ 		MarkRecord(i,'1'); //line color
+ 	   }
+ 	}
+	//Include all the records in the sel_recs cookie 
+	//CDA Filter so that those already included are not included twice
+	//Or in RemoveFromCookie, make it recursive //CDA
+	//Or both for security //DEBUG
+	cookie_text = GetCookie('sel_recs');
+	for (j=0; j<total; j++) {
+	 cookie_text = cookie_text + j + ',';
+	}
+	SetCookie('sel_recs',cookie_text);		
+	//And update selected records number
+	var totalselrecs = document.getElementById('totalselrecs');
+	totalselrecs.innerHTML = total;	
+ }
+ //Unselect
+ else {
+ 	//Unmark (color) those viewed/shown
+ 	for (i = from-1; i < end; i++) {
+	   var checkb = document.getElementById('check_'+i);
+	   if (checkb.checked) {
+		 checkb.checked=0;
+		 MarkRecord(i,'0'); //line color
+		}
+	}
+	//Exclude all the records from the sel_recs cookie 
+	SetCookie('sel_recs','');		
+	//And update selected records number
+	var totalselrecs = document.getElementById('totalselrecs');
+	totalselrecs.innerHTML = 0;	
+ }  	
+}
 
-function SelectAllRecs(from,end,action)
+//Select/Unselect all records shown in page
+//action=1 for Select, action=0 for Unselect
+function SelectAllViewed(from,end,action) 
 {
  //Select
  if (action == 1) {
  	for (i = from-1; i < end; i++) {
-	   var record = document.getElementById('tr_'+i);
+	   //var record = document.getElementById('tr_'+i);
 	   var checkb = document.getElementById('check_'+i);
 	   if  (!checkb.checked) {
 	   	checkb.checked = 1;
@@ -105,7 +151,7 @@ function SelectAllRecs(from,end,action)
  //Unselect
  else {
  	for (i = from-1; i < end; i++) {
-	   var record = document.getElementById('tr_'+i);
+	   //var record = document.getElementById('tr_'+i);
 	   var checkb = document.getElementById('check_'+i);
 	   if (checkb.checked) {
 		 checkb.checked=0;
@@ -114,7 +160,6 @@ function SelectAllRecs(from,end,action)
 	}
  }
 } 
-
 
 
 //CookieExpirationDate
