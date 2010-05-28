@@ -13,7 +13,7 @@
    <!--/Menubar-->
    
   <!-- XMLHttpRequest -->
-  <script language="javascript" type="text/javascript">  
+  <script type="text/javascript">  
   <!--   
   var xmlhttp;  
   function showResult(field,str,out) {  
@@ -51,7 +51,7 @@
     
 </head>
 
-<!--<body onload="javascript:AplicarCebra('DataTable');ActivateTab('<TMPL_VAR NAME="Activetab">','4'); ">-->
+
 <body onload="javascript:AplicarCebra('DataTable');">
 
 <div class="ext font">
@@ -70,13 +70,15 @@
  <tr class="headerline">
    <!-- Control cells -->
    <td class="control">
-     <img src="/doaboo/images/markall.png" onclick="javascript:SelectAllRecs('<TMPL_VAR name="Showfrom">','<TMPL_VAR name="Endrecord">','1'); ">
+     <img src="/doaboo/images/markallrecs.png" onclick="javascript:SelectAllRecs('<TMPL_VAR name="Showfrom">','<TMPL_VAR name="Endrecord">','<TMPL_VAR name="RECORDS_NUMBER">','1'); ">				       	
+     <img src="/doaboo/images/markall.png" onclick="javascript:SelectAllViewed('<TMPL_VAR name="Showfrom">','<TMPL_VAR name="Endrecord">','1'); ">
    </td>
    <td class="control">
    	 <input type="hidden" name="end" id="end" value="<TMPL_VAR NAME="Initrecord">">   
    	 <TMPL_IF NAME="Initrecord"> <!-- the UP button not shown if Initrecord is 0 (first page) -->
+	    <!-- Value id=end used for the boxup/RePage button -->
  	    <img src="/doaboo/images/boxup.png" onclick="javascript:document.getElementById('init').value='0';document.tableform.submit();">	
-        <!--<a href="/doaboo-cgi/db.pl?end=_TMPL_VAR NAME="Initrecord"_">T</a>-->
+        <img src="/doaboo/images/gotoinit.png" onclick="javascript:document.getElementById('init').value='0';document.getElementById('end').value='';document.tableform.submit();">	
 	 </TMPL_IF>
    </td>	
    <td class="control">Icon</td>
@@ -86,7 +88,7 @@
    </TMPL_LOOP>
  </tr> 
  
- <!-- First line starts. Closed with </tr> inside the records loop, when Newline detected -->
+ <!-- First line starts. Closed with </tr> inside the records (Valores) loop, when Newline detected -->
  <tr class="oddline" id="tr_<TMPL_VAR NAME="Initrecord">">
      <!-- Control Cells -->
      <td class="control">
@@ -155,13 +157,13 @@
  <tr class="headerline">
  	<input type="hidden" name="init" id="init" value="<TMPL_VAR NAME="Index">">
   	<td class="control">
-      <img src="/doaboo/images/unmarkall.png" onclick="javascript:SelectAllRecs('<TMPL_VAR name="Showfrom">','<TMPL_VAR name="Endrecord">','0'); ">				     
+      <img src="/doaboo/images/unmarkall.png"  onclick="javascript:SelectAllViewed('<TMPL_VAR name="Showfrom">','<TMPL_VAR name="Endrecord">','0'); ">				     
+      <img src="/doaboo/images/unmarkallrecs.png" onclick="javascript:SelectAllRecs('<TMPL_VAR name="Showfrom">','<TMPL_VAR name="Endrecord">','<TMPL_VAR name="RECORDS_NUMBER">','0'); ">				     
     </td>
     <td class="control">          
 	  <TMPL_UNLESS NAME="Norecords"> 
  	     <img src="/doaboo/images/boxdown.png" onclick="javascript:document.getElementById('end').value='';document.tableform.submit();">	
-		 <!--Not working yet: XMLHttpRequest: need to divide db.pl in parts -->
-	     <!--<img src="/doaboo/images/boxdown.png" align="absmiddle" onClick="javascript:showResult('userchoice','Nextpage','external');">-->
+		 <img src="/doaboo/images/gotoend.png" onclick="javascript:document.getElementById('end').value='<TMPL_VAR name="RECORDS_NUMBER">';document.tableform.submit();">
 	  </TMPL_UNLESS>
      </td>
    	 <td class="control">Icon</td>  

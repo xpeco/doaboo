@@ -1,4 +1,4 @@
-<script language="Javascript" type="text/Javascript">
+<script type="text/Javascript">
 
 // Alternate Row Colors
 function AplicarCebra (tableid)  {
@@ -10,6 +10,7 @@ function AplicarCebra (tableid)  {
      table.rows[i].className += " " + current;
      current =   current == "evenline" ? "oddline" : "evenline";
    }
+   return true;
 }
 
 //ActivateTab selected #DEBUG
@@ -42,16 +43,17 @@ function MarkRecord(index,action){
 
 //Remove From Cookie
 function RemoveFromCookie (cookie_name,cookie_value) {
-  cookie_text=GetCookie(cookie_name);
+  var cookie_text=GetCookie(cookie_name);
   if (cookie_text != null) {
-    begin=cookie_text.indexOf(cookie_value+',');
+    var begin=cookie_text.indexOf(cookie_value+',');
     if (begin != -1) {
-      end=cookie_text.indexOf(',',begin+1);
+      var end=cookie_text.indexOf(',',begin+1);
       end=end+1;
       cookie_text=cookie_text.substring(0,begin)+cookie_text.substring(end,cookie_text.length);
       document.cookie = cookie_name + '=' + escape(cookie_text);
     }
   }
+  return true;
 }
 
 // Select / Unselect Record
@@ -88,6 +90,34 @@ function SelectRecord(index,action){
  return true;	
 }
 
+//Select/Unselect all records shown in page
+//action=1 for Select, action=0 for Unselect
+function SelectAllViewed(from,end,action) 
+{
+ //Select
+ if (action == 1) {
+ 	for (var i = from-1; i < end; i++) {
+	   var checkb = document.getElementById('check_'+i);
+	   if  (!checkb.checked) {
+	   	checkb.checked = 1;
+ 		SelectRecord(i,'1');
+ 	   }
+ 	}
+ }
+ //Unselect
+ else {
+ 	for (var i = from-1; i < end; i++) {
+	   var checkb = document.getElementById('check_'+i);
+	   if (checkb.checked) {
+		 checkb.checked=0;
+		 SelectRecord(i,'0');
+		}
+	}
+ }
+ return true;
+} 
+
+
 //Select/Unselect all the records (not only those shown in page)
 //action=1 for Select, action=0 for Unselect
 function SelectAllRecs(from,end,total,action)
@@ -95,9 +125,9 @@ function SelectAllRecs(from,end,total,action)
  //Select 
  if (action == 1) {
  	//Mark (color) those viewed/shown
- 	for (i = from-1; i < end; i++) {
+ 	for (var i = from-1; i < end; i++) {
 	   var checkb = document.getElementById('check_'+i);
-	   if  (!checkb.checked) {
+	   if (!checkb.checked) {
 	   	checkb.checked = 1;
  		MarkRecord(i,'1'); //line color
  	   }
@@ -106,8 +136,8 @@ function SelectAllRecs(from,end,total,action)
 	//CDA Filter so that those already included are not included twice
 	//Or in RemoveFromCookie, make it recursive //CDA
 	//Or both for security //DEBUG
-	cookie_text = GetCookie('sel_recs');
-	for (j=0; j<total; j++) {
+	var cookie_text = GetCookie('sel_recs');
+	for (var j=0; j<total; j++) {
 	 cookie_text = cookie_text + j + ',';
 	}
 	SetCookie('sel_recs',cookie_text);		
@@ -118,7 +148,7 @@ function SelectAllRecs(from,end,total,action)
  //Unselect
  else {
  	//Unmark (color) those viewed/shown
- 	for (i = from-1; i < end; i++) {
+ 	for (var i = from-1; i < end; i++) {
 	   var checkb = document.getElementById('check_'+i);
 	   if (checkb.checked) {
 		 checkb.checked=0;
@@ -131,36 +161,8 @@ function SelectAllRecs(from,end,total,action)
 	var totalselrecs = document.getElementById('totalselrecs');
 	totalselrecs.innerHTML = 0;	
  }  	
+ return true;
 }
-
-//Select/Unselect all records shown in page
-//action=1 for Select, action=0 for Unselect
-function SelectAllViewed(from,end,action) 
-{
- //Select
- if (action == 1) {
- 	for (i = from-1; i < end; i++) {
-	   //var record = document.getElementById('tr_'+i);
-	   var checkb = document.getElementById('check_'+i);
-	   if  (!checkb.checked) {
-	   	checkb.checked = 1;
- 		SelectRecord(i,'1');
- 	   }
- 	}
- }
- //Unselect
- else {
- 	for (i = from-1; i < end; i++) {
-	   //var record = document.getElementById('tr_'+i);
-	   var checkb = document.getElementById('check_'+i);
-	   if (checkb.checked) {
-		 checkb.checked=0;
-		 SelectRecord(i,'0');
-		}
-	}
- }
-} 
-
 
 //CookieExpirationDate
 function getCookieExpirDate() {
@@ -173,18 +175,19 @@ function getCookieExpirDate() {
 
 //SetCookie
 function SetCookie(cookie_name,cookie_value) {
-  cookie_text=cookie_value;
+  var cookie_text=cookie_value;
   var expiration = getCookieExpirDate();
   document.cookie = cookie_name + '=' + escape(cookie_text) + '; ' + 'expires='+expiration+'; ' ;
+  return true;
 }
 
-//GetCookie
+//GetCookie 
 function GetCookie(cookie_name) {
   if (document.cookie.length > 0) {
-    begin = document.cookie.indexOf(cookie_name+'=');
+    var begin = document.cookie.indexOf(cookie_name+'=');
     if (begin != -1) {
       begin += cookie_name.length+1;
-      end = document.cookie.indexOf(';', begin);
+      var end = document.cookie.indexOf(';', begin);
       if (end == -1) end = document.cookie.length;
       return unescape(document.cookie.substring(begin, end));
     }

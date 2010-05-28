@@ -31,6 +31,7 @@ sub GetRecsForTable {
     # PageUp / PageDown processing: it depends on user choices
     ###########################################################    
     if ((not defined $end)||($end eq "")) { $end = 0; }
+    #GoUp / GoDown page by page (Go to init included)
     if ($end > $recbypage) {
       #the user clicked on up_records
       $init = $end - $recbypage;
@@ -38,12 +39,14 @@ sub GetRecsForTable {
     else {
       $end  = $init + $recbypage;
     }
-    #last page: select only the latest records
+    #Last page reached: select only the latest records
     if ($end > $totalrecords) { 
       $end       = $totalrecords; 
       $recbypage = $totalrecords-$init; 
     }
+    #Add the limits to the DB query
   	$sql = $sql." LIMIT $init,$end";
+  	
   	
   	my $dbh = DBCONN->new;
     my $sth = $dbh->prepare($sql) or die "Prepare exception: $DBI::errstr";
@@ -70,7 +73,7 @@ sub GetRecsForTable {
     ###########################
     # Records
     ###########################
-    my $sel_recs = $cgi->cookie('sel_recs') if (defined $cgi->cookie('sel_recs')); #Read the established cookie
+    my $sel_recs = $cgi->cookie('sel_recs') if (defined $cgi->cookie('sel_recs')); #Read the sel_recs cookie
     my @selected = split(/,/,$sel_recs) if (defined $sel_recs);
     my @records;
     my $i=$init;  
@@ -103,7 +106,6 @@ sub GetRecsForTable {
     $t->param(Endrecord  => $z);
     $t->param(Showfrom   => $init+1); #counter starts by 1 for the user ("Showing from" message)
     $t->param(Totalselec => $#selected+1);
-   #} #End of if $sql ne ''
 
 } #end of sub
 
