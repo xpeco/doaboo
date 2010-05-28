@@ -1,23 +1,31 @@
-	<div class="exttopbar">
+	<div id="exttopbar" class="exttopbar">
 	    <!-- Menu BAR -->
 		<div id="menu" style="float:left;">
-		<ul class="level1" id="root">
+		<ul class="tree" id="root">
 		  <li>
 		    <a href="#">Menu</a>
-		    <ul class="level2">
+		    <ul class="subtree">
 		      <li><a href="#">Sub A</a></li>
 		      <li>
 		        <a href="#">Tablas</a>
-		        <ul class="level3">
+		        <ul class="subtree2">
 		          <li><a href="./db.pl?table=ADM_GROUPS&tab=t2">ADM_GROUPS</a></li>
-		          <li><a href="./db.pl?table=FILER&tab=t4">FILER</a></li>
+		          <li>
+		          	 <a href="./db.pl?table=FILER&tab=t4">FILER</a>
+ 					 <ul class="subtree2">
+		               <li><a href="#">Level 4 AAA</a></li>
+		               <li><a href="#">Level 4 BBB</a></li>
+		               <li><a href="#">Level 4 CCC</a></li>
+		               <li><a href="#">Level 4 EEE</a></li>
+		             </ul>				   
+				  </li> 
 		          <li><a href="./db.pl?table=ADM_VIEWS&tab=t3">ADM_VIEWS</a></li>
 		        </ul>
 		      </li>
 		      <li><a href="#">Sub C</a></li>
 		      <li>
 		        <a href="#">Sub D</a>
-		        <ul class="level3">
+		        <ul class="subtree2">
 		          <li><a href="#">Level 3 AAA</a></li>
 		          <li><a href="#">Level 3 BBB</a></li>
 		          <li><a href="#">Level 3 CCC</a></li>
@@ -30,7 +38,7 @@
 		  <li class="sep">|</li>
 		  
 		  <li><a href="#">Views</a>
-		    <ul class="level2">
+		    <ul class="subtree">
 		      <li><a href="#">Sub 2A</a></li>
 		      <li><a href="#">Sub 2B</a></li>
 		      <li><a href="#">Sub 2C</a></li>
@@ -41,7 +49,7 @@
 		  <li class="sep">|</li>
 		  
 		  <li><a href="#">Reports</a>
-		    <ul class="level2">
+		    <ul class="subtree">
 		      <li><a href="#">Sub 3A</a></li>
 		      <li><a href="#">Sub 3B</a></li>
 		      <li><a href="#">Sub 3C</a></li>
@@ -53,11 +61,11 @@
 		  
 		  <li>
 		    <a href="#">Relationships</a>
-		    <ul class="level2">
+		    <ul class="subtree">
 		      <li><a href="#">Sub A</a></li>
 		      <li>
 		        <a href="#">Sub B</a>
-		        <ul class="level3">
+		        <ul class="subtree">
 		          <li><a href="#">Level 3 One</a></li>
 		          <li><a href="#">Level 3 Two</a></li>
 		          <li><a href="#">Level 3 Three</a></li>
@@ -71,7 +79,7 @@
 		  <li class="sep">|</li>
 		  
 		  <li><a href="#">Action Items</a>
-		    <ul class="level2">
+		    <ul class="subtree">
 		      <li><a href="#">Sub 5A</a></li>
 		      <li><a href="#">Sub 5B</a></li>
 		      <li><a href="#">Sub 5C</a></li>
@@ -84,9 +92,14 @@
 		<!-- Menu BAR -->
 
 		<!-- NO Menu BAR -->
-		<div class="nomenubar" style="float:right;">
+		<div id="nomenubar" class="nomenubar" style="float:left;">
 	
-		<span class="viewsicons">
+		<span id="viewiconsspan" class="viewsicons">
+			<!--DEBUG-->
+			<img src="/doaboo/images/boxup.png">&nbsp;&nbsp
+			<img src="/doaboo/images/boxup.png">&nbsp;&nbsp
+			<img src="/doaboo/images/boxup.png">&nbsp;&nbsp
+			<!-- /DEBUG -->
             <TMPL_IF NAME="announce">
                <img class="menuImage" src="<TMPL_VAR NAME="IMG_menu_announce">.gif" border="0" width="16" height="16" onClick="javascript:var ann=unescape('<TMPL_VAR NAME="ann_text">');alert(ann);" hspace="10">
             </TMPL_IF>
@@ -102,29 +115,29 @@
 			</TMPL_UNLESS>
         </span>
              
-        <span class="pulsobox">
+        <span id="pulsoboxspan" class="pulsobox">
 		    <INPUT class="fieldbar" type="text" name="pulso_search" id="pulso_search" onKeyPress="return enter(this,event)">&nbsp;
             <INPUT type="submit" class="textbar" value=" Search " onClick="javascript:PopUpPulso('<TMPL_VAR NAME="real_script_name">?function=Pulso','','SUBWINDOW',630,408,'pulso_search');"title="Pulso">
         </span>
         
-        <span class="logout">
+        <span id="logoutspan" class="logout">
                      <TMPL_UNLESS NAME="hide_wiki">
                          <TMPL_IF "object_defined">
-                           <input type="button" class="textbar" value=" Help " onClick="window.open('WIKI_URL<TMPL_VAR NAME="name">');">
+                           <input id="infobutton" type="button" class="textbar" value=" Help " onClick="window.open('WIKI_URL<TMPL_VAR NAME="name">');">
                          <TMPL_ELSE>
-                         <input type="button" class="textbar" value="Documentation" onClick="window.open('WIKI_INIT');">
+                           <input id ="infobutton" type="button" class="textbar" value="Documentation" onClick="window.open('WIKI_INIT');">
                          </TMPL_IF>
                      </TMPL_UNLESS>
 
 					 <TMPL_IF NAME="no_user">
-                       &nbsp;&nbsp;&nbsp;<span class="textbar">Session expired</span>
+                       &nbsp;&nbsp;&nbsp;<span id="userspan" class="textbar">Session expired</span>
                      <TMPL_ELSE>
-                       &nbsp;&nbsp;&nbsp;<span class="textbar">Logged as "<TMPL_VAR NAME="user">"</span>
+                       &nbsp;&nbsp;&nbsp;<span id="userspan" class="textbar">Logged as "<TMPL_VAR NAME="user">"</span>
                      </TMPL_IF>
                      <TMPL_UNLESS NAME="hide_logout">
-                        &nbsp;<input type="button" class="textbar" value=" Logout" onClick="javascript:SetCookie('user','');SetCookie('password','');document.location='<TMPL_VAR NAME="script_name">?function=Login<TMPL_IF name="show_banner>&show_banner=1</TMPL_IF><TMPL_IF name="hide_logos">&hide_logos=1</TMPL_IF>';">
+                        &nbsp;<input type="button" class="textbar" value=" Logout " onClick="javascript:SetCookie('sel_recs','');document.location='/doaboo-cgi/login.pl';"> 
                      </TMPL_UNLESS>
         </span>
 		</div> <!-- No menu Bar -->
-		</div> <!-- exttopbar -->
+	</div> <!-- exttopbar -->
 		

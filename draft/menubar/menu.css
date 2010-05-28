@@ -1,35 +1,34 @@
 /*TopBar*/
 div.exttopbar {
    height: 30px; 
-   width:  100%;
-   margin-bottom: 4px;
-   overflow:hidden;
-   border: 1px dotted;
+   width:  100%; 
    overflow: visible;
+   margin-bottom: 10px;
 }
 div.nomenubar {
- 	width:	 66%; 
+ 	width:	 67%; 
  	height:  100%;
- 	border: 1px red dashed;
 }
 span.viewsicons {
 	float:  left;
-	width:  100px; 
+	width:  auto; 
 	height: 100%;
-	border: 1px green dotted;
+	margin-left: 16px;
+	border: 1px blue dotted;
 }
 span.pulsobox {
 	float: left;
 	height: 100%;
-	margin-left: 12px;
+	margin-left: 60px;
 	padding: 4px 0px 4px 0px;
 	-moz-border-radius: 6px;
     -ms-border-radius: 6px;
 }
 span.logout {
-	float:right; 
+	float:right;
 	height: 100%;
 	padding: 4px 0px 4px 0px;
+	overflow:hidden;
 }
 .textbar {
 	font-weight:bold;
@@ -38,7 +37,7 @@ span.logout {
 .fieldbar {
    font-size: 0.8em;
    height: 10pt;
-   width: 180pt;
+   width: 140pt; 
    border: 2pt solid;
    -moz-border-radius: 6px;
    -ms-border-radius: 6px;
@@ -99,7 +98,7 @@ span.logout {
 }
 
 /* End IE5-Mac hack */
-#menu  ul.level2, #menu ul.level3 {
+#menu  ul.subtree, #menu ul.subtree2 {
 	position: absolute;
 	top: 0px;
 	left: 0px;
@@ -110,7 +109,7 @@ span.logout {
 	background: #8f7dD2;
 }
 
-#menu  ul.level2 li, #menu ul.level3 li {
+#menu  ul.subtree li, #menu ul.subtree2 li {
 	border-bottom: 1px solid #fff;
 	float: none;
 	margin: 0;
@@ -118,12 +117,12 @@ span.logout {
 	width: 150px;
 }
 
-#menu  ul.level2 li a, #menu ul.level3 li a {
+#menu  ul.subtree li a, #menu ul.subtree2 li a {
 	padding: 5px 9px 5px 5px;
 	font-size: 1.6em;
 }
 
-#menu  ul.level2 li a:hover, #menu  ul.level3 li a:hover, #menu ul.level1 li a:hover {
+#menu  ul.subtree li a:hover, #menu  ul.subtree2 li a:hover, #menu ul.tree li a:hover {
 	/*font-weight: normal;*/
 	background-color: #Af9fEf;
 }

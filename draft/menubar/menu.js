@@ -66,8 +66,8 @@ MenuContainer.prototype = {
 	  this.id = this.element.id;
 
 	  if (this.type == "menuContainer") {
-	  	if (this.element.hasClassName("level1")) this.menuType = "horizontal";
-		else if (this.element.hasClassName("level2")) this.menuType = "dropdown";
+	  	if (this.element.hasClassName("tree")) this.menuType = "horizontal";
+		else if (this.element.hasClassName("subtree")) this.menuType = "dropdown";
 		else this.menuType = "flyout";
 
 	    if (this.menuType == "flyout" || this.menuType == "dropdown") {

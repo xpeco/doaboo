@@ -64,7 +64,7 @@ sub check {
 
 sub _init{
 	my $self=shift;
-	my $user=$self->{db}->DBCONN::rawget('select ADM_PASSWORD,ADM_GROUP,ADM_NAME,ADM_RESTRICTIONS_METHOD,ADM_RESTRICTIONS_FIELD from ADM_USERS,ADM_GROUPS where ADM_LOGIN=\''.$self->{login}.'\' and ADM_GROUP=ADM_GROUP_NAME limit 1');
+	my $user=$self->{db}->DBCONN::rawget('select ADM_PASSWORD,ADM_GROUP,ADM_NAME,ADM_RESTRICTIONS_METHOD,ADM_RESTRICTIONS_FIELD,INITIAL_OBJECT,INITIAL_VIEW,INITIAL_METHOD,INIT_FUNCTION,WIKI_USER,ADM_LANGUAGE,ADM_INST_PER_PAGE,ADM_AUTOMARK_REL,ADM_INIT_EDITOR from ADM_USERS,ADM_GROUPS where ADM_LOGIN=\''.$self->{login}.'\' and ADM_GROUP=ADM_GROUP_NAME and ADM_ENABLE=\'Y\' limit 1');
 	$self->{error}=1;
 	$self->{adm_password}=$user->[0]->{ADM_PASSWORD};
 	if ($self->check() ne 'OK'){ 
@@ -77,6 +77,10 @@ sub _init{
 	$self->{adm_password}=$user->[0]->{ADM_PASSWORD};
 	$self->{ractions}=$user->[0]->{ADM_RESTRICTIONS_METHOD};
 	$self->{factions}=$user->[0]->{ADM_RESTRICTIONS_FIELD};
+	$self->{itopic}=$user->[0]->{INITIAL_OBJECT};
+	$self->{iview}=$user->[0]->{INITIAL_VIEW};
+	$self->{language}=$user->[0]->{ADM_LANGUAGE};
+	$self->{ipp}=$user->[0]->{ADM_INST_PER_PAGE};
 
 	return $self;
 }

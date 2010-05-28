@@ -12,17 +12,15 @@
    <script src="/doaboo/menubar/menu.js" type="text/javascript"></script>
    <!--/Menubar-->
    
-   <!-- XMLHttpRequest -->
-   <script language="javascript" type="text/javascript">  
+  <!-- XMLHttpRequest -->
+  <script language="javascript" type="text/javascript">  
   <!--   
   var xmlhttp;  
-  function showResult(field,str,out)  
-  {  
+  function showResult(field,str,out) {  
    xmlhttp=GetXmlHttpObject();  
-   if (xmlhttp==null)  
-    {  
-    alert ("Browser does not support HTTP Request");  
-    return;  
+   if (xmlhttp==null) {  
+     alert ("Browser does not support HTTP Request");  
+     return;  
     }  
    var url="/doaboo-cgi/db.pl";  
    url=url+"?"+field+"="+str; 
@@ -31,71 +29,56 @@
    xmlhttp.send(null);  
   }  
 
-  function stateChanged(divname)  
-  {  
-  if (xmlhttp.readyState==4)  
-  {  
-   document.getElementById(divname).innerHTML=xmlhttp.responseText;  
-  }  
+  function stateChanged(divname) {  
+   if (xmlhttp.readyState==4)  {  
+     document.getElementById(divname).innerHTML=xmlhttp.responseText;  
+   }  
   }  
  
-  function GetXmlHttpObject()  
-  {  
-  if (window.XMLHttpRequest)  
-    {  
-    // code for IE7+, Firefox, Chrome, Opera, Safari  
-    return new XMLHttpRequest();  
+  function GetXmlHttpObject() {  
+   if (window.XMLHttpRequest) {  
+     // code for IE7+, Firefox, Chrome, Opera, Safari  
+     return new XMLHttpRequest();  
     }  
-  if (window.ActiveXObject)  
-    {  
-    // code for IE6, IE5  
-    return new ActiveXObject("Microsoft.XMLHTTP");  
+   if (window.ActiveXObject) {  
+     // code for IE6, IE5  
+     return new ActiveXObject("Microsoft.XMLHTTP");  
     }  
-  return null;  
+   return null;  
   }  
   //-->  
   </script>  	
+    
 </head>
 
-<body onload="javascript:AplicarCebra('DataTable');ActivateTab('<TMPL_VAR NAME="Activetab">','4'); ">
+<!--<body onload="javascript:AplicarCebra('DataTable');ActivateTab('<TMPL_VAR NAME="Activetab">','4'); ">-->
+<body onload="javascript:AplicarCebra('DataTable');">
 
 <div class="ext font">
 
 <!--Menu with scriptaculous-1.8.3 --->
 <TMPL_INCLUDE NAME="menubar/menu.tmpl">
+<TMPL_IF NAME="Adjust">
+   <script>AdjustWidth();</script>
+</TMPL_IF>
 		
-<ul id="tabs">
-  	<!-- LOOP VIEWS with param TABLE, VIEWNAME... - PTTD -->
-	<li>
-		<a id="t1" href="/doaboo-cgi/db.pl?table=ADM_USERS&tab=t1">ADM_USERS</a>
-	</li>
-	<li>
-		<a id="t2" href="/doaboo-cgi/db.pl?table=ADM_GROUPS&tab=t2">ADM_GROUPS</a>
-	</li>
-	<li>
-		<a id="t3" href="/doaboo-cgi/db.pl?table=ADM_VIEWS&tab=t3">ADM_VIEWS</a>
-	</li>
-	<li>
-		<a id="t4" href="/doaboo-cgi/db.pl?table=FILER&tab=t4">FILER</a>
-	</li>
-</ul>
-
-<div class="tabsdiv">
+<div id="tablediv" class="tablediv">
 <form name="tableform" action="/doaboo-cgi/db.pl" method="post">
-<input type ="hidden" name="tab" value="<TMPL_VAR NAME="Activetab">">
-<br><center><table id="DataTable" class="data font">
+<center><table id="DataTable" class="data font">
 
  <!--Header line - Campos Loop-->
  <tr class="headerline">
    <!-- Control cells -->
+   <td class="control">
+     <img src="/doaboo/images/markall.png" onclick="javascript:SelectAllRecs('<TMPL_VAR name="Showfrom">','<TMPL_VAR name="Endrecord">','1'); ">
+   </td>
    <td class="control">
    	 <input type="hidden" name="end" id="end" value="<TMPL_VAR NAME="Initrecord">">   
    	 <TMPL_IF NAME="Initrecord"> <!-- the UP button not shown if Initrecord is 0 (first page) -->
  	    <img src="/doaboo/images/boxup.png" onclick="javascript:document.getElementById('init').value='0';document.tableform.submit();">	
         <!--<a href="/doaboo-cgi/db.pl?end=_TMPL_VAR NAME="Initrecord"_">T</a>-->
 	 </TMPL_IF>
-   </td>
-   <td class="control">&nbsp;</td>
+   </td>	
    <td class="control">Icon</td>
    <!-- Column Names Loop -->
    <TMPL_LOOP NAME="Campos">
@@ -122,11 +105,12 @@
 			  <!-- > --> <!-- close input -->
      </td>
      <td class="control">
-    	   Iconx2
+        <img src="/doaboo/images/details.png"  onclick="javascript:">
+        <img src="/doaboo/images/details2.png" onclick="javascript:">
 	 </td>
      <td class="control">
-       &nbsp;
-	  </td>
+     	<img src="/doaboo/images/delete.png" onclick="javascript:$('tr_'+<TMPL_VAR NAME="Initrecord">).hide();">
+	 </td>
 
  <!-- Records Loop - Cell by Cell -->
  <TMPL_LOOP NAME="Valores">
@@ -151,35 +135,36 @@
 				  <!-- > --> <!-- close input -->
 	     </td>
          <td class="control">
-       	   Iconx2
+       	    <img src="/doaboo/images/details.png"  onclick="javascript:">
+            <img src="/doaboo/images/details2.png" onclick="javascript:">
 	     </td>
          <td class="control">
-           &nbsp;
+           <img src="/doaboo/images/delete.png" onclick="javascript:$('tr_'+<TMPL_VAR NAME="Index">).hide();">
 	     </td>
 	    <!-- /Control Cells -->
-        <TMPL_ELSE> <!-- Unless -->
-           <!-- Last Line-->
-           <tr class="headerline">
-             <td class="control">
-               <input type="hidden" name="init" id="init" value="<TMPL_VAR NAME="Index">">	
-			   <TMPL_UNLESS NAME="Norecords"> 
- 	             <img src="/doaboo/images/boxdown.png" onclick="javascript:document.getElementById('end').value='';document.tableform.submit();">	
-			     <!--Not working yet: XMLHttpRequest: need to divide db.pl in parts -->
-	             <!--<img src="/doaboo/images/boxdown.png" align="absmiddle" onClick="javascript:showResult('userchoice','Nextpage','external');">-->
-			   </TMPL_UNLESS>
-	       
-             </td>
- 	         <td class="control">&nbsp;</td>
-   	         <td class="control">Icon</td>
-   	         <!-- This last line is closed with </tr> outside the records loop -->
+		<TMPL_ELSE>
+		  <!-- Value used for the boxdown / AvPage button -->	
+		  <input type="hidden" name="init" id="init" value="<TMPL_VAR NAME="Index">">	
 	    </TMPL_UNLESS>
 	 <TMPL_ELSE>  <!-- If -->
 	    <td><TMPL_VAR NAME="Valor"></td>     	
-	 </TMPL_IF>
-	  	  	    
- </TMPL_LOOP>
-   
-     <!-- Continuation of the last table line: Column Names Loop -->
+	 </TMPL_IF>  	  	    
+ </TMPL_LOOP> <!-- /End of Records Loop -->
+  
+ <!-- Last Line-->
+ <tr class="headerline">
+ 	<input type="hidden" name="init" id="init" value="<TMPL_VAR NAME="Index">">
+  	<td class="control">
+      <img src="/doaboo/images/unmarkall.png" onclick="javascript:SelectAllRecs('<TMPL_VAR name="Showfrom">','<TMPL_VAR name="Endrecord">','0'); ">				     
+    </td>
+    <td class="control">          
+	  <TMPL_UNLESS NAME="Norecords"> 
+ 	     <img src="/doaboo/images/boxdown.png" onclick="javascript:document.getElementById('end').value='';document.tableform.submit();">	
+		 <!--Not working yet: XMLHttpRequest: need to divide db.pl in parts -->
+	     <!--<img src="/doaboo/images/boxdown.png" align="absmiddle" onClick="javascript:showResult('userchoice','Nextpage','external');">-->
+	  </TMPL_UNLESS>
+     </td>
+   	 <td class="control">Icon</td>  
    	 <TMPL_LOOP NAME="Campos">
      <td><input type="text" value="<TMPL_VAR NAME="Nombre">"></td>
    	 </TMPL_LOOP>
@@ -191,10 +176,10 @@
 	  Showing results <TMPL_VAR name="Showfrom">-<TMPL_VAR name="Endrecord"> 
 	  from a total of <TMPL_VAR name="RECORDS_NUMBER"> in <TMPL_VAR name="COLUMNS_NUMBER"> 
 	  columns of <TMPL_VAR name="Table"> (<span id="totalselrecs"><TMPL_VAR name="Totalselec"></span> selected) 
-	  &nbsp;&nbsp;&nbsp;&nbsp;<a href="db.pl">Icon Show only marked</a>
+	  &nbsp;&nbsp;&nbsp;&nbsp;
+	  <a href="#" onclick="javascript:HideRecords('unsel');return false;">Icon Show only marked</a>
 </div>	
 	
-</div> <!--tabsdiv-->
 </div> <!--ext-->
 </body>
 </html>
