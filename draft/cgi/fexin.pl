@@ -30,6 +30,17 @@ sub EXGet_Instance_List
 				$where.=" $range in () and";
 			}
 		}
+		elsif($ranges->{$range}=~/^\!.*/)
+		{
+			$ranges->{$range}=~s/^\!//;
+			$where.=" $range not in (\'$ranges->{$range}\') and";
+		}
+		elsif($ranges->{$range}=~/^\(\!.*\)/)
+		{
+			$ranges->{$range}=~s/^\(\!/\(/;
+			$where.=" $range not in \'$ranges->{$range}\' and";
+		}
+
 		else
 		{
 			$where.=" $range = \'$ranges->{$range}\' and";
@@ -93,6 +104,17 @@ sub EXGet_Instance
 				$where.=" $range in () and";
 			}
 		}
+		elsif($ranges->{$range}=~/^\!.*/)
+		{
+			$ranges->{$range}=~s/^\!//;
+			$where.=" $range not in (\'$ranges->{$range}\') and";
+		}
+		elsif($ranges->{$range}=~/^\(\!.*\)/)
+		{
+			$ranges->{$range}=~s/^\(\!/\(/;
+			$where.=" $range not in \'$ranges->{$range}\' and";
+		}
+
 		else
 		{
 			$where.=" $range = \'$ranges->{$range}\' and";
@@ -145,6 +167,16 @@ sub EXGet_Range_List
 		{
 			$where.=" $range in \'$ranges->{$range}\' and";
 		}
+		elsif($ranges->{$range}=~/^\!.*/)
+		{
+			$ranges->{$range}=~s/^\!//;
+			$where.=" $range not in (\'$ranges->{$range}\') and";
+		}
+		elsif($ranges->{$range}=~/^\(\!.*\)/)
+		{
+			$ranges->{$range}=~s/^\(\!/\(/;
+			$where.=" $range not in \'$ranges->{$range}\' and";
+		}
 		else
 		{
 			$where.=" $range = \'$ranges->{$range}\' and";
@@ -160,14 +192,22 @@ sub EXGet_Range_List
 	{
 		$query="select * from $table";
 	}
+print "Query: $query\n";
 	return $user->DO::query($query,'ARRAY');
 }
 
 
-my $r=EXGet_Instance_List('ADM_USERS',{ADM_LOGIN=>$actual_user},'NONE');
-if ($r->[0]->{ADM_LOGIN} ne ''){print "$r->[0]->{ADM_GROUP}\n";}
+#my $r=EXGet_Instance_List('ADM_USERS',{ADM_LOGIN=>$actual_user},'NONE');
+#if ($r->[0]->{ADM_LOGIN} ne ''){print "$r->[0]->{ADM_GROUP}\n";}
 #$r=EXGet_Instance('ADM_USERS',{ADM_LOGIN=>'amassey',ADM_GROUP=>'.*'},{ADM_GROUP=>'ASC'},'NONE');
 #if ($r->[0]->{ADM_LOGIN} ne ''){print "$r->[0]->{ADM_GROUP}\n";}
 
 #$r=EXGet_Range_List('CONTRACT',{CUSTOMER=>$r->[0]->{ADM_ORG}});
 #print "$r\n";
+
+
+
+
+
+my $filers=EXGet_Range_List('FILER',{STATUS=>'Active',IN_DATE=>'0000-00-00',START_DATE=>'!0000-00-00'});
+print "$filers\n";

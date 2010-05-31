@@ -3,10 +3,16 @@ use strict;
 use warnings;
 use FEXIN;
 
-my $code='use FEXIN;my $actual_user=\'roessler\';my $user=EXGet_Instance_List(\'ADM_USERS\',{ADM_LOGIN=>$actual_user},\'NONE\');
-if ($user->[0]->{ADM_ORG} ne \'\'){return EXGet_Range_List(\'CONTRACT\',{CUSTOMER=>$user->[0]->{ADM_ORG}});}';
+my $code='
+use FEXIN;use DATETIME;
+my $actual_user=\'spa\';
+my $messages=EXGet_Instance(\'MESSAGE\',{},{IN_DATE=>\'DESC\',NUMBER=>\'ASC\'},\'NONE\',1);
+my $prev_date=EXDate_Add($messages->[0]->{IN_DATE},\'-7days\');
+return $prev_date;
+#return $messages;
+';
 
 $code=~s/EXGet/FEXIN::EXGet/g;
-
+$code=~s/EXDate/DATETIME::EXDate/g;
 my $eval=eval $code;
 print "R:$eval\n";

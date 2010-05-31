@@ -135,6 +135,28 @@ print "########################\n";
 						$select_where.="`$f->{name}` in (\'$f->{expression}\') and";
 					}
 				}
+				if ($f->{range} eq 'CODE')
+				{
+					$f->{expression}="use FEXIN;use DATETIME;my \$actual_user='$self->{login}';".$f->{expression};
+					$f->{expression}=~s/EXGet/FEXIN::EXGet/g;
+					$f->{expression}=~s/EXDate/DATETIME::EXDate/g;
+
+
+					my $eval=eval $f->{expression};
+
+#		print "-------------\n";
+#		print "$f->{expression}\n";
+#		print "-------------\n";
+#		print "-------------\n";
+#		print "$eval\n";
+#		print "-------------\n";
+
+					#FIX ,)  by ,'')
+					$eval=~s/\,\)/\,\'\')/;
+					#	
+					$select_where.="`$f->{name}` in $eval and";
+				}
+
 				if ($f->{order} ne '')
 				{
 					$select_order.="`$f->{name}` $f->{order}, ";
@@ -173,12 +195,12 @@ print "########################\n";
 		$eval=~s/\)/\'\)/;
 		$eval=~s/\,/\'\,\'/g;
 
-		print "-------------\n";
-		print "$r->{ADM_RESTRICTION_CODE}\n";
-		print "-------------\n";
-		print "-------------\n";
-		print "$eval\n";
-		print "-------------\n";
+#		print "-------------\n";
+#		print "$r->{ADM_RESTRICTION_CODE}\n";
+#		print "-------------\n";
+#		print "-------------\n";
+#		print "$eval\n";
+#		print "-------------\n";
 
 		$select_where.="and $r->{ADM_RESTRICTION_DETAIL} in $eval";
 
