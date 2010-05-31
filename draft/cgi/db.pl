@@ -31,6 +31,7 @@ sub GetRecsForTable {
     # PageUp / PageDown processing: it depends on user choices
     ###########################################################    
     if ((not defined $end)||($end eq "")) { $end = 0; }
+    #GoUp / GoDown page by page (Go to init included)
     if ($end > $recbypage) {
       #the user clicked on up_records
       $init = $end - $recbypage;
@@ -38,12 +39,14 @@ sub GetRecsForTable {
     else {
       $end  = $init + $recbypage;
     }
-    #last page: select only the latest records
+    #Last page reached: select only the latest records
     if ($end > $totalrecords) { 
       $end       = $totalrecords; 
       $recbypage = $totalrecords-$init; 
     }
+    #Add the limits to the DB query
   	$sql = $sql." LIMIT $init,$end";
+  	
   	
   	my $dbh = DBCONN->new;
     my $sth = $dbh->prepare($sql) or die "Prepare exception: $DBI::errstr";
@@ -70,7 +73,7 @@ sub GetRecsForTable {
     ###########################
     # Records
     ###########################
-    my $sel_recs = $cgi->cookie('sel_recs') if (defined $cgi->cookie('sel_recs')); #Read the established cookie
+    my $sel_recs = $cgi->cookie('sel_recs') if (defined $cgi->cookie('sel_recs')); #Read the sel_recs cookie
     my @selected = split(/,/,$sel_recs) if (defined $sel_recs);
     my @records;
     my $i=$init;  
@@ -93,7 +96,7 @@ sub GetRecsForTable {
        push @records, {Newline => '1', Index => $i, Selected => $sel};
       }
       else {
-   	   push @records, {Newline => '1', Norecords => 1};
+   	   $t->param(Norecords  => 1);
       }
     }
     $t->param(Valores    => \@records);
@@ -102,7 +105,7 @@ sub GetRecsForTable {
     $t->param(Initrecord => $init, Selected => $sel);
     $t->param(Endrecord  => $z);
     $t->param(Showfrom   => $init+1); #counter starts by 1 for the user ("Showing from" message)
-   #} #End of if $sql ne ''
+    $t->param(Totalselec => $#selected+1);
 
 } #end of sub
 
@@ -132,16 +135,16 @@ my $user    = $session->param("UserStruct");
 ##################
 #Defaults #DEBUG
 ##################
-my $tmplfile  = 'table1.tmpl';
+my $tmplfile  = 'table.tmpl';
 my $table     = 'ADM_USERS';
-my $tab       = 't1';
+#my $tab       = 't1';
 #my $userchoice;
 
 ##############
 #Read Params
 ##############
 $table       = $cgi_h->param('table') if (defined $cgi_h->param('table'));
-$tab         = $cgi_h->param('tab')   if (defined $cgi_h->param('tab'));
+#$tab         = $cgi_h->param('tab')   if (defined $cgi_h->param('tab'));
 #$userchoice  = $cgi_h->param('userchoice') if (defined $cgi_h->param('userchoice'));
 
 
@@ -185,9 +188,13 @@ my $template = HTML::Template->new(filename => $tmplfile,
 ###############
 # General Data
 ###############
-$template->param(Activetab => $tab);
+#$template->param(Activetab => $tab);
 $template->param(Table     => $table);
 $template->param(user      => $user->{login});
+#Browser size adjustment	
+if ((defined $ENV{'HTTP_REFERER'})&&($ENV{'HTTP_REFERER'} =~ m/login.pl/)) { 
+  $template->param(Adjust => 1);
+}
 
 ######################################################
 #Get Records and Fill Table template with the results

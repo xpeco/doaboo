@@ -1,4 +1,4 @@
-<script language="Javascript" type="text/Javascript">
+<script type="text/Javascript">
 
 // Alternate Row Colors
 function AplicarCebra (tableid)  {
@@ -10,9 +10,11 @@ function AplicarCebra (tableid)  {
      table.rows[i].className += " " + current;
      current =   current == "evenline" ? "oddline" : "evenline";
    }
+   return true;
 }
 
-//ActivateTab selected
+//ActivateTab selected #DEBUG
+/*
 function ActivateTab(id,total){
  for (var i = 1; i <= total; i++) {
  	var tabid = 't' + i;
@@ -25,6 +27,7 @@ function ActivateTab(id,total){
  tabon.className += ' active-tab';
  return true;
 }
+*/
 
 // Mark/Unmark Record 
 function MarkRecord(index,action){
@@ -40,16 +43,17 @@ function MarkRecord(index,action){
 
 //Remove From Cookie
 function RemoveFromCookie (cookie_name,cookie_value) {
-  cookie_text=GetCookie(cookie_name);
+  var cookie_text=GetCookie(cookie_name);
   if (cookie_text != null) {
-    begin=cookie_text.indexOf(cookie_value+',');
+    var begin=cookie_text.indexOf(cookie_value+',');
     if (begin != -1) {
-      end=cookie_text.indexOf(',',begin+1);
+      var end=cookie_text.indexOf(',',begin+1);
       end=end+1;
       cookie_text=cookie_text.substring(0,begin)+cookie_text.substring(end,cookie_text.length);
       document.cookie = cookie_name + '=' + escape(cookie_text);
     }
   }
+  return true;
 }
 
 // Select / Unselect Record
@@ -67,13 +71,97 @@ function SelectRecord(index,action){
 		cookie_text = cookie_text + index + ',';
 	}
 	SetCookie('sel_recs',cookie_text);
+	//Increase selected records number
+	var totalselrecs = document.getElementById('totalselrecs');
+	var totsel = parseInt(totalselrecs.innerHTML);
+    totsel += 1;
+	totalselrecs.innerHTML = totsel;	
  }
  //Unselect record
  else { 
  	MarkRecord(index,'0'); //line color
     RemoveFromCookie('sel_recs',index);
+	//Decrease selected records number
+	var totalselrecs = document.getElementById('totalselrecs');
+	var totsel = parseInt(totalselrecs.innerHTML);
+    totsel -= 1;
+	totalselrecs.innerHTML = totsel;	
  }
  return true;	
+}
+
+//Select/Unselect all records shown in page
+//action=1 for Select, action=0 for Unselect
+function SelectAllViewed(from,end,action) 
+{
+ //Select
+ if (action == 1) {
+ 	for (var i = from-1; i < end; i++) {
+	   var checkb = document.getElementById('check_'+i);
+	   if  (!checkb.checked) {
+	   	checkb.checked = 1;
+ 		SelectRecord(i,'1');
+ 	   }
+ 	}
+ }
+ //Unselect
+ else {
+ 	for (var i = from-1; i < end; i++) {
+	   var checkb = document.getElementById('check_'+i);
+	   if (checkb.checked) {
+		 checkb.checked=0;
+		 SelectRecord(i,'0');
+		}
+	}
+ }
+ return true;
+} 
+
+
+//Select/Unselect all the records (not only those shown in page)
+//action=1 for Select, action=0 for Unselect
+function SelectAllRecs(from,end,total,action)
+{
+ //Select 
+ if (action == 1) {
+ 	//Mark (color) those viewed/shown
+ 	for (var i = from-1; i < end; i++) {
+	   var checkb = document.getElementById('check_'+i);
+	   if (!checkb.checked) {
+	   	checkb.checked = 1;
+ 		MarkRecord(i,'1'); //line color
+ 	   }
+ 	}
+	//Include all the records in the sel_recs cookie 
+	//CDA Filter so that those already included are not included twice
+	//Or in RemoveFromCookie, make it recursive //CDA
+	//Or both for security //DEBUG
+	var cookie_text = GetCookie('sel_recs');
+	for (var j=0; j<total; j++) {
+	 cookie_text = cookie_text + j + ',';
+	}
+	SetCookie('sel_recs',cookie_text);		
+	//And update selected records number
+	var totalselrecs = document.getElementById('totalselrecs');
+	totalselrecs.innerHTML = total;	
+ }
+ //Unselect
+ else {
+ 	//Unmark (color) those viewed/shown
+ 	for (var i = from-1; i < end; i++) {
+	   var checkb = document.getElementById('check_'+i);
+	   if (checkb.checked) {
+		 checkb.checked=0;
+		 MarkRecord(i,'0'); //line color
+		}
+	}
+	//Exclude all the records from the sel_recs cookie 
+	SetCookie('sel_recs','');		
+	//And update selected records number
+	var totalselrecs = document.getElementById('totalselrecs');
+	totalselrecs.innerHTML = 0;	
+ }  	
+ return true;
 }
 
 //CookieExpirationDate
@@ -87,18 +175,19 @@ function getCookieExpirDate() {
 
 //SetCookie
 function SetCookie(cookie_name,cookie_value) {
-  cookie_text=cookie_value;
+  var cookie_text=cookie_value;
   var expiration = getCookieExpirDate();
   document.cookie = cookie_name + '=' + escape(cookie_text) + '; ' + 'expires='+expiration+'; ' ;
+  return true;
 }
 
-//GetCookie
+//GetCookie 
 function GetCookie(cookie_name) {
   if (document.cookie.length > 0) {
-    begin = document.cookie.indexOf(cookie_name+'=');
+    var begin = document.cookie.indexOf(cookie_name+'=');
     if (begin != -1) {
       begin += cookie_name.length+1;
-      end = document.cookie.indexOf(';', begin);
+      var end = document.cookie.indexOf(';', begin);
       if (end == -1) end = document.cookie.length;
       return unescape(document.cookie.substring(begin, end));
     }
@@ -106,4 +195,51 @@ function GetCookie(cookie_name) {
   return null;
 }
 
+//Browser Size //Review idem with scriptaculous
+function getBrowserWindowSize()
+{
+ var myWidth = 0, myHeight = 0;
+ if( typeof( window.innerWidth ) == 'number' )
+ {
+  //Non-IE
+  myWidth = window.innerWidth;
+  myHeight = window.innerHeight; 
+ }
+ else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) )
+ {
+  //IE 6+ in 'standards compliant mode'
+  myWidth = document.documentElement.clientWidth;
+  myHeight = document.documentElement.clientHeight;
+ }
+ else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) )
+ {
+  //IE 4 compatible
+  myWidth = document.body.clientWidth;
+  myHeight = document.body.clientHeight;
+ }
+
+ return {width:myWidth, height:myHeight};
+}
+
+function AdjustWidth(){
+ var browser = getBrowserWindowSize();
+ if (browser.width < 1274) {
+   $('nomenubar').setStyle({width: '64%'});
+   $('viewiconsspan').setStyle({ margin: '0 0 0 4px' });
+   $('pulsoboxspan').setStyle({ margin: '0 0 0 12px' });
+ }
+ if (browser.width < 1200) {
+ 	$('nomenubar').setStyle({width: '54%'})
+  	$('infobutton').hide();  
+	$('pulsoboxspan').setStyle({ margin: '0 0 0 2px' });
+	$('pulso_search').setStyle({ width: '120px', margin: '0 0 0 0px' });	
+ } 
+ if (browser.width < 950) {
+   $('userspan').hide();
+   $('nomenubar').setStyle({width: '80%'}); 
+   $('pulsoboxspan').setStyle({ margin: '0 0 0 15px' });
+   $('pulso_search').setStyle({ width: '100px' });
+   $('exttopbar').setStyle({ margin: '0 0 40px 0' });
+ }
+}
 </script>

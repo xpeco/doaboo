@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-package DB_UPDATE;
+package DBDOABOO;
 
 #use strict;
 use warnings;
@@ -20,10 +20,19 @@ sub get_id {
         unless (ref $dbh){ print "Error, should call rawget() with an object, not a class\n";};
 	my $item=shift;
 	my $format=shift;
-	my $query=$dbh->prepare("select id from doaboo_"."$format"." where name=\'$item->{NAME}\'");
-      	$query->execute;
-      	my @id_item=$query->fetchrow_array;
-	return $id_item[0];
+	my $topic=shift;
+	if (not defined $topic) {
+		my $query=$dbh->prepare("select id from doaboo_"."$format"." where name=\'$item->{NAME}\'");
+   	   	$query->execute;
+      		my @id_item=$query->fetchrow_array;
+		return $id_item[0];
+	}
+	else {
+		my $query=$dbh->prepare("select id from doaboo_"."$format"." where name=\'$item->{NAME}\' and topic=\'$topic\'");
+            $query->execute;
+            my @id_item=$query->fetchrow_array;
+      return $id_item[0];
+	}
 }
 
 sub record {
@@ -36,12 +45,38 @@ sub record {
 	my $action_id=shift;
 	my $string='';
 	$item->{DESC} = $item->{NAME} if not defined $item->{DESC};
-	if (defined $item->{DESC}) {
+	if ((defined $item->{DESC}) and ($format ne 'menus')){
 		my $code='';
 		$code=$item->{DESC};
 		$code=~s/\'/\\\'/g;
 		$string=" description=\"$code\"";
 	}
+   else {
+		my $topic=$dbh->prepare("select id from doaboo_topics where name=\'$item->{NAME}\'");
+      $topic->execute;
+      my @topic=$topic->fetchrow_array;
+      my $script=$dbh->prepare("select id from doaboo_scripts where name=\'$item->{NAME}\'");
+      $script->execute;
+      my @script=$script->fetchrow_array;
+      if (defined $topic[0]) {
+      	my $topic_desc=$dbh->prepare("select description from doaboo_topics where name=\'$item->{NAME}\'");
+      	$topic_desc->execute;
+      	my @topic_desc=$topic_desc->fetchrow_array;
+      	$string.=" type='TOPIC', topic=\'$topic[0]\', description=\'$topic_desc[0]\'";
+      }
+      elsif (defined $script[0]) {
+			my $script_desc=$dbh->prepare("select description from doaboo_scripts where name=\'$item->{NAME}\'");
+			$script_desc->execute;
+			my @script_desc=$script_desc->fetchrow_array;
+			$string.=" type='SCRIPT', topic=\'$script[0]\', description=\'$script_desc[0]\'";
+		}
+      elsif ((not defined $topic[0]) and (not defined $script[0]) and (not defined $item->{URL})){
+			$string.=" type='FOLDER'";
+		}
+      else {
+			$string.=" type='URL'";
+		}
+   } 
 	my @list=('NAME','HINT','TYPE','REQUIRED','RECALCULATE','KEY_CAPTION','LIST','SUBTYPE','PRIVATE','PARENT','URL');
 	foreach my $elem (@list){
 		my $table=lc($elem);
@@ -128,14 +163,6 @@ sub record {
 		       $string.=" ,attribute=\'$att[0]\', action=\'$action_id\'";
 	       }
        }
-       if ((defined $item->{TYPE}) and ($format eq 'menus') and ($item->{TYPE} eq 'TOPIC')) {
-	       my $topic=$dbh->prepare("select id from doaboo_topics where name=\'$item->{NAME}\'");
-               $topic->execute;
-               my @topic=$topic->fetchrow_array;
-	       if (defined $topic[0]) {
-		       $string.=", topic=\'$topic[0]\'";
-               }
-       }
        if (defined $item->{RELATION}) {
 	       my $relation=$dbh->prepare("select id from doaboo_topics where name=\'$item->{RELATION}\'");
 	       $relation->execute;
@@ -217,6 +244,7 @@ sub record {
        else {
 	       my $query=$dbh->prepare("insert into doaboo_"."$format"." set "."$string")->execute;
        }
+		 
 }
 
 sub _init {
