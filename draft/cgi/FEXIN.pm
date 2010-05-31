@@ -12,11 +12,11 @@ sub EXGet_Instance_List
 	my $where='where ';
 	foreach my $range(keys %$ranges)
 	{
-		if($ranges->{$range}=~/\.\*/)
+		if($ranges->{$range}=~/\.\*/) # .* by like
 		{
 			$where.=" $range like \'%\' and";
 		}
-		elsif($ranges->{$range}=~/\(.*\)/)
+		elsif($ranges->{$range}=~/\(.*\)/) # (a,b) by ('a','b')
 		{
 			if($ranges->{$range} ne '()')
 			{
@@ -28,6 +28,17 @@ sub EXGet_Instance_List
 				$where.=" $range in () and";
 			}
 		}
+		elsif($ranges->{$range}=~/^\!.*/) # ! by not in
+		{
+			$ranges->{$range}=~s/^\!//;
+			$where.=" $range not in (\'$ranges->{$range}\') and";
+		}
+		elsif($ranges->{$range}=~/^\(\!.*\)/) #(!aa) by not in ()
+		{
+			$ranges->{$range}=~s/^\(\!/\(/;
+			$where.=" $range not in \'$ranges->{$range}\' and";
+		}
+
 		else
 		{
 			$where.=" $range = \'$ranges->{$range}\' and";
@@ -70,7 +81,7 @@ sub EXGet_Instance_List
 
 sub EXGet_Instance
 {
-	my ($table, $ranges, $orders, $speed) = @_;
+	my ($table, $ranges, $orders, $speed, $limit) = @_;
    my $dbh=DBCONN->new(); # connect
 
 	my $where='where ';
@@ -92,6 +103,17 @@ sub EXGet_Instance
 				$where.=" $range in () and";
 			}
 		}
+		elsif($ranges->{$range}=~/^\!.*/)
+		{
+			$ranges->{$range}=~s/^\!//;
+			$where.=" $range not in (\'$ranges->{$range}\') and";
+		}
+		elsif($ranges->{$range}=~/^\(\!.*\)/)
+		{
+			$ranges->{$range}=~s/^\(\!/\(/;
+			$where.=" $range not in \'$ranges->{$range}\' and";
+		}
+
 		else
 		{
 			$where.=" $range = \'$ranges->{$range}\' and";
@@ -101,9 +123,9 @@ sub EXGet_Instance
 	my $order='order by ';
 	foreach my $ord(keys %$orders)
 	{
-		$order.=" $ord $orders->{$ord} and";
+		$order.=" $ord $orders->{$ord}, ";
 	}
-	$order=~s/ and\Z//;
+	$order=~s/, \Z//;
 	my $query='';
 	if ($where!~/where \Z/)
 	{
@@ -117,16 +139,24 @@ sub EXGet_Instance
 	{
 		$query.=" $order";
 	}
+
+	if($limit ne '')
+	{
+		$query.=" limit $limit";
+	}
+
+
+#print "Query: $query\n";
 	my $data= $dbh->DBCONN::rawget($query);
 	# Add evaluates
-	my $fields=$dbh->DBCONN::rawget("select name,calculated_logic from doaboo_attributes where topic in \(select id from doaboo_topics where name=\'$table\'\) and type='CALCULATED'");
-	foreach my $d(@$data)
-	{
-		foreach my $field(@$fields)
-		{
-			$d->{$field->{name}}=eval $field->{calculated_logic};
-		}
-	}
+#	my $fields=$dbh->DBCONN::rawget("select name,calculated_logic from doaboo_attributes where topic in \(select id from doaboo_topics where name=\'$table\'\) and type='CALCULATED'");
+#	foreach my $d(@$data)
+#	{
+#		foreach my $field(@$fields)
+#		{
+#			$d->{$field->{name}}=eval $field->{calculated_logic};
+#		}
+#	}
 	return $data;
 }
 
@@ -146,6 +176,17 @@ sub EXGet_Range_List
 		{
 			$where.=" $range in \'$ranges->{$range}\' and";
 		}
+		elsif($ranges->{$range}=~/^\!.*/)
+		{
+			$ranges->{$range}=~s/^\!//;
+			$where.=" $range not in (\'$ranges->{$range}\') and";
+		}
+		elsif($ranges->{$range}=~/^\(\!.*\)/)
+		{
+			$ranges->{$range}=~s/^\(\!/\(/;
+			$where.=" $range not in \'$ranges->{$range}\' and";
+		}
+
 		else
 		{
 			$where.=" $range = \'$ranges->{$range}\' and";

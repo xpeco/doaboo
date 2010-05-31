@@ -92,6 +92,7 @@ print "########################\n";
 	my $select_topics=$topic;
 	my $select_fields='';
 	my $select_where='';
+	my $select_order='';
 
 # compose where adding more tables
 
@@ -112,6 +113,10 @@ print "########################\n";
 					#$select_where.="$topicname->[0]->{name}.$f->{name} in (\'$f->{expression}\') and";
 					$select_where.="`$f->{name}` in (\'$f->{expression}\') and";
 				}
+				if ($f->{order} ne '')
+				{
+					$select_order.="`$f->{name}` $f->{order}, ";
+				}
 			}
 			else
 			{
@@ -129,7 +134,32 @@ print "########################\n";
 					{
 						$select_where.="`$f->{name}` in (\'$f->{expression}\') and";
 					}
+				}
+				if ($f->{range} eq 'CODE')
+				{
+					$f->{expression}="use FEXIN;use DATETIME;my \$actual_user='$self->{login}';".$f->{expression};
+					$f->{expression}=~s/EXGet/FEXIN::EXGet/g;
+					$f->{expression}=~s/EXDate/DATETIME::EXDate/g;
 
+
+					my $eval=eval $f->{expression};
+
+#		print "-------------\n";
+#		print "$f->{expression}\n";
+#		print "-------------\n";
+#		print "-------------\n";
+#		print "$eval\n";
+#		print "-------------\n";
+
+					#FIX ,)  by ,'')
+					$eval=~s/\,\)/\,\'\')/;
+					#	
+					$select_where.="`$f->{name}` in $eval and";
+				}
+
+				if ($f->{order} ne '')
+				{
+					$select_order.="`$f->{name}` $f->{order}, ";
 				}
 			}
 		}
@@ -137,6 +167,8 @@ print "########################\n";
 
 	$select_where=~s/and\Z//;
 	$select_fields=~s/\, \Z//;
+	$select_order=~s/\, \Z//;
+
 #	foreach my $t(@topics)
 #	{
 #		$select_topics.=$t.',';
@@ -163,12 +195,12 @@ print "########################\n";
 		$eval=~s/\)/\'\)/;
 		$eval=~s/\,/\'\,\'/g;
 
-		print "-------------\n";
-		print "$r->{ADM_RESTRICTION_CODE}\n";
-		print "-------------\n";
-		print "-------------\n";
-		print "$eval\n";
-		print "-------------\n";
+#		print "-------------\n";
+#		print "$r->{ADM_RESTRICTION_CODE}\n";
+#		print "-------------\n";
+#		print "-------------\n";
+#		print "$eval\n";
+#		print "-------------\n";
 
 		$select_where.="and $r->{ADM_RESTRICTION_DETAIL} in $eval";
 
@@ -176,6 +208,10 @@ print "########################\n";
 	$select_where=~s/^and //;
 
 	my $query="select $select_fields from $select_topics where $select_where";
+	if ($select_order ne '')
+	{
+		$query.=" order by $select_order";
+	}
 	return $query;
 }
 
