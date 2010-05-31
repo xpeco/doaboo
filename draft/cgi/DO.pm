@@ -83,9 +83,9 @@ sub getrecords{
 
 
 	my $fields=$self->{db}->DBCONN::rawget($qq);
-print "########################\n";
-print "$qq\n";
-print "########################\n";
+#print "########################\n";
+#print "$qq\n";
+#print "########################\n";
 
 	my @topics;
 #	push(@topics,$topic);
@@ -211,6 +211,11 @@ print "########################\n";
 	if ($select_order ne '')
 	{
 		$query.=" order by $select_order";
+	}
+	
+	if(defined $limit)
+	{
+		$query.=" limit $limit";
 	}
 	return $query;
 }

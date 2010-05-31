@@ -205,5 +205,4 @@ sub EXGet_Range_List
 	return $dbh->DBCONN::rawget($query,'ARRAY');
 }
 $ENV{DOABOOPATH}='/home/peco/doaboo/draft';
-print "Using FEXIN\n";
 1;
