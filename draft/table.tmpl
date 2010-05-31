@@ -5,7 +5,7 @@
    <title>DOABOO TABLE</title>
    <link rel="stylesheet" href="/doaboo/doaboo.css" media="screen" type="text/css">
    <TMPL_INCLUDE NAME="doaboo.js">
-   <!--Menubar-->
+   <!--Menubar and Appear/Hide effects-->
    <link rel="stylesheet" href="/doaboo/menubar/menu.css" media="screen" type="text/css" />
    <script src="/doaboo/menubar/prototype.js" type="text/javascript"></script>
    <script src="/doaboo/menubar/scriptaculous.js" type="text/javascript"></script>
@@ -52,7 +52,8 @@
 </head>
 
 
-<body onload="javascript:AplicarCebra('DataTable');">
+<!--<body onload="javascript:AplicarCebra('DataTable');">-->
+<body>
 
 <div class="ext font">
 
@@ -64,8 +65,9 @@
 		
 <div id="tablediv" class="tablediv">
 <form name="tableform" action="/doaboo-cgi/db.pl" method="post">
-<center><table id="DataTable" class="data font">
-
+<center>
+	
+ <table id="DataTable" class="data font sortable">
  <!--Header line - Campos Loop-->
  <tr class="headerline">
    <!-- Control cells -->
@@ -81,10 +83,18 @@
         <img src="/doaboo/images/gotoinit.png" onclick="javascript:document.getElementById('init').value='0';document.getElementById('end').value='';document.tableform.submit();">	
 	 </TMPL_IF>
    </td>	
-   <td class="control">Icon</td>
+   <td class="control">
+   	 <img src="/doaboo/images/editoron.png" id="editoronicon" onclick="javascript:$('editorline').style.display='inherit';this.style.display='none';return false;">	 
+   </td>
    <!-- Column Names Loop -->
    <TMPL_LOOP NAME="Campos">
-    <td><TMPL_VAR NAME="Nombre"></td>
+	     <td id="dhtmlgoodies_control" onDblClick="slidedown_showHide('box<TMPL_VAR __COUNTER__>');return false;">
+			<span id="izq"><TMPL_VAR NAME="Nombre"></span> <!-- CDA: will be DESC -->
+			<span id="der">|</span>
+			<div class="dhtmlgoodies_contentBox"  id='box<TMPL_VAR __COUNTER__>'>
+				<div class="dhtmlgoodies_content" id='subBox<TMPL_VAR __COUNTER__>'> HintTmplVAr </div> <!-- CDA will be HINT -->
+			</div> 
+         </td>
    </TMPL_LOOP>
  </tr> 
  
@@ -111,7 +121,7 @@
         <img src="/doaboo/images/details2.png" onclick="javascript:">
 	 </td>
      <td class="control">
-     	<img src="/doaboo/images/delete.png" onclick="javascript:$('tr_'+<TMPL_VAR NAME="Initrecord">).hide();">
+     	<img src="/doaboo/images/delete.png" onclick="javascript:$('tr_'+<TMPL_VAR NAME="Initrecord">).hide();">!!
 	 </td>
 
  <!-- Records Loop - Cell by Cell -->
@@ -141,7 +151,7 @@
             <img src="/doaboo/images/details2.png" onclick="javascript:">
 	     </td>
          <td class="control">
-           <img src="/doaboo/images/delete.png" onclick="javascript:$('tr_'+<TMPL_VAR NAME="Index">).hide();">
+           <img src="/doaboo/images/delete.png" onclick="javascript:$('tr_'+<TMPL_VAR NAME="Index">).hide();">!!
 	     </td>
 	    <!-- /Control Cells -->
 		<TMPL_ELSE>
@@ -154,7 +164,7 @@
  </TMPL_LOOP> <!-- /End of Records Loop -->
   
  <!-- Last Line-->
- <tr class="headerline">
+ <tr class="headerline sortbottom">
  	<input type="hidden" name="init" id="init" value="<TMPL_VAR NAME="Index">">
   	<td class="control">
       <img src="/doaboo/images/unmarkall.png"  onclick="javascript:SelectAllViewed('<TMPL_VAR name="Showfrom">','<TMPL_VAR name="Endrecord">','0'); ">				     
@@ -171,8 +181,30 @@
      <td><input type="text" value="<TMPL_VAR NAME="Nombre">"></td>
    	 </TMPL_LOOP>
    </tr>
-   
-</table></center></form>
+ 
+</table>
+
+  <!-- Editor mode line -->
+  <div id="editorline" style="display:none";">
+  <table class="data font">
+  <tr class="headerline">
+   <td class="control">
+    &nbsp;
+   </td>
+   <td class="control">
+   	&nbsp;
+   </td>
+   <td class="control">
+   	 <img src="/doaboo/images/editoroff.png"  onclick="javascript:$('editorline').style.display='none';$('editoronicon').style.display='inherit';return false;">
+   </td>  
+   <TMPL_LOOP NAME="Campos">
+   	 <input type="hidden" name="edi_<TMPL_VAR NAME="Nombre">">
+     <td>Edi-Icons</td>
+   </TMPL_LOOP>
+  </tr>
+  </table>
+  </div>
+</center></form>
 
 <div>
 	  Showing results <TMPL_VAR name="Showfrom">-<TMPL_VAR name="Endrecord"> 
@@ -183,5 +215,13 @@
 </div>	
 	
 </div> <!--ext-->
+
+<!-- Pintax -->
+<script type="text/javascript"> 
+addEvent(window, "load", sortables_init);
+addEvent(window, "load", AplicarCebra); 
+installTable("DataTable");
+</script> 
+
 </body>
 </html>
