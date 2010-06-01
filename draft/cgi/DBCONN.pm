@@ -51,8 +51,10 @@ sub rawget
 		$list=~s/\,\Z//;
 		return $list;
 	}
-
-	else {return $do->fetchall_arrayref({});}
+	else {
+		my $return=$do->fetchall_arrayref({});
+		return $return;
+		}
 }
 
 sub user {

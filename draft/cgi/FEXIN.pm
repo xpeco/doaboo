@@ -12,6 +12,49 @@ sub EXGet_Instance_List
 	my $where='where ';
 	foreach my $range(keys %$ranges)
 	{
+		if($ranges->{$range}=~/\[.*\]/) 
+		{
+			my $first=$ranges->{$range};
+			$first=~s/\!|\[|\,.*//g;
+			my $second=$ranges->{$range};
+			$second=~s/\!|\[.*\,|\]//g;
+			if($ranges->{$range}=~/\!.*/)
+			{
+				$where.="`$range` <= \'$first\' and `$range` >= \'$second\' and ";
+   		}
+			else
+			{
+				$where.="`$range` >= \'$first\' and `$range` <= \'$second\' and ";
+			}
+		}
+		else
+		{
+			$ranges->{$range}=~s/\,/\|/g;
+			$where.=" $range regexp \'$ranges->{$range}\' and ";
+		}
+	}
+	$where=~s/ and \Z//;
+	my $query='';
+	if ($where!~/where \Z/)
+	{
+		$query="select * from $table $where";
+	}
+	else
+	{
+		$query="select * from $table";
+	}
+	my $data=$dbh->DBCONN::rawget($query);
+	return $data;
+}
+
+sub EXGet_Instance_List1
+{
+	my ($table, $ranges, $speed) = @_;
+   my $dbh=DBCONN->new(); # connect
+
+	my $where='where ';
+	foreach my $range(keys %$ranges)
+	{
 		if($ranges->{$range}=~/\.\*/) # .* by like
 		{
 			$where.=" $range like \'%\' and";
@@ -79,7 +122,7 @@ sub EXGet_Instance_List
 	return $data;
 }
 
-sub EXGet_Instance
+sub EXGet_Instance1
 {
 	my ($table, $ranges, $orders, $speed, $limit) = @_;
    my $dbh=DBCONN->new(); # connect
@@ -160,7 +203,66 @@ sub EXGet_Instance
 	return $data;
 }
 
-sub EXGet_Range_List
+sub EXGet_Instance
+{
+	my ($table, $ranges, $orders, $speed, $limit) = @_;
+   my $dbh=DBCONN->new(); # connect
+
+	my $where='where ';
+	foreach my $range(keys %$ranges)
+	{
+		if($ranges->{$range}=~/\[.*\]/) 
+		{
+			my $first=$ranges->{$range};
+			$first=~s/\!|\[|\,.*//g;
+			my $second=$ranges->{$range};
+			$second=~s/\!|\[.*\,|\]//g;
+			if($ranges->{$range}=~/\!.*/)
+			{
+				$where.="`$range` <= \'$first\' and `$range` >= \'$second\' and ";
+   		}
+			else
+			{
+				$where.="`$range` >= \'$first\' and `$range` <= \'$second\' and ";
+			}
+		}
+		else
+		{
+			$ranges->{$range}=~s/\,/\|/g;
+			$where.=" $range regexp \'$ranges->{$range}\' and ";
+		}
+	}
+	$where=~s/ and \Z//;
+	my $order='order by ';
+	foreach my $ord(keys %$orders)
+	{
+		$order.=" $ord $orders->{$ord}, ";
+	}
+	$order=~s/, \Z//;
+	my $query='';
+	if ($where!~/where \Z/)
+	{
+		$query="select * from $table $where";
+	}
+	else
+	{
+		$query="select * from $table";
+	}
+	if ($order!~/order by \Z/)
+	{
+		$query.=" $order";
+	}
+
+	if($limit ne '')
+	{
+		$query.=" limit $limit";
+	}
+
+	my $data= $dbh->DBCONN::rawget($query);
+	return $data;
+}
+
+sub EXGet_Range_List1
 {
 	my ($table, $ranges, $orders, $speed) = @_;
    my $dbh=DBCONN->new(); # connect
@@ -186,13 +288,54 @@ sub EXGet_Range_List
 			$ranges->{$range}=~s/^\(\!/\(/;
 			$where.=" $range not in \'$ranges->{$range}\' and";
 		}
-
 		else
 		{
 			$where.=" $range = \'$ranges->{$range}\' and";
 		}
 	}
 	$where=~s/ and\Z//;
+	my $query='';
+	if ($where!~/where \Z/)
+	{
+		$query="select * from $table $where";
+	}
+	else
+	{
+		$query="select * from $table";
+	}
+	return $dbh->DBCONN::rawget($query,'ARRAY');
+}
+
+sub EXGet_Range_List
+{
+	my ($table, $ranges, $orders, $speed) = @_;
+   my $dbh=DBCONN->new(); # connect
+
+	my $where='where ';
+	foreach my $range(keys %$ranges)
+	{
+		if($ranges->{$range}=~/\[.*\]/) 
+		{
+			my $first=$ranges->{$range};
+			$first=~s/\!|\[|\,.*//g;
+			my $second=$ranges->{$range};
+			$second=~s/\!|\[.*\,|\]//g;
+			if($ranges->{$range}=~/\!.*/)
+			{
+				$where.="`$range` <= \'$first\' and `$range` >= \'$second\' and ";
+   		}
+			else
+			{
+				$where.="`$range` >= \'$first\' and `$range` <= \'$second\' and ";
+			}
+		}
+		else
+		{
+			$ranges->{$range}=~s/\,/\|/g;
+			$where.=" $range regexp \'$ranges->{$range}\' and ";
+		}
+	}
+	$where=~s/ and \Z//;
 	my $query='';
 	if ($where!~/where \Z/)
 	{
