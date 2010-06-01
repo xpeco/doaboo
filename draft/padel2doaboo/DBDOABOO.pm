@@ -7,13 +7,46 @@ use warnings;
 use DBI;
 
 
-sub new{
+sub new {
         my $class=shift;
         my $self={@_};
         bless($self, $class);
         my $dbh=$self->_init;
         return $dbh;
 }
+
+sub _normalize {
+				my $dbh=shift;
+				my $code=shift;
+				$code=~s/\\/\\\\/g;
+				$code=~s/\'/\\\'/g;
+				$code=~s/\"/\\\"/g;
+				$code=~s/\./\\\./g;
+				$code=~s/\*/\\\*/g;
+            my @code = split(/;/, $code);
+            foreach $code(@code) {
+					$code=~s/\n/ /g;
+               $code=~s/^\s+//;
+               $code=~s/\s+$//;
+            }
+            $code = join("; ", @code);
+            @code = split(/{/, $code);
+            foreach $code(@code) {
+               $code=~s/\n/ /g;
+               $code=~s/^\s+//;
+               $code=~s/\s+$//;
+            }
+            $code = join("\{ ", @code);
+            @code = split(/}/, $code);
+            foreach $code(@code) {
+               $code=~s/\n/ /g;
+               $code=~s/^\s+//;
+               $code=~s/\s+$//;
+            }
+            $code = join("\} ", @code);
+				return $code;
+				}
+					
 
 sub get_id {
 	my $dbh=shift;
@@ -77,7 +110,7 @@ sub record {
 			$string.=" type='URL'";
 		}
    } 
-	my @list=('NAME','HINT','TYPE','REQUIRED','RECALCULATE','KEY_CAPTION','LIST','SUBTYPE','PRIVATE','PARENT','URL');
+	my @list=('NAME','HINT','TYPE','RECALCULATE','KEY_CAPTION','LIST','SUBTYPE','PRIVATE','PARENT','URL');
 	foreach my $elem (@list){
 		my $table=lc($elem);
 		if (defined $item->{$elem}) {
@@ -87,70 +120,21 @@ sub record {
 	if (defined $item->{KEY}) {
 		$string.=", clave=\'$item->{KEY}\'";
 	}
-	@list=('RANGE','HIDE','CAPTION');
+	@list=('RANGE','HIDE','CAPTION','REQUIRED');
 	foreach my $elem(@list){
                $table=lc($elem);
                if (defined $item->{$elem}->{BLOCK}[0]) {
 		       my $code='';
 		       $code= $item->{$elem}->{BLOCK}[0];
-		       $code=~s/\'/\\\'/g;
-		       $code=~s/\"/\\\"/g;
-		       $code=~s/\./\\\./g;
-		       $code=~s/\*/\\\*/g;
-		       my @code = split(/;/, $code);
-		       foreach $code(@code) {
-			       $code=~s/\n/ /g;
-			       $code=~s/^\s+//;
-			       $code=~s/\s+$//;
-		       }
-		       $code = join("; ", @code);
-		       @code = split(/{/, $code);
-		       foreach $code(@code) {
-		 	       $code=~s/\n/ /g;
-			       $code=~s/^\s+//;
-			       $code=~s/\s+$//;
-		       }
-		       $code = join("\{ ", @code);
-		       @code = split(/}/, $code);
-		       foreach $code(@code) {
-			       $code=~s/\n/ /g;
-			       $code=~s/^\s+//;
-			       $code=~s/\s+$//;
-		       }
-		       $code = join("\} ", @code);
+				 $code=$dbh->DBDOABOO::_normalize($code);
 		       $string.=" ,$table='Y', $table"."_logic=\"$code\"";
-               }
+             }
        }
        if (defined $item->{VALUE}->{BLOCK}[0]) {
 	       $code='';
 	       $code= $item->{VALUE}->{BLOCK}[0];
-	       $code=~s/\\/\\\\/g;
-               $code=~s/\'/\\\'/g;
-               $code=~s/\"/\\\"/g;
-               $code=~s/\./\\\./g;
-               $code=~s/\*/\\\*/g;
-	       my @code = split(/;/, $code);
-	       foreach $code(@code) {
-		 $code=~s/\n/ /g;
-		 $code=~s/^\s+//;
-		 $code=~s/\s+$//;
-	       }
-	       $code = join("; ", @code);
-	       @code = split(/{/, $code);
-	       foreach $code(@code) {
-		 $code=~s/\n/ /g;
-	         $code=~s/^\s+//;
-	         $code=~s/\s+$//;
-	       }
-	       $code = join("\{ ", @code);
-	       @code = split(/}/, $code);
-	       foreach $code(@code) {
-	         $code=~s/\n/ /g;
-	         $code=~s/^\s+//;
-		 $code=~s/\s+$//;
-	       }
-	       $code = join("\} ", @code);
-               $string.=" ,calculated_logic=\"$code\"";
+			 $code=$dbh->DBDOABOO::_normalize($code);
+          $string.=" ,calculated_logic=\"$code\"";
        }
        if ((defined $topic_id) and (($format eq 'attributes') or ($format eq 'actions'))) {
 	       $string.=" ,topic=\'$topic_id\'";
@@ -178,65 +162,15 @@ sub record {
 	       if (defined $item->{$elem}->{BLOCK}[0]) {
 		       my $code='';
 		       $code= $item->{$elem}->{BLOCK}[0];
-		       $code=~s/\\/\\\\/g;
-		       $code=~s/\'/\\\'/g;
-		       $code=~s/\"/\\\"/g;
-		       $code=~s/\./\\\./g;
-		       $code=~s/\*/\\\*/g;
-		       my @code = split(/;/, $code);
-		       foreach $code(@code) {
-		           $code=~s/\n/ /g;
-		           $code=~s/^\s+//;
-		           $code=~s/\s+$//;
-	               }
-	               $code = join("; ", @code);
-	               @code = split(/{/, $code);
-	               foreach $code(@code) {
-		           $code=~s/\n/ /g;
-	                   $code=~s/^\s+//;
-	                   $code=~s/\s+$//;
-	               }
-	               $code = join("\{ ", @code);
-	               @code = split(/}/, $code);
-	               foreach $code(@code) {
-	                   $code=~s/\n/ /g;
-	                   $code=~s/^\s+//;
-		           $code=~s/\s+$//;
-	               }
-	               $code = join("\} ", @code);
-		       $string.=" , step"."$i"."=\"$code\"";
+		       $code=$dbh->DBDOABOO::_normalize($code);
+				 $string.=" , step"."$i"."=\"$code\"";
 	       }
        }
        if (defined $item->{BLOCK}[0]) {
 	       my $code='';
 	       $code= $item->{BLOCK}[0];
-	       $code=~s/\\/\\\\/g;
-	       $code=~s/\'/\\\'/g;
-	       $code=~s/\"/\\\"/g;
-	       $code=~s/\./\\\./g;
-	       $code=~s/\*/\\\*/g;
-	       my @code = split(/;/, $code);
-	       foreach $code(@code) {
-		 $code=~s/\n/ /g;
-		 $code=~s/^\s+//;
-		 $code=~s/\s+$//;
-	       }
-	       $code = join("; ", @code);
-	       @code = split(/{/, $code);
-	       foreach $code(@code) {
-		 $code=~s/\n/ /g;
-	         $code=~s/^\s+//;
-	         $code=~s/\s+$//;
-	       }
-	       $code = join("\{ ", @code);
-	       @code = split(/}/, $code);
-	       foreach $code(@code) {
-	         $code=~s/\n/ /g;
-	         $code=~s/^\s+//;
-		 $code=~s/\s+$//;
-	       }
-	       $code = join("\} ", @code);
-	       $string.=" , logic=\"$code\"";
+	       $code=$dbh->DBDOABOO::_normalize($code);
+			 $string.=" , logic=\"$code\"";
        }
        if (defined $id) {
 	       my $query=$dbh->prepare("update doaboo_"."$format"." set "."$string"." where id=\'$id\'")->execute;

@@ -22,6 +22,21 @@ sub query{
 	#print "At q, user: $self->{login} -- here we should check permissions\n";
 	# $query->_cleanquery;
 	my $result=$self->{db}->DBCONN::rawget($query,$format);
+	$result="Error in query: $DBI::errstr" if $DBI::err;
+	return $result;
+}
+
+sub gettopics{
+	my $self=shift;
+	my $result;
+	if($self->{factions} eq 'ALLOWANCE')
+	{
+		$result=$self->{db}->DBCONN::rawget("select * from doaboo_topics where name not in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'OBJECT\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+	}
+	else
+	{
+		$result=$self->{db}->DBCONN::rawget("select * from doaboo_topics where name in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'OBJECT\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+	}
 	return $result;
 }
 
@@ -111,7 +126,10 @@ sub getrecords{
 				if ($f->{range} eq 'EXPRESSION')
 				{
 					#$select_where.="$topicname->[0]->{name}.$f->{name} in (\'$f->{expression}\') and";
-					$select_where.="`$f->{name}` in (\'$f->{expression}\') and";
+#					$select_where.="`$f->{name}` in (\'$f->{expression}\') and";
+
+					$f->{expression}=~s/\,/\|/g;
+					$select_where.="`$f->{name}` regexp \'$f->{expression}\' and";
 				}
 				if ($f->{order} ne '')
 				{
@@ -124,15 +142,25 @@ sub getrecords{
 				$select_fields.="`$f->{name}`, ";
 				if ($f->{range} eq 'EXPRESSION')
 				{
-					#$select_where.="$topic.$f->{name} in (\'$f->{expression}\') and";
-					if($f->{expression}=~/^!.*/)
+					if($f->{expression}=~/\[.*\]/) #[2010-05-01,2010]
 					{
-						$f->{expression}=~s/^!//;
-						$select_where.="`$f->{name}` not in (\'$f->{expression}\') and";
+						my $first=$f->{expression};
+						$first=~s/\!|\[|\,.*//g;
+						my $second=$f->{expression};
+						$second=~s/\!|\[.*\,|\]//g;
+						if($f->{expression}=~/\!.*/)
+						{
+							$select_where.="`$f->{name}` <= \'$first\' and `$f->{name}` >= \'$second\' and ";
+   					}
+						else
+						{
+							$select_where="`$f->{name}` >= \'$first\' and `$f->{name}` <= \'$second\' and ";
+						}
 					}
 					else
 					{
-						$select_where.="`$f->{name}` in (\'$f->{expression}\') and";
+						$f->{expression}=~s/\,/\|/g;
+						$select_where.="`$f->{name}` REGEXP \'$f->{expression}\' and ";
 					}
 				}
 				if ($f->{range} eq 'CODE')
@@ -143,7 +171,6 @@ sub getrecords{
 
 
 					my $eval=eval $f->{expression};
-
 #		print "-------------\n";
 #		print "$f->{expression}\n";
 #		print "-------------\n";
@@ -152,11 +179,36 @@ sub getrecords{
 #		print "-------------\n";
 
 					#FIX ,)  by ,'')
-					$eval=~s/\,\)/\,\'\')/;
-					#	
-					$select_where.="`$f->{name}` in $eval and";
-				}
+					#$eval=~s/\,\)/\,\' \')/;
+					#FIX (,) by ( )
+					$eval=~s/\(\,\)/\( \)/;
+					#
+					if($eval=~/\[.*\]/) #[2010-05-01,2010]
+					{
+						my $first=$eval;
+						$first=~s/\!|\[|\,.*//g;
+						my $second=$eval;
+						$second=~s/\!|\[.*\,|\]//g;
+						if($eval=~/\!.*/)
+						{
+							$select_where.="`$f->{name}` <= \'$first\' and `$f->{name}` >= \'$second\' and ";
+   					}
+						else
+						{
+							$select_where="`$f->{name}` >= \'$first\' and `$f->{name}` <= \'$second\' and ";
+						}
+					}
+#					if($eval=~/\[.*\]/) #[2010-05-01,2010]
+#					{
+#					}
+					else
+					{
+#						$select_where.="`$f->{name}` in $eval and";
+						$eval=~s/\,/\|/g;
+						$select_where.="`$f->{name}` REGEXP \'$eval\' and ";
 
+					}
+				}
 				if ($f->{order} ne '')
 				{
 					$select_order.="`$f->{name}` $f->{order}, ";
@@ -165,7 +217,7 @@ sub getrecords{
 		}
 	}
 
-	$select_where=~s/and\Z//;
+	$select_where=~s/and \Z//;
 	$select_fields=~s/\, \Z//;
 	$select_order=~s/\, \Z//;
 
@@ -190,10 +242,11 @@ sub getrecords{
 		$r->{ADM_RESTRICTION_CODE}=~s/EXGet/FEXIN::EXGet/g;
 
 		my $eval=eval $r->{ADM_RESTRICTION_CODE};
+
 		# Rebuild (A) by ('A') to be SQL compatible
-		$eval=~s/\(/\(\'/;
-		$eval=~s/\)/\'\)/;
-		$eval=~s/\,/\'\,\'/g;
+#		$eval=~s/\(/\(\'/;
+#		$eval=~s/\)/\'\)/;
+#		$eval=~s/\,/\'\,\'/g;
 
 #		print "-------------\n";
 #		print "$r->{ADM_RESTRICTION_CODE}\n";
@@ -202,12 +255,17 @@ sub getrecords{
 #		print "$eval\n";
 #		print "-------------\n";
 
-		$select_where.="and $r->{ADM_RESTRICTION_DETAIL} in $eval";
+#		$select_where.="and $r->{ADM_RESTRICTION_DETAIL} in $eval";
+		$eval=~s/\,/\|/g;
+		$select_where.="and $r->{ADM_RESTRICTION_DETAIL} regexp \'$eval\'";
 
 	}
 	$select_where=~s/^and //;
+   $select_where='where '.$select_where if ($select_where ne '');
 
-	my $query="select $select_fields from $select_topics where $select_where";
+#	my $query="select $select_fields from $select_topics where $select_where";
+	my $query="select $select_fields from $select_topics $select_where";
+
 	if ($select_order ne '')
 	{
 		$query.=" order by $select_order";
@@ -292,6 +350,7 @@ sub _inituser{
 sub logout{
 	my $self=shift;
 	# remove the hash?
+	# disconnect DB?
 	undef $self;
 }
 1;

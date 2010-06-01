@@ -20,9 +20,8 @@ sub EXDate_Nice
 # It returns a variable with today's date with format YYYY-MM-DD
 sub EXDate_Today
 {
- my $date=&UnixDate("today","%Y-%m-%d");
- return $date;
-};
+ return Date::Manip::UnixDate("today","%Y-%m-%d");
+}
 
 
 # Date year (YYYY)
@@ -32,9 +31,8 @@ sub EXDate_Today
 sub EXDate_Year
 {
  if ($_[0] eq '') {$_[0]="today"};
- my $date=&UnixDate($_[0],"%Y");
- return $date;
-};
+ return Date::Manip::UnixDate($_[0],"%Y");
+}
 
 
 # Date month (MM)
@@ -44,8 +42,7 @@ sub EXDate_Year
 sub EXDate_Month
 {
  if ($_[0] eq '') {$_[0]="today";}
- my $date=&UnixDate($_[0],"%m");
- return $date;
+ return Date::Manip::UnixDate($_[0],"%m");
 }
 
 # Date month string (MM)
@@ -56,7 +53,7 @@ sub EXDate_MonthString
  my $date='Unknown';
  if ($_[0] ne '')
  {
-	 $date=&UnixDate($_[0],"%m");
+	 $date=Date::Manip::UnixDate($_[0],"%m");
 	 $date = Date::Calc::Month_to_Text($date);
  }
  return $date;
@@ -88,7 +85,7 @@ sub EXDate_MonthNumber
 sub EXDate_Day
 {
  if ($_[0] eq '') {$_[0]="today"};
- my $date=&UnixDate($_[0],"%d");
+ my $date=Date::Manip::UnixDate($_[0],"%d");
  return $date;
 };
 
@@ -98,7 +95,7 @@ sub EXDate_Day
 # as indicated in the call to the function (OPTIONS:"d","m","Y","%Y-%m-%d")
 sub EXDate_Present
 {
- my $date=&UnixDate("today","%@_");
+ my $date=Date::Manip::UnixDate("today","%@_");
  return $date;
 };
 
@@ -130,7 +127,7 @@ sub EXDate_Compare
 ## not logical to call it from PUMA with 2 dates, because it's not logical to add 2 dates. For ## the time_add function is different, and Delta_Transfrom function is necessary (see below).
 sub EXDate_Add
 {
- my $date=Date::Manip::UnixDate(Date::Manip::DateCalc($_[0],$_[1]) , "%Y-%m-%d" );
+ my $date=Date::Manip::UnixDate(Date::Manip::DateCalc($_[0],$_[1]),"%Y-%m-%d");
  return $date;
 };
 
@@ -284,9 +281,8 @@ sub EXDate_WOY
 sub EXDate_DOW_Number
 {
 	if ($_[0] eq '') {$_[0]="today"};
-	my $date=&UnixDate( $_[0],"%w");
-	return $date;
-};
+	return Date::Manip::UnixDate( $_[0],"%w");
+}
 
 
 # Returns the date of the last Sunday of a given date
@@ -356,9 +352,8 @@ sub EXTimestampC
 # It returns a variable with present time with format HH:MN:SS
 sub EXTime_Present
 {
- my $time=&UnixDate("now","%H:%M:%S");
- return $time;
-};
+	return Date::Manip::UnixDate("now","%H:%M:%S");
+}
 
 
 # Time hour: HH=00-23
@@ -368,9 +363,8 @@ sub EXTime_Present
 sub EXTime_Hour
 {
  if ($_[0] eq '') {$_[0]="today"};
- my $time=&UnixDate($_[0],"%H");
- return $time;
-};
+ return Date::Manip::UnixDate($_[0],"%H");
+}
 
 # Time minutes: MN=00-59
 # It returns minutes with format MN
@@ -379,9 +373,8 @@ sub EXTime_Hour
 sub EXTime_Minutes
 {
  if ($_[0] eq '') {$_[0]="today"};
- my $time=&UnixDate($_[0],"%M");
- return $time;
-};
+ return Date::Manip::UnixDate($_[0],"%M");
+}
 
 
 #Time seconds: SS=00-59
@@ -391,9 +384,8 @@ sub EXTime_Minutes
 sub EXTime_Seconds
 {
  if ($_[0] eq '') {$_[0]="today"};
- my $time=&UnixDate($_[0],"%S");
- return $time;
-};
+ return Date::Manip::UnixDate($_[0],"%S");
+}
 
 
 
@@ -417,7 +409,7 @@ sub Delta_transform
   else {
    return $_[0];
   }
-};
+}
 
 
 # ADD Time
@@ -434,9 +426,8 @@ sub Delta_transform
 sub EXTime_Add
 {
   my $datum = Delta_transform($_[1]);
-  my $time=&UnixDate( &DateCalc($_[0],$datum) , "%H:%M:%S" );
-  return $time;
-};
+  return Date::Manip::UnixDate(Date::Manip::DateCalc($_[0],$datum),"%H:%M:%S");
+}
 
 
 # Accumulate time

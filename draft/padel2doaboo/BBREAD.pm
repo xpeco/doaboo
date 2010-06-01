@@ -21,19 +21,19 @@ sub _type{
 				    my $type=shift;
 					 my $mysql_types = {
 						  CHAR=>"varchar(250) default ''",
-                    INT=>'bigint(20)',
-                    DECIMAL=>'decimal(10,2)',
-                    FLOAT=>'double',
-                    LINK=>'longtext',
-                    MEMO=>'longtext',
-                    DATE=>'date',
+                    INT=>"bigint(20) default '0'",
+                    DECIMAL=>"decimal(10,2) default '0.00'",
+                    FLOAT=>"double default '0'",
+                    LINK=>"longtext default ''",
+                    MEMO=>"longtext default ''",
+                    DATE=>"date default '0000-00-00'",
                     TIME=>"time default '00:00:00'",
-                    ACCOUNT=>'longtext',
-                    OWN_ACCOUNT=>'varchar(250)',
-                    BOOLEAN=>'char(1)',
-                    AUTO=>'bigint(20)',
-						  RELATION =>'varchar(250)',
-						  CALCULATED=>'varchar(250)'
+                    ACCOUNT=>"longtext default ''",
+                    OWN_ACCOUNT=>"varchar(250) default ''",
+                    BOOLEAN=>"char(1) default 'N'",
+                    AUTO=>"bigint(20) default '0'",
+						  RELATION =>"bigint(20) default '0'",
+						  CALCULATED=>"varchar(250)default ''"
 						  };
 					  my $db_type=$mysql_types->{$type};
 					  return $db_type;
@@ -50,7 +50,7 @@ sub create {
 					foreach my $id(@$topic) {
 					my $string='';
 					my $i=0;
-         		$string.="CREATE TABLE IF NOT EXISTS doaboo_"."@$id[3] ( ";
+         		$string.="CREATE TABLE IF NOT EXISTS `DoABoo`."."`@$id[3]` ( ";
          		my $query=$dbh->prepare("select * from doaboo_attributes where topic=\'@$id[0]\'");
          		$query->execute;
          		my @columns=$query->fetchall_arrayref;
@@ -60,18 +60,33 @@ sub create {
                      	$string.=", ";
                   	}
 							$i++;
-							$string.="@$name[19]";
+							$string.="`@$name[19]`";
 							if ((defined @$name[3]) and (@$name[3] ne '')) {
-								print "Tipo en XML es: @$name[3]\n";
 								my $type=$dbh->BBREAD::_type(@$name[3]);
                			$string.=" $type";
 							}
                		if (@$name[5] eq 'Y') {
                   			$string.=" NOT NULL ";
                		}
+							if (@$name[4] eq 'Y') {
+									if (length(@$name[19]) > 50) {
+										$string.= ",  UNIQUE KEY `PRIMKEY` (`@$name[19]`(50))";
+									}
+									else {
+										$string.= ",  UNIQUE KEY `PRIMKEY` (`@$name[19]`)";
+									}
+							}
+							if (defined @$name[17]) {
+									if (length(@$name[19]) > 50) {
+										$string.=", KEY `REL_@$name[19]` (`@$name[19]`(50))";
+									}
+									else {
+										$string.=", KEY `REL_@$name[19]` (`@$name[19]`)";
+									}
+							}
 						}
          		}
-   				$string.=" \)";
+   				$string.=" \) ENGINE=MyISAM DEFAULT CHARSET=latin1";
    				print "$string\n";
    				}
 				}	
