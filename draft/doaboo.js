@@ -45,7 +45,7 @@ function MarkRecord(index,action){
 function RemoveFromCookie (cookie_name,cookie_value) {
   var cookie_text  = GetCookie(cookie_name);
   if (cookie_text != null) {
-    var begin = begin=cookie_text.indexOf(cookie_value+',');
+    var begin =cookie_text.indexOf(cookie_value+',');
     if (begin != -1) {
       var end=cookie_text.indexOf(',',begin+1);
       end=end+1;
