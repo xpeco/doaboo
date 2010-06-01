@@ -43,14 +43,14 @@ function MarkRecord(index,action){
 
 //Remove From Cookie
 function RemoveFromCookie (cookie_name,cookie_value) {
-  var cookie_text=GetCookie(cookie_name);
+  var cookie_text  = GetCookie(cookie_name);
   if (cookie_text != null) {
-    var begin=cookie_text.indexOf(cookie_value+',');
+    var begin = begin=cookie_text.indexOf(cookie_value+',');
     if (begin != -1) {
       var end=cookie_text.indexOf(',',begin+1);
       end=end+1;
       cookie_text=cookie_text.substring(0,begin)+cookie_text.substring(end,cookie_text.length);
-      document.cookie = cookie_name + '=' + escape(cookie_text);
+	  document.cookie = cookie_name + '=' + escape(cookie_text);  
     }
   }
   return true;
@@ -124,6 +124,8 @@ function SelectAllRecs(from,end,total,action)
 {
  //Select 
  if (action == 1) {
+ 	//Clean the cookie first
+ 	SetCookie('sel_recs','');
  	//Mark (color) those viewed/shown
  	for (var i = from-1; i < end; i++) {
 	   var checkb = document.getElementById('check_'+i);
@@ -133,9 +135,6 @@ function SelectAllRecs(from,end,total,action)
  	   }
  	}
 	//Include all the records in the sel_recs cookie 
-	//CDA Filter so that those already included are not included twice
-	//Or in RemoveFromCookie, make it recursive //CDA
-	//Or both for security //DEBUG
 	var cookie_text = GetCookie('sel_recs');
 	for (var j=0; j<total; j++) {
 	 cookie_text = cookie_text + j + ',';
@@ -175,9 +174,9 @@ function getCookieExpirDate() {
 
 //SetCookie
 function SetCookie(cookie_name,cookie_value) {
-  var cookie_text=cookie_value;
-  var expiration = getCookieExpirDate();
-  document.cookie = cookie_name + '=' + escape(cookie_text) + '; ' + 'expires='+expiration+'; ' ;
+  //var cookie_text = cookie_value;
+  var expiration  = getCookieExpirDate();
+  document.cookie = cookie_name + '=' + escape(cookie_value) + '; ' + 'expires='+expiration+'; ' ;
   return true;
 }
 
@@ -202,7 +201,7 @@ function getBrowserWindowSize()
  if( typeof( window.innerWidth ) == 'number' )
  {
   //Non-IE
-  myWidth = window.innerWidth;
+  myWidth  = window.innerWidth;
   myHeight = window.innerHeight; 
  }
  else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) )
