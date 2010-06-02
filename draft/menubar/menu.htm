@@ -1,4 +1,4 @@
-		<div id="menu">
+		<div id="menu"> <!-- Menu BAR -->
 		<ul class="level1" id="root">
 		  <li>
 		    <a href="#">Top One</a>
@@ -7,7 +7,7 @@
 		      <li>
 		        <a href="#">Sub B</a>
 		        <ul class="level3">
-		          <li><a href="#">Level 3 One</a></li>
+		          <li><a href="doaboo-cgi/db.pl">OPCION 1</a></li>
 		          <li><a href="#">Level 3 Two</a></li>
 		          <li><a href="#">Level 3 Three</a></li>
 		        </ul>
@@ -78,4 +78,48 @@
 		  </li>
 		  
 		</ul>
-		</div>
+		</div> <!-- Menu BAR -->
+
+		<!-- MENU NO BAR -->
+		<div class="menuNoBarIcon">
+            <TMPL_IF NAME="announce">
+               <img class="menuImage" src="<TMPL_VAR NAME="IMG_menu_announce">.gif" border="0" width="16" height="16" onClick="javascript:var ann=unescape('<TMPL_VAR NAME="ann_text">');alert(ann);" hspace="10">
+            </TMPL_IF>
+            <TMPL_UNLESS NAME="really_hide_menu">
+            	<TMPL_UNLESS NAME="temporary_view">&nbsp;&nbsp;
+				  <TMPL_IF NAME="not_default_view">
+				  	 <a href="javascript:document.tableform.set_default_view.value=1;document.tableform.submit();" title="[[Set as Default View]]"><img src="<TMPL_VAR NAME="IMG_set_default">.gif" border="0" class="iconbar" alt="[[Set as Default View]]"></a></TMPL_IF><TMPL_IF NAME="user_is_owner">&nbsp;&nbsp;<a href="javascript:document.tableform.delete_user_view.value=1;document.tableform.submit();" title="[[Delete User View]]"><img src="<TMPL_VAR NAME="IMG_delete_view">.gif" border="0" class="iconbar" alt="[[Delete User View]]"></a>
+				  </TMPL_IF>
+				 </TMPL_UNLESS>
+				 <TMPL_IF NAME="temporary_view">
+				 	&nbsp;&nbsp;<a href="javascript:PopUp('<TMPL_VAR NAME="real_script_name">?function=SaveTemporaryView&object=<TMPL_VAR NAME="object">&view=<TMPL_VAR NAME="view">&original_view=<TMPL_VAR NAME="original_view">&server_id=<TMPL_VAR NAME="server_id">','','SUBWINDOW',630,408)" title="[[Save View]]"><img src="<TMPL_VAR NAME="IMG_save_view">.gif" border="0" class="iconbar" alt="[[Save View]]"></a>
+				  </TMPL_IF>
+			</TMPL_UNLESS>
+        </div>
+             
+        <!--<td width=20% nowrap class="bar" align="center">-->
+        <div class="menuNoBar" style="text-align:center;">
+            <INPUT class="fieldBar" type="text" name="pulso_search" id="pulso_search" onKeyPress="return enter(this,event)">&nbsp;
+            <INPUT type="submit" class="buttonBar" value="[[Search]]" onClick="javascript:PopUpPulso('<TMPL_VAR NAME="real_script_name">?function=Pulso','','SUBWINDOW',630,408,'pulso_search');"title="[[Pulso]]">
+        </div>
+        <!--</td>
+
+        <td width=24% nowrap class="bar" align="right">-->
+        <div class="menuNoBarIcon" style="text-align:right;">
+                     <TMPL_UNLESS NAME="hide_wiki">
+                         <TMPL_IF "object_defined">
+                           <input type="button" class="buttonBar" value="[[Help]]" onClick="window.open('WIKI_URL<TMPL_VAR NAME="name">');">
+                         <TMPL_ELSE>
+                           <input type="button" class="buttonBar" value="[[Documentation]]" onClick="window.open('WIKI_INIT');">
+                         </TMPL_IF>
+                     </TMPL_UNLESS>
+
+					 <TMPL_IF NAME="no_user">
+                       &nbsp;&nbsp;&nbsp;[[Session expired]]
+                     <TMPL_ELSE>
+                       &nbsp;&nbsp;&nbsp;[[Logged as]] "<TMPL_VAR NAME="user">"
+                     </TMPL_IF>
+                     <TMPL_UNLESS NAME="hide_logout">
+                        &nbsp;<input type="button" class="buttonBar" value="[[Logout]]" onClick="javascript:SetCookie('user','');SetCookie('password','');document.location='<TMPL_VAR NAME="script_name">?function=Login<TMPL_IF name="show_banner>&show_banner=1</TMPL_IF><TMPL_IF name="hide_logos">&hide_logos=1</TMPL_IF>';">
+                     </TMPL_UNLESS>
+        </div>
