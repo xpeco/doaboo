@@ -103,8 +103,8 @@ sub getrecords{
 #print "########################\n";
 
 	my @topics;
-#	push(@topics,$topic);
-	my $select_topics=$topic;
+	push(@topics,$topic);
+	my $select_topics='';#$topic;
 	my $select_fields='';
 	my $select_where='';
 	my $select_order='';
@@ -115,117 +115,58 @@ sub getrecords{
 	{
 		if ($f->{show} ne 'N')
 		{
+			my $field='';
+			my $tn=$topic;
 			if ($f->{type} eq 'RELATION')
 			{
-				#my $topicname=$self->{db}->DBCONN::rawget("select name from doaboo_topics where id=\'$f->{relation}\' limit 1");
-				#$select_fields.="$topicname->[0]->{name}.$f->{name}, ";
-				$select_fields.="`$f->{name}`, ";
-
-				#push(@topics,$topicname->[0]->{name}) if (not grep(/^$topicname->[0]->{name}$/,@topics));
-
-				if ($f->{range} eq 'EXPRESSION')
+				# Get the keys to the where
+				my $topicname=$self->{db}->DBCONN::rawget("select name,id from doaboo_topics where id=\'$f->{relation}\' limit 1");
+				my $topickeys=$self->{db}->DBCONN::rawget("select name from doaboo_attributes where topic=\'$topicname->[0]->{id}\' and clave=\'Y\'");
+				foreach my $topickey(@$topickeys)
 				{
-					#$select_where.="$topicname->[0]->{name}.$f->{name} in (\'$f->{expression}\') and";
-#					$select_where.="`$f->{name}` in (\'$f->{expression}\') and";
-
-					$f->{expression}=~s/\,/\|/g;
-					$select_where.="`$f->{name}` regexp \'$f->{expression}\' and";
+					$select_where.="`$topicname->[0]->{name}`.`$topickey->{name}` = `$topic`.`$f->{name}` and ";
 				}
-				if ($f->{order} ne '')
+				# Get the fields from the related_table to compose the cap
+				my $topicaps=$self->{db}->DBCONN::rawget("select name from doaboo_attributes where topic=\'$topicname->[0]->{id}\' and key_caption=\'Y\'");
+				$tn=$topicname->[0]->{name};
+				my $alias=$f->{name};
+				foreach my $topicap(@$topicaps)
 				{
-					$select_order.="`$f->{name}` $f->{order}, ";
+					$field.="`$topicname->[0]->{name}`.`$topicap->{name}`,' - ', ";
 				}
+				$field=~s/\,\' \- \'\, \Z//;
+				$field="concat($field) as `$alias`";
+				push(@topics,$topicname->[0]->{name}) if (not grep(/^$topicname->[0]->{name}$/,@topics));
 			}
 			else
 			{
-				#$select_fields.="$topic.$f->{name}, ";
-				$select_fields.="`$f->{name}`, ";
-				if ($f->{range} eq 'EXPRESSION')
-				{
-					if($f->{expression}=~/\[.*\]/) #[2010-05-01,2010]
-					{
-						my $first=$f->{expression};
-						$first=~s/\!|\[|\,.*//g;
-						my $second=$f->{expression};
-						$second=~s/\!|\[.*\,|\]//g;
-						if($f->{expression}=~/\!.*/)
-						{
-							$select_where.="`$f->{name}` <= \'$first\' and `$f->{name}` >= \'$second\' and ";
-   					}
-						else
-						{
-							$select_where="`$f->{name}` >= \'$first\' and `$f->{name}` <= \'$second\' and ";
-						}
-					}
-					else
-					{
-						$f->{expression}=~s/\,/\|/g;
-						$select_where.="`$f->{name}` REGEXP \'$f->{expression}\' and ";
-					}
-				}
-				if ($f->{range} eq 'CODE')
-				{
-					$f->{expression}="use FEXIN;use DATETIME;my \$actual_user='$self->{login}';".$f->{expression};
-					$f->{expression}=~s/EXGet/FEXIN::EXGet/g;
-					$f->{expression}=~s/EXDate/DATETIME::EXDate/g;
+				$field="`$topic`.`$f->{name}` as `$f->{name}`";
+			}
 
+			$select_fields.="$field, ";
 
-					my $eval=eval $f->{expression};
-#		print "-------------\n";
-#		print "$f->{expression}\n";
-#		print "-------------\n";
-#		print "-------------\n";
-#		print "$eval\n";
-#		print "-------------\n";
+			$f->{name}="$tn`.`$f->{name}";
 
-					#FIX ,)  by ,'')
-					#$eval=~s/\,\)/\,\' \')/;
-					#FIX (,) by ( )
-					$eval=~s/\(\,\)/\( \)/;
-					#
-					if($eval=~/\[.*\]/) #[2010-05-01,2010]
-					{
-						my $first=$eval;
-						$first=~s/\!|\[|\,.*//g;
-						my $second=$eval;
-						$second=~s/\!|\[.*\,|\]//g;
-						if($eval=~/\!.*/)
-						{
-							$select_where.="`$f->{name}` <= \'$first\' and `$f->{name}` >= \'$second\' and ";
-   					}
-						else
-						{
-							$select_where="`$f->{name}` >= \'$first\' and `$f->{name}` <= \'$second\' and ";
-						}
-					}
-#					if($eval=~/\[.*\]/) #[2010-05-01,2010]
-#					{
-#					}
-					else
-					{
-#						$select_where.="`$f->{name}` in $eval and";
-						$eval=~s/\,/\|/g;
-						$select_where.="`$f->{name}` REGEXP \'$eval\' and ";
-
-					}
-				}
-				if ($f->{order} ne '')
-				{
-					$select_order.="`$f->{name}` $f->{order}, ";
-				}
+			if ($f->{range} eq 'EXPRESSION')
+			{
+				$select_where.=_calcexp($f->{name},$f->{expression});
+			}
+			if ($f->{range} eq 'CODE')
+			{
+				$select_where.=_calccode($self->{login},$f->{name},$f->{expression});
+			}
+			if ($f->{order} ne '')
+			{
+				$select_order.="`$f->{name}` $f->{order}, ";
 			}
 		}
 	}
 
-	$select_where=~s/and \Z//;
-	$select_fields=~s/\, \Z//;
-	$select_order=~s/\, \Z//;
-
-#	foreach my $t(@topics)
-#	{
-#		$select_topics.=$t.',';
-#	}
-#	$select_topics=~s/\,\Z//;
+	foreach my $t(@topics)
+	{
+		$select_topics.="`$t`, ";
+	}
+	$select_topics=~s/\, \Z//;
 
 
 #print "SELECT FIELDS: $select_fields\n";
@@ -238,32 +179,16 @@ sub getrecords{
 	foreach my $r(@$restrictions)
 	{
 		# Add Fake PulsAGo
-		$r->{ADM_RESTRICTION_CODE}="use FEXIN;my \$actual_user='$self->{login}';".$r->{ADM_RESTRICTION_CODE};
-		$r->{ADM_RESTRICTION_CODE}=~s/EXGet/FEXIN::EXGet/g;
-
-		my $eval=eval $r->{ADM_RESTRICTION_CODE};
-
-		# Rebuild (A) by ('A') to be SQL compatible
-#		$eval=~s/\(/\(\'/;
-#		$eval=~s/\)/\'\)/;
-#		$eval=~s/\,/\'\,\'/g;
-
-#		print "-------------\n";
-#		print "$r->{ADM_RESTRICTION_CODE}\n";
-#		print "-------------\n";
-#		print "-------------\n";
-#		print "$eval\n";
-#		print "-------------\n";
-
-#		$select_where.="and $r->{ADM_RESTRICTION_DETAIL} in $eval";
-		$eval=~s/\,/\|/g;
-		$select_where.="and $r->{ADM_RESTRICTION_DETAIL} regexp \'$eval\'";
-
+		$r->{ADM_RESTRICTION_DETAIL}="$topic`.`$r->{ADM_RESTRICTION_DETAIL}";
+		$select_where.=_calccode($self->{login},$r->{ADM_RESTRICTION_DETAIL},$r->{ADM_RESTRICTION_CODE});
 	}
-	$select_where=~s/^and //;
+	
+	$select_where=~s/(and \Z)//;
+	$select_fields=~s/\, \Z//;
+	$select_order=~s/\, \Z//;
+
    $select_where='where '.$select_where if ($select_where ne '');
 
-#	my $query="select $select_fields from $select_topics where $select_where";
 	my $query="select $select_fields from $select_topics $select_where";
 
 	if ($select_order ne '')
@@ -277,6 +202,7 @@ sub getrecords{
 	}
 	return $query;
 }
+
 
 sub getallrecords{
 	my $self=shift;
@@ -328,6 +254,54 @@ sub getactions{
 		$result=$self->{db}->DBCONN::rawget("select `id`,`description`,`hint` from doaboo_actions where topic in \(select id from doaboo_topics where `NAME`=\'$topic\'\) and name in \(select ADM_RESTRICTION_DETAIL from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT='METHOD' and ADM_RESTRICTION_OBJECTS='FILER' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
 	}
 	return $result;
+}
+
+sub _calcexp{
+	my $field=shift;
+	my $expression=shift;
+
+	my $select_where;
+	if($expression=~/\[.*\]/) #[2010-05-01,2010]
+	{
+		my $first=$expression;
+		$first=~s/\!|\[|\,.*//g;
+		my $second=$expression;
+		$second=~s/\!|\[.*\,|\]//g;
+		if($expression=~/\!.*/)
+		{
+			$select_where.="`$field` <= \'$first\' and `$field` >= \'$second\' and ";
+   	}
+		else
+		{
+			$select_where="`$field` >= \'$first\' and `$field` <= \'$second\' and ";
+		}
+	}
+	else
+	{
+		$expression=~s/\,/\|/g;
+		$select_where.="`$field` regexp \'$expression\' and ";
+	}
+
+	return $select_where;
+}
+
+sub _calccode{
+	my $login=shift;
+	my $field=shift;
+	my $expression=shift;
+
+	my $select_where;
+
+	$expression="use FEXIN;use DATETIME;my \$actual_user='$login';".$expression;
+	$expression=~s/EXGet/FEXIN::EXGet/g;
+	$expression=~s/EXDate/DATETIME::EXDate/g;
+
+	my $eval=eval $expression;
+
+	#FIX (,) by ( )
+	$eval=~s/\(\,\)/\( \)/;
+	#
+	return _calcexp($field,$eval);
 }
 
 sub _initdb{

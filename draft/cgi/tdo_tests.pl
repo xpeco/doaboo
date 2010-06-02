@@ -10,10 +10,10 @@ my $user=DO->new(login=>'spa',password=>'123');
 if ($user->{error}) #if (not $user->{error})
 {
 	my $topics=$user->gettopics;
-	foreach my $topic(@$topics)
-	{
-#my $topic;
-#$topic->{name}='VMESSAGE';
+#	foreach my $topic(@$topics)
+#	{
+my $topic;
+$topic->{name}='FILER';
 
 		print "Topic $topic->{name}\n";
 		my $views=$user->getviews($topic->{name});
@@ -21,10 +21,10 @@ if ($user->{error}) #if (not $user->{error})
 		{
 			print "	View: $view->{NAME}\n";
 			my $query=$user->getrecords($topic->{name},$view->{NAME},'10');
-#			print "$query\n";
+			print "$query\n";
 			#print "Running...";
 			my $q=$user->query($query);
-			#print "Done\n\n";
+			print "Done\n\n";
 		}
-	}
+#	}
 }
