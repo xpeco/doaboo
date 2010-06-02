@@ -12,17 +12,15 @@
    <script src="/doaboo/menubar/menu.js" type="text/javascript"></script>
    <!--/Menubar-->
    
-   <!-- XMLHttpRequest -->
-   <script language="javascript" type="text/javascript">  
+  <!-- XMLHttpRequest -->
+  <script language="javascript" type="text/javascript">  
   <!--   
   var xmlhttp;  
-  function showResult(field,str,out)  
-  {  
+  function showResult(field,str,out) {  
    xmlhttp=GetXmlHttpObject();  
-   if (xmlhttp==null)  
-    {  
-    alert ("Browser does not support HTTP Request");  
-    return;  
+   if (xmlhttp==null) {  
+     alert ("Browser does not support HTTP Request");  
+     return;  
     }  
    var url="/doaboo-cgi/db.pl";  
    url=url+"?"+field+"="+str; 
@@ -31,27 +29,22 @@
    xmlhttp.send(null);  
   }  
 
-  function stateChanged(divname)  
-  {  
-  if (xmlhttp.readyState==4)  
-  {  
-   document.getElementById(divname).innerHTML=xmlhttp.responseText;  
-  }  
+  function stateChanged(divname) {  
+   if (xmlhttp.readyState==4)  {  
+     document.getElementById(divname).innerHTML=xmlhttp.responseText;  
+   }  
   }  
  
-  function GetXmlHttpObject()  
-  {  
-  if (window.XMLHttpRequest)  
-    {  
-    // code for IE7+, Firefox, Chrome, Opera, Safari  
-    return new XMLHttpRequest();  
+  function GetXmlHttpObject() {  
+   if (window.XMLHttpRequest) {  
+     // code for IE7+, Firefox, Chrome, Opera, Safari  
+     return new XMLHttpRequest();  
     }  
-  if (window.ActiveXObject)  
-    {  
-    // code for IE6, IE5  
-    return new ActiveXObject("Microsoft.XMLHTTP");  
+   if (window.ActiveXObject) {  
+     // code for IE6, IE5  
+     return new ActiveXObject("Microsoft.XMLHTTP");  
     }  
-  return null;  
+   return null;  
   }  
   //-->  
   </script>  	
@@ -122,11 +115,12 @@
 			  <!-- > --> <!-- close input -->
      </td>
      <td class="control">
-    	   Iconx2
+        <img src="/doaboo/images/details.png"  onclick="javascript:">
+        <img src="/doaboo/images/details2.png" onclick="javascript:">
 	 </td>
      <td class="control">
-       &nbsp;
-	  </td>
+     	<img src="/doaboo/images/delete.png" onclick="javascript:$('tr_'+<TMPL_VAR NAME="Initrecord">).hide();">
+	 </td>
 
  <!-- Records Loop - Cell by Cell -->
  <TMPL_LOOP NAME="Valores">
@@ -154,7 +148,7 @@
        	   Iconx2
 	     </td>
          <td class="control">
-           &nbsp;
+           <img src="/doaboo/images/delete.png" onclick="javascript:$('tr_'+<TMPL_VAR NAME="Initrecord">).hide();">
 	     </td>
 	    <!-- /Control Cells -->
         <TMPL_ELSE> <!-- Unless -->
@@ -191,7 +185,8 @@
 	  Showing results <TMPL_VAR name="Showfrom">-<TMPL_VAR name="Endrecord"> 
 	  from a total of <TMPL_VAR name="RECORDS_NUMBER"> in <TMPL_VAR name="COLUMNS_NUMBER"> 
 	  columns of <TMPL_VAR name="Table"> (<span id="totalselrecs"><TMPL_VAR name="Totalselec"></span> selected) 
-	  &nbsp;&nbsp;&nbsp;&nbsp;<a href="db.pl">Icon Show only marked</a>
+	  &nbsp;&nbsp;&nbsp;&nbsp;
+	  <a href="#" onclick="javascript:HideRecords('unsel');return false;">Icon Show only marked</a>
 </div>	
 	
 </div> <!--tabsdiv-->
