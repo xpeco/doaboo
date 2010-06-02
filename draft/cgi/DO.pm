@@ -225,7 +225,7 @@ sub getstored{
 # Se soluciona agregando al where la seccion del where en base a los permisos.
 	my $self=shift;
 	my $topic=shift;
-	my $where=shift; # where key='xx'
+	my $where=shift; # where key1='xx' and key2='yy'
 
 	my $fields;
 	if($self->{factions} eq 'ALLOWANCE')
