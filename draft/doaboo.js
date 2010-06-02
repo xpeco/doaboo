@@ -41,20 +41,33 @@ function MarkRecord(index,action){
  return true;	
 }
 
-//Remove From Cookie
+//Remove unselected items from cookie
 function RemoveFromCookie (cookie_name,cookie_value) {
-  var cookie_text  = GetCookie(cookie_name);
+  var cookie_text=GetCookie(cookie_name);
   if (cookie_text != null) {
-    var begin =cookie_text.indexOf(cookie_value+',');
-    if (begin != -1) {
-      var end=cookie_text.indexOf(',',begin+1);
-      end=end+1;
-      cookie_text=cookie_text.substring(0,begin)+cookie_text.substring(end,cookie_text.length);
-	  document.cookie = cookie_name + '=' + escape(cookie_text);  
-    }
+  	cookie_text=','+cookie_text; //Look for the exact number BETWEEN COMMAS 
+	var init=1; //Avoid at the end the first artificial comma previously inserted
+	var begin;
+	do {
+		begin=cookie_text.indexOf(','+cookie_value+','); //Look for the exact number BETWEEN COMMAS 
+        if (begin != -1) {
+	      var end = begin+cookie_value.length+1;
+	      if (begin == 0) { begin=1; end = end + 1; } //Tuning when extracting the first number (position 0) 
+	      //alert(begin+' / '+end+' / '+cookie_text); //DEBUG
+          cookie_text=cookie_text.substring(init,begin)+cookie_text.substring(end,cookie_text.length); 
+        }
+	} while (begin != -1); //Repeat in case it is more than once by error
+	//Eliminate the first artificial comma in case it has not been eliminated yet	
+	if (cookie_text.indexOf(',')==0) {
+	 cookie_text=cookie_text.substring(1,cookie_text.length);
+	}
+	//alert('final='+cookie_text); //DEBUG
+	//And set the cookie again
+	document.cookie = cookie_name + '=' + escape(cookie_text);
   }
   return true;
 }
+
 
 // Select / Unselect Record
 // Mark record if selected and set or unset Cookie 
