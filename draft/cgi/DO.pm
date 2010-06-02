@@ -16,17 +16,17 @@ sub new{
 }
 
 sub query{
+# Raw SQL query without permissions
 	my $self=shift;
 	my $query=shift;
 	my $format=shift;
-	#print "At q, user: $self->{login} -- here we should check permissions\n";
-	# $query->_cleanquery;
 	my $result=$self->{db}->DBCONN::rawget($query,$format);
 	$result="Error in query: $DBI::errstr" if $DBI::err;
 	return $result;
 }
 
 sub gettopics{
+# Returns the list of available Topics
 	my $self=shift;
 	my $result;
 	if($self->{factions} eq 'ALLOWANCE')
@@ -41,6 +41,7 @@ sub gettopics{
 }
 
 sub getviews{
+# Returns the list of available Views
 	my $self=shift;
 	my $topic=shift;
 	my $result=$self->{db}->DBCONN::rawget("select `OBJECT`,`NAME`,`DESC`,`HINT` from ADM_VIEWS where OBJECT=\'$topic\' and \(\(USER_VIEW=\'$self->{login}\' or GROUP_VIEW IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or \(USER_VIEW=\'\' and GROUP_VIEW=\'\'\)\)");
@@ -48,6 +49,7 @@ sub getviews{
 }
 
 sub getview{
+# Returns the details of a View
 	my $self=shift;
 	my $topic=shift;
 	my $view=shift;
@@ -56,6 +58,7 @@ sub getview{
 }
 
 sub getrelationsto{
+# Returns the relationships to where the topic points
 	my $self=shift;
 	my $topic=shift;
 	my $result;
@@ -71,6 +74,7 @@ sub getrelationsto{
 }
 
 sub getrelationsfrom{
+# Returns the relationships from where the topic points
 	my $self=shift;
 	my $topic=shift;
 	my $result;
@@ -87,6 +91,7 @@ sub getrelationsfrom{
 
 
 sub getrecords{
+# Returns the complete SQL to fill Table
 	my $self=shift;
 	my $topic=shift;
 	my $view=shift;
@@ -189,7 +194,8 @@ sub getrecords{
 
    $select_where='where '.$select_where if ($select_where ne '');
 
-	my $query="select $select_fields from $select_topics $select_where";
+	my $query="select SQL_CALC_FOUND_ROWS $select_fields from $select_topics $select_where";
+#then execute select FOUND_ROWS();
 
 	if ($select_order ne '')
 	{
@@ -204,15 +210,19 @@ sub getrecords{
 }
 
 
-sub getallrecords{
-	my $self=shift;
-	my $topic=shift;
-	my $result=$self->{db}->DBCONN::rawget("select * from $topic");
-
-	return $result;
-}
+#sub getallrecords{
+#	my $self=shift;
+#	my $topic=shift;
+#	my $result=$self->{db}->DBCONN::rawget("select * from $topic");
+#	return $result;
+#}
 
 sub getstored{
+# Returns the record_details
+# No implementa permisos por instancia porque entiendo que un usuario ve lo que puede
+# ver y por tanto no le daria a un instance_details de un registro que no ve...
+# Pero podría trucar la llamada pasando un ID distinto!!
+# Se soluciona agregando al where la seccion del where en base a los permisos.
 	my $self=shift;
 	my $topic=shift;
 	my $where=shift; # where key='xx'

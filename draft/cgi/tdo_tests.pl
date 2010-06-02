@@ -13,7 +13,7 @@ if ($user->{error}) #if (not $user->{error})
 #	foreach my $topic(@$topics)
 #	{
 my $topic;
-$topic->{name}='FILER';
+$topic->{name}='ALERT';
 
 		print "Topic $topic->{name}\n";
 		my $views=$user->getviews($topic->{name});
@@ -21,10 +21,10 @@ $topic->{name}='FILER';
 		{
 			print "	View: $view->{NAME}\n";
 			my $query=$user->getrecords($topic->{name},$view->{NAME},'10');
-			print "$query\n";
+			#print "$query\n";
 			#print "Running...";
 			my $q=$user->query($query);
-			print "Done\n\n";
+			#print "Done\n\n";
 		}
 #	}
 }
