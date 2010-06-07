@@ -130,6 +130,7 @@ sub getrecords{
 				foreach my $topickey(@$topickeys)
 				{
 					$select_where.="`$topicname->[0]->{name}`.`$topickey->{name}` = `$topic`.`$f->{name}` and ";
+					$select_order.="`$topicname->[0]->{name}`.`$topickey->{name}` $f->{order}, " if $f->{order} ne '';
 				}
 				# Get the fields from the related_table to compose the cap
 				my $topicaps=$self->{db}->DBCONN::rawget("select name from doaboo_attributes where topic=\'$topicname->[0]->{id}\' and key_caption=\'Y\'");
@@ -142,15 +143,17 @@ sub getrecords{
 				$field=~s/\,\' \- \'\, \Z//;
 				$field="concat($field) as `$alias`";
 				push(@topics,$topicname->[0]->{name}) if (not grep(/^$topicname->[0]->{name}$/,@topics));
+				# rename f->{name} adding its topic to calc expressions to not being ambiguous
+				$f->{name}="$topicname->[0]->{name}`.`$topickeys->[0]->{name}"; # avoid expressions/code into relation fields pointing to multiple keys
 			}
 			else
 			{
 				$field="`$topic`.`$f->{name}` as `$f->{name}`";
+				$f->{name}="$tn`.`$f->{name}";
+				$select_order.="`$f->{name}` $f->{order}, " if ($f->{order} ne '');
 			}
 
 			$select_fields.="$field, ";
-
-			$f->{name}="$tn`.`$f->{name}";
 
 			if ($f->{range} eq 'EXPRESSION')
 			{
@@ -160,10 +163,10 @@ sub getrecords{
 			{
 				$select_where.=_calccode($self->{login},$f->{name},$f->{expression});
 			}
-			if ($f->{order} ne '')
-			{
-				$select_order.="`$f->{name}` $f->{order}, ";
-			}
+#			if ($f->{order} ne '')
+#			{
+#				$select_order.="`$f->{name}` $f->{order}, ";
+#			}
 		}
 	}
 
