@@ -147,14 +147,6 @@ sub record {
 		       $string.=" ,attribute=\'$att[0]\', action=\'$action_id\'";
 	       }
        }
-       if (defined $item->{RELATION}) {
-	       my $relation=$dbh->prepare("select id from doaboo_topics where name=\'$item->{RELATION}\'");
-	       $relation->execute;
-	       my @relation=$relation->fetchrow_array;
-	       if (defined $relation[0]) {
-		       $string.=", relation=\'$relation[0]\'";
-	       }
-       }
        @list=('PRESCRIPT','POSTSCRIPT','ENDSCRIPT');
        my $i=0;
        foreach my $elem(@list){
@@ -180,6 +172,25 @@ sub record {
        }
 		 
 }
+
+sub relation { 
+					my $dbh=shift;
+   				unless (ref $dbh){ print "Error, should call rawget() with an object, not a class\n";};
+   				my $item=shift;
+   				my $id=shift;
+   				my $topic_id=shift;
+					$string='';
+					if (defined $item->{RELATION}) {
+          			my $relation=$dbh->prepare("select id from doaboo_topics where name=\'$item->{RELATION}\'");
+          			$relation->execute;
+          			my @relation=$relation->fetchrow_array;
+          			if (defined $relation[0]) {
+             			$string.=" `relation`=\'$relation[0]\'";
+							my $query=$dbh->prepare("update doaboo_attributes set "."$string"." where `id`=\'$id\' and `topic`=\'$topic_id\'")->execute;
+
+          			}
+       			}
+				 }
 
 sub _init {
 	my $dbh=DBI->connect("DBI:mysql:spatest:localhost",'spatest','spatest') or die "Cannot connect to database: $DBI::errstr";
