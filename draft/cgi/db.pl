@@ -80,10 +80,19 @@ sub GetRecsForTable {
     my $z=$init+$recbypage;
     my $sel=0;
     while ((my $row = $sth->fetchrow_hashref)&&($i < $z)) {
+      my $j=0; #column counter
+      my $iskey=0;	
       for my $col (sort keys %$row) {          
          my %rowh;
          $rowh{Valor} = $row->{$col};
-         #$rowh{Index} = $i; #PTTD This "Index" value would work inside Valores TMPL_LOOP, where "Valor" value 
+         #$rowh{Index} = $i; #PTTD This "Index" value would work inside Valores TMPL_LOOP, where "Valor" value
+         ###CDA
+         ###$rowh{CellNum} = $i."_".$j; #row index + col index
+         $j++; #Attention! COUNTER Loop of fields starts on 1, not in zero
+         $rowh{ColNum} = $j;
+         if ($j==2) { $iskey = 1; } #DEBUG Detect Column / Fields which are Key
+         else { $iskey = 0; }
+         $rowh{Iskey}  = $iskey; 
          push @records, \%rowh;
       }
       #Counter increment

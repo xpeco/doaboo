@@ -48,20 +48,16 @@ function RemoveFromCookie (cookie_name,cookie_value) {
   	cookie_text=','+cookie_text; //Look for the exact number BETWEEN COMMAS 
 	var init=1; //Avoid at the end the first artificial comma previously inserted
 	var begin;
-	//do { //CDA
 		begin=cookie_text.indexOf(','+cookie_value+','); //Look for the exact number BETWEEN COMMAS 
         if (begin != -1) {
 	      var end = begin+cookie_value.length+1;
 	      if (begin == 0) { begin=1; end = end + 1; } //Tuning when extracting the first number (position 0) 
-	      //alert(begin+' / '+end+' / '+cookie_text); //DEBUG
           cookie_text=cookie_text.substring(init,begin)+cookie_text.substring(end,cookie_text.length); 
         }
-	//} while (begin != -1); //Repeat in case it is more than once by error
 	//Eliminate the first artificial comma in case it has not been eliminated yet	
 	if (cookie_text.indexOf(',')==0) {
 	 cookie_text=cookie_text.substring(1,cookie_text.length);
 	}
-	//alert('final='+cookie_text); //DEBUG
 	//And set the cookie again
 	document.cookie = cookie_name + '=' + escape(cookie_text);
   }
@@ -98,8 +94,6 @@ function RemoveFromCookieCDA (cookie_name,cookie_value) {
   }
   return true;
 }
-
-
 
 // Select / Unselect Record
 // Mark record if selected and set or unset Cookie 
@@ -220,7 +214,6 @@ function getCookieExpirDate() {
 
 //SetCookie
 function SetCookie(cookie_name,cookie_value) {
-  //var cookie_text = cookie_value;
   var expiration  = getCookieExpirDate();
   document.cookie = cookie_name + '=' + escape(cookie_value) + '; ' + 'expires='+expiration+'; ' ;
   return true;
@@ -239,6 +232,37 @@ function GetCookie(cookie_name) {
   }
   return null;
 }
+
+//StoreKeys
+function StoreKeys(mod) {
+//DEBUG
+//The list of marked recs include those not shown which key is not present... 
+//all the keys should be saved in a relation with the record number and taken afterwards either for sel or unsel!!!
+//DEBUG	
+//mod var to make the difference on Selected (1) or Unselected (0) => if record checked 
+  var cookie_value = '';
+  var list   = document.getElementById('tablediv').getElementsByTagName('span');
+  for (var i=1; i<list.length; i++) {
+  	 if (list[i].className == 'key') {
+	   var fieldname = document.getElementById('Field_'+list[i].id).innerHTML;
+	   cookie_value = cookie_value + list[i].innerHTML + ',';
+	   //DEBUG
+	   //If the fieldname changes => a new column is key => make array of cookie_names and store them all (for)
+	  }
+  }
+  var cookie_name = 'SELECTED_'+fieldname;
+  var cookie_text = GetCookie(cookie_name);
+  if (cookie_text == null) {
+  	cookie_text = cookie_value;
+  }
+  else {
+  	cookie_text = cookie_text + cookie_value;
+  }
+  var expiration  = getCookieExpirDate();
+  document.cookie = cookie_name + '=' + escape(cookie_text) + '; ' + 'expires='+expiration+'; ' ;
+  return true;
+}
+
 
 //Browser Size //Review idem with scriptaculous
 function getBrowserWindowSize()

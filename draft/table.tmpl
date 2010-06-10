@@ -89,6 +89,7 @@
    <!-- Column Names Loop -->
    <TMPL_LOOP NAME="Campos">
 	     <td id="dhtmlgoodies_control" onDblClick="slidedown_showHide('box<TMPL_VAR __COUNTER__>');return false;">
+	     	<div id="Field_<TMPL_VAR __COUNTER__>" style="display:none;"><TMPL_VAR NAME="Nombre"></div> <!-- Datum for Selected/Unselected Cookies -->
 			<span id="izq"><TMPL_VAR NAME="Nombre"></span> <!-- CDA: will be DESC -->
 			<span id="der">|</span>
 			<div class="dhtmlgoodies_contentBox"  id='box<TMPL_VAR __COUNTER__>'>
@@ -123,6 +124,7 @@
      <td class="control">
      	<img src="/doaboo/images/delete.png" onclick="javascript:$('tr_'+<TMPL_VAR NAME="Initrecord">).hide();">!!
 	 </td>
+
 
  <!-- Records Loop - Cell by Cell -->
  <TMPL_LOOP NAME="Valores">
@@ -159,9 +161,16 @@
 		  <input type="hidden" name="init" id="init" value="<TMPL_VAR NAME="Index">">	
 	    </TMPL_UNLESS>
 	 <TMPL_ELSE>  <!-- If -->
-	    <td><TMPL_VAR NAME="Valor"></td>     	
+	    <td>
+	    	<TMPL_IF NAME="IsKey">
+	    	   <span class="key" id="<TMPL_VAR NAME="ColNum">"><TMPL_VAR NAME="Valor"></span>
+			<TMPL_ELSE>
+			   <TMPL_VAR NAME="Valor">
+			</TMPL_IF>
+		 </td>     	
 	 </TMPL_IF>  	  	    
  </TMPL_LOOP> <!-- /End of Records Loop -->
+ 
   
  <!-- Last Line-->
  <tr class="headerline sortbottom">
@@ -211,7 +220,10 @@
 	  from a total of <TMPL_VAR name="RECORDS_NUMBER"> in <TMPL_VAR name="COLUMNS_NUMBER"> 
 	  columns of <TMPL_VAR name="Table"> (<span id="totalselrecs"><TMPL_VAR name="Totalselec"></span> selected) 
 	  &nbsp;&nbsp;&nbsp;&nbsp;
-	  <a href="#" onclick="javascript:HideRecords('unsel');return false;">Icon Show only marked</a>
+	  <input type="hidden" name="showmod" id="showmod" value="showall">
+	  <img src="/doaboo/images/showselected.png" onclick="javascript:document.getElementById('showmod').value='selected';StoreKeys('1');document.tableform.submit();">
+      <img src="/doaboo/images/shownonselected.png" onclick="javascript:document.getElementById('showmod').value='unselected';StoreKeys('0');document.tableform.submit();">
+	  <img src="/doaboo/images/showallrecs.png" onclick="javascript:document.getElementById('Valor');document.tableform.submit();"> 
 </div>	
 	
 </div> <!--ext-->
