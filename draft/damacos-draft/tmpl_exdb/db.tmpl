@@ -1,0 +1,20 @@
+<html>
+<head></head>
+<body>
+
+<table border="1">
+<tr><th>VALOR1</th><th>VALOR2</th><th>VALOR3</th></tr>
+
+<TMPL_VAR NAME="TITLE">
+<TMPL_LOOP NAME="ROWS">
+ <tr>
+  <td><TMPL_VAR NAME="SN"></td>
+  <td><TMPL_VAR NAME="MODEL"></td>
+  <td><TMPL_VAR NAME="IP"></td>
+ </tr>
+</TMPL_LOOP>
+
+</table>
+
+</body>
+</html>

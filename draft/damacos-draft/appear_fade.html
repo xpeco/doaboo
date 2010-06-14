@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>script.aculo.us Unit test file</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <script src="js/prototype.js" type="text/javascript"></script>
+  <script src="js/scriptaculous.js?load=effects,dragdrop" type="text/javascript"></script>
+</head>
+
+<body>
+<h2> JS: Elements appearing / fading with scriptaculous-1.8.3</h2>
+
+<ul>
+  <li><a href="#" onclick="$('appear_demo1').appear({ duration: 3.0, to: 0.5 }); return false;">Appear1</a></li>
+  <li><a href="#" onclick="$('appear_demo1').fade(); return false;">Fade1</a></li>
+  <li><a href="#" onclick="$('appear_demo1').hide(); return false;">Hide1</a></li>
+</ul>
+
+<ul>
+  <li><a href="#" onclick="$('appear_demo2').appear({ duration: 5.0 }); return false;">Appear2</a></li>
+  <li><a href="#" onclick="$('appear_demo2').fade({ duration: 3.0, from: 1, to: 0 }); return false;">Fade2</a></li>
+  <li><a href="#" onclick="$('appear_demo2').hide(); return false;">Hide2</a></li>
+</ul>
+
+<table><tr>
+<td><div id="appear_demo1" style="display:none;margin-left:400px;"><img src="angry.jpg" width="150"><br>Duration 3.0 <br>Opacity to 0.5</div></td>
+<td><div id="appear_demo2" style="display:none; border:2px solid; background:green; width:150px; height:66px; text-align:center; vertical-align:middle;"><p>Duration 5.0, Opacity to 1.0</p></div></td>
+</tr></table>
+
+</body>
+</html>

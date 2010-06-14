@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>script.aculo.us Unit test file</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <script src="js/prototype.js" type="text/javascript"></script>
+  <script src="js/scriptaculous.js?load=effects,dragdrop" type="text/javascript"></script>
+  <script src="js/unittest.js" type="text/javascript"></script>
+  <style>
+  .highlight_demo {
+        font-weight: normal;
+        font-size: 1em;
+        color:#4799ae;
+	/*letter-spacing: .2em;
+	line-height: 1.1em*/
+  }
+  .tipo1 {
+    font-family: "Andale Mono", "Monotype.com", monospace 
+  }
+  .tipo2 {
+   font-family: Tahoma, serifSansSerifMonospace
+  }
+  .tipo3 {
+   font-family: Verdana, Arial, Helvetica, sans-serif 
+  }
+  .button {
+    font-variant: small-caps;
+    margin-left:  1em;
+   }
+   ul.list {
+     list-style-type: none;
+     padding: 0;
+   }
+   li.list
+   {
+    background-image: url(images/bball.png);
+    background-repeat: no-repeat;
+    background-position: 0 .4em;
+    padding-left: .6em;
+   }
+  </style>
+</head>
+
+<body style="font-family: Verdana, Arial, Helvetica, sans-serif; text-align:center">
+<h2 id="title">JS: Appear/Fade and Drag/(Drop) and Highlight with scriptaculous-1.8.3 (and unittest.js)</h2>
+
+<table style="margin-left:100px;">
+<tr>
+<td>
+  <ul class="list">
+  <li class="list"><input type="button" class="button" onclick="$('appear_demo1').appear({ duration: 3.0, to: 0.5 }); return false;" value="Appear 1">
+  &nbsp;<input type="button" class="button" onclick="$('appear_demo1').fade(); return false;" value="Fade 1">
+  &nbsp;&nbsp;<a href="#" onclick="$('appear_demo1').hide(); return false;">Hide 1</a></li>
+  <br>
+  <li class="list"><input type="button" class="button" onclick="$('appear_demo2').appear({ duration: 5.0 }); return false;" value="Appear 2">
+  &nbsp;<input type="button" class="button" onclick="$('appear_demo2').fade({ duration: 3.0, from: 1, to: 0 }); return false;" value="Fade 2">
+  &nbsp;&nbsp;<a href="#" onclick="$('appear_demo2').hide(); return false;">Hide 2</a></li>
+  </ul>
+</td>
+<td><div id="appear_demo1" style="display:none;margin-left:150px;"><img src="angry.jpg" width="100"><br>Duration 3.0 <br>Opacity to 0.5</div></td>
+<td><div id="appear_demo2" style="display:none; border:2px solid; background:green; width:150px; height:66px; text-align:center; vertical-align:middle;"><p>Duration 5.0, Opacity to 1.0</p></div></td>
+</tr></table>
+
+<br><br>
+<div id="test" style="border:1px solid;padding:10px;width:400px;margin-left:100px;"> 
+<div id="divone" style="background:#e0e0e0;width:200px;"> &nbsp;CLICK AND MOVE ME</div>
+<br>
+<div id="divtwo" style="width:200px;"> &nbsp;MOVE ME TOO</div>
+<br>
+<div class="highlight_demo tipo1" style="padding:8px;width:350px;" onclick="new Effect.Highlight(this, { startcolor: '#ffff99',
+endcolor: '#ffffff' }); return false;">Click and Highlight me</div>
+<div class="highlight_demo tipo2" style="padding:8px;width:350px;" onclick="new Effect.Highlight(this.parentNode, { startcolor: '#99ffff',
+endcolor: '#ffffff' }); return false;">Click me and Highlight the box</div>
+<div class="highlight_demo tipo3" style="padding:8px;width:350px;" onclick="new Effect.Highlight($('title'), { startcolor: '#ff99ff',
+endcolor: '#ffffff' }); return false;">Click me and Highlight the title</div>
+</div>
+
+<br><div id="morph_demo" style="background:#58de4e; width:150px; height:50px; margin-left:100px;" onclick="$('morph_demo').morph('background:#58de4e; duration:14; width:550px;'); $('morph_demo').innerHTML=''; $('decrease').style.visibility='visible'; return false;"> &nbsp;Click me to grow</div>'
+<div id='decrease' style="visibility:hidden" onclick="$('morph_demo').morph('background:#cccccc; width:150px;'); $('morph_demo').innerHTML='Click me again'; $('decrease').style.visibility='hidden'; return false;">Go back</div>
+
+<script type="text/javascript" language="javascript" charset="utf-8">
+// The Test element is defined in unittest.js
+// <![CDATA[
+  new Test.Unit.Runner({
+      
+    testAutoPositioning: function() { with(this) {
+      assertEqual('static', Element.getStyle('divone','position'));
+      new Draggable('divone');
+      new Draggable('divtwo');
+      assertEqual('relative', Element.getStyle('divone','position'));
+      assertEqual('absolute', Element.getStyle('divtwo','position'));
+    }},
+    
+  }, "test");
+// ]]>
+</script>
+
+</body>
+</html>

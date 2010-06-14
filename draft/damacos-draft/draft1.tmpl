@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBaBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>DAMACOS - DRAFT1</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <link rel='stylesheet' type='text/css' href='draft1.css'/>  
+  <script src="js/prototype.js" type="text/javascript"></script>
+  <script src="js/scriptaculous.js?load=effects,dragdrop" type="text/javascript"></script>
+  <script src="js/unittest.js" type="text/javascript"></script>
+  <script language="javascript">
+    function downBox (box,title,size) {
+     box.morph('height:14px;');
+     box.innerHTML=title.innerHTML;
+    }
+    function loadConsum () {
+     $('black').morph('duration:4; width:99px;');
+     $('yellow').morph('duration:4; width:50px;');
+     $('magenta').morph('duration:4; width:30px;');
+     $('blue').morph('duration:4; width:60px;');
+    }
+  </script>
+</span>
+
+  </script>
+</head>
+
+<body onload="loadConsum();">
+
+  <div id="box1" class="common box one" style="float:left;">
+   <span id="title1" class="boxtitle" style="float:left">Datos1</span>
+   <span class="icons" style="float:right">
+     <img src="images/boxdown.png"       onClick="downBox($('box1'),$('title1'));">
+     <img src="images/boxclose.png"      onClick="$('box1').fade();">
+   </span>
+  </div>
+  <div id="box2" class="common box two" style="float:right">
+   <span id="title2" class="boxtitle" style="float:left">Datos2</span>
+   <span class="icons" style="float:right">
+     <img src="images/boxdown.png"  onClick="downBox($('box2'),$('title2'));">
+     <img src="images/boxclose.png" onClick="$('box2').fade();">
+   </span>
+   <table>
+   <TMPL_LOOP NAME="ROWS">
+   <tr>
+    <td><TMPL_VAR NAME="SN"></td>
+    <td><TMPL_VAR NAME="MODEL"></td>
+    <td><TMPL_VAR NAME="IP"></td>
+   </tr>
+   </TMPL_LOOP>
+   </table>
+  </div>
+  <div id="box3" class="common box three" style="float:left">
+   <span id="title3" class="boxtitle" style="float:left">Consumable status</span>
+   <span class="icons" style="float:right">
+     <img src="images/boxdown.png"  onClick="downBox($('box3'),$('title6'));">
+     <img src="images/boxclose.png" onClick="$('box3').fade();">
+   </span>
+   <br><div id="toners">
+   <table class="common data">
+      <tr>
+        <td class="tonercell">Tóner negro</td>
+        <td class="tonercell">
+          <div class="tonerimg">
+           <div id="black" style="background:#000000;width:5px;height:8px;margin:16 0 0 11;"></div>
+          </div>
+        </td>    
+        <td class="tonercell">99%</td>
+      </tr>
+      <tr>
+        <td class="tonercell">Tóner amarillo</td>
+        <td class="tonercell">
+          <div class="tonerimg">
+            <div id="yellow" style="background:#ebc41e;width:5px;height:8px;margin:16 0 0 11;"></div>
+          </div>
+        </td>
+        <td class="tonercell">50%</td>
+     </tr>
+      <tr>
+        <td class="tonercell">Tóner magenta</td>
+        <td class="tonercell">
+          <div class="tonerimg">
+             <div id="magenta" style="background:#c10456;width:5px;height:8px;margin:16 0 0 11;"></div> 
+          </div>
+        </td>
+        <td class="tonercell">30%</td>
+    </tr>
+      <tr>
+        <td class="tonercell">Tóner azul</td> 
+        <td class="tonercell">
+          <div class="tonerimg">
+             <div id="blue" style="background:#10348a;width:5px;height:8px;margin:16 0 0 11;"></div>
+          </div>
+        </td>
+        <td class="tonercell">60%</td>
+     </tr>
+   </table>
+   </div>
+  </div>
+  <div id="box4" class="common box four"  style="float:right">
+    <img src="http://chart.apis.google.com/chart?cht=bvs&chs=800x375&chg=20,50&chf=&chtt=Printed+pages&chdlp=r&chco=0000FF&chdl=Total+Counter&chd=t:2717,3799,4058,3606,2616,2773,3219,3653,1309,2248,2154,2434,901&chds=0,4869.6&chm=N,000000,0,-1,11&chbh=a&chxt=x,y&chxl=0:|Dec-08|Jan-09|Feb-09|Mar-09|Apr-09|May-09|Jun-09|Jul-09|Aug-09|Sep-09|Oct-09|Nov-09|Dec-09|&chxp=,1,2,3,4,5,6,7,8,9,10,11,12,13|1,901,1690,2479,3268,4057&chxr=0,1,13|1,0,4869.6&chxs=0,000000|1,0000FF">
+  </div>
+  <div id="box5" class="common box five"  style="float:left" >Datos5</div>
+  <div id="box6" class="common box six"   style="float:right">Datos6</div>
+
+
+<!--Appear/Fade-->
+<!--
+<table style="margin-left:100px;">
+<tr>
+<td>
+  <ul class="list">
+  <li><input type="button" class="button" onclick="$('appear_demo1').appear({ duration: 3.0, to: 0.5 }); return false;" value="Appear 1">
+  &nbsp;<input type="button" class="button" onclick="$('appear_demo1').fade(); return false;" value="Fade 1">
+  &nbsp;&nbsp;<a href="#" onclick="$('appear_demo1').hide(); return false;">Hide 1</a></li>
+  <br>
+  <li><input type="button" class="button" onclick="$('appear_demo2').appear({ duration: 5.0 }); return false;" value="Appear 2">
+  &nbsp;<input type="button" class="button" onclick="$('appear_demo2').fade({ duration: 3.0, from: 1, to: 0 }); return false;" value="Fade 2">
+  &nbsp;&nbsp;<a href="#" onclick="$('appear_demo2').hide(); return false;">Hide 2</a></li>
+  </ul>
+</td>
+<td><div id="appear_demo1" style="display:none;margin-left:150px;"><img src="angry.jpg" width="100"><br>Duration 3.0 <br>Opacity to 0.5</div></td>
+
+<td>
+-->
+
+<!--Morph-->
+<!--
+<div id="morph_demo" style="background:#58de4e;color:#f9ff5f;width:150px;height:50px;vertical-align:middle;" onclick="$('morph_demo').morph('background:#58de4e; duration:14; width:550px;'); $('morph_demo').innerHTML=''; $('decrease').style.visibility='visible'; return false;">Click me to grow</div>'
+<div id='decrease' style="width:70px;margin-left:550px;background:#50984b;color:#f9ff5f;visibility:hidden;" onclick="$('morph_demo').morph('background:#9a9a9a; width:150px;'); $('morph_demo').innerHTML='Click me again'; $('decrease').style.visibility='hidden'; return false;">Go back</div>
+-->
+
+
+</body>
+</html>

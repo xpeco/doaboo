@@ -1,0 +1,73 @@
+/* Common to all elements*/
+* { 
+ margin: 0; 
+ padding: 0; 
+}
+body {
+ font-size: 90.5% 
+}
+.common {
+ font-family: Verdana, Arial, Helvetica, sans-serif;
+ color:#4799ae;
+}
+.box {
+ border: 1px solid;
+ border-color:#a2bfc6;
+ width:  48%;
+ height: 200px;
+ margin: 0.4em;
+ padding:0.2em;
+ overflow:auto;
+ font-size:1em;
+}
+.boxtitle {
+ font-size:1.1em;
+}
+.list {
+ list-style-position: inside; 
+ list-style-type: circle; /* options: disc, circle, square, decimal, lower-roman...*/
+}
+.tonercell {
+ padding: 3px;
+}
+.tonerimg {
+ background-image:url(images/tonermin.gif);
+ background-repeat:no-repeat;
+ width:120px;
+ height:34px;
+ border:1px white solid;
+} 
+.init {
+ margin-top:100px;
+ margin-left:300px;
+ text-align:center;
+ font-size:1.2em;
+}
+
+/*
+.highlight_demo {
+   font-weight: normal;
+   font-size: 1em;
+   color:#4799ae;
+   letter-spacing: .2em;
+     line-height: 1.1em
+}
+.tipo1 {
+   font-family: "Andale Mono", "Monotype.com", monospace
+}
+.tipo2 {
+   font-family: Tahoma, serifSansSerifMonospace
+}
+.tipo3 {
+   font-family: Verdana, Arial, Helvetica, sans-serif
+}
+.button {
+   font-variant: small-caps;
+}
+*/
+/* options: disc, circle, square, decimal, lower-roman, upper-roman, lower-alpha, upper-alpha, none */
+ /*ul.list {
+   list-style-type: circle;  list-style-image: url(bullet1.png);
+   list-style-position: inside;
+}
+*/

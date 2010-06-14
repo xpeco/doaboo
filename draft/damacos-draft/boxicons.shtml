@@ -1,0 +1,4 @@
+<span id="icons" class="icons" style="float:right">
+ <img src="images/boxdown.png"  onClick="downBox($('icons').parentNode);">
+ <img src="images/boxclose.png" onClick="$('icons').parentNode.fade();">
+</span>

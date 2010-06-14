@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBaBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>script.aculo.us Unit test file</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <!--<script src="../scriptaculous-js-1.8.3/lib/prototype.js" type="text/javascript"></script>
+  <script src="../scriptaculous-js-1.8.3/src/scriptaculous.js?load=effects,dragdrop" type="text/javascript"></script>
+  <script src="../scriptaculous-js-1.8.3/src/unittest.js" type="text/javascript"></script>
+  -->
+  <script src="js/prototype.js" type="text/javascript"></script>
+  <script src="js/scriptaculous.js?load=effects,dragdrop" type="text/javascript"></script>
+  <script src="js/unittest.js" type="text/javascript"></script>
+  
+  <style>
+  .highlight_demo {
+        font-weight: normal;
+        font-size: 1em;
+        color:#4799ae;
+	/*letter-spacing: .2em;
+	line-height: 1.1em*/
+  }
+  .tipo1 {
+    font-family: "Andale Mono", "Monotype.com", monospace 
+  }
+  .tipo2 {
+   font-family: Tahoma, serifSansSerifMonospace
+  }
+  .tipo3 {
+   font-family: Verdana, Arial, Helvetica, sans-serif 
+  }
+  .button {
+    font-variant: small-caps;
+   }
+   ul.list {
+     list-style-type: circle; /* options: disc, circle, square, decimal, lower-roman, upper-roman, lower-alpha, upper-alpha, none */
+     list-style-image: url(images/bullet1.png);
+     /*list-style-position: inside;*/ /*inside or outside*/
+   }
+  </style>
+</head>
+
+<body style="font-family: Verdana, Arial, Helvetica, sans-serif;">
+<h3 id="title">Javascript: Appear/Fade and Drag/(Drop) and Highlight with scriptaculous-1.8.3 (and unittest.js)</h3>
+
+<!--Appear/Fade-->
+<table style="margin-left:100px;">
+<tr>
+<td>
+  <ul class="list">
+  <li><input type="button" class="button" onclick="$('appear_demo1').appear({ duration: 3.0, to: 0.5 }); return false;" value="Appear 1">
+  &nbsp;<input type="button" class="button" onclick="$('appear_demo1').fade(); return false;" value="Fade 1">
+  &nbsp;&nbsp;<a href="#" onclick="$('appear_demo1').hide(); return false;">Hide 1</a></li>
+  <br>
+  <li><input type="button" class="button" onclick="$('appear_demo2').appear({ duration: 5.0 }); return false;" value="Appear 2">
+  &nbsp;<input type="button" class="button" onclick="$('appear_demo2').fade({ duration: 3.0, from: 1, to: 0 }); return false;" value="Fade 2">
+  &nbsp;&nbsp;<a href="#" onclick="$('appear_demo2').hide(); return false;">Hide 2</a></li>
+  </ul>
+</td>
+<td><div id="appear_demo1" style="display:none;margin-left:150px;"><img src="angry.jpg" width="100"><br>Duration 3.0 <br>Opacity to 0.5</div></td>
+
+<td>
+<!-- <div id="appear_demo2" style="display:none; border:2px solid; background:green; width:150px; height:76px; text-align:center; position:relative; vertical-align:middle;">
+ <p style="position:relative;top:40%;margin:0;">Duration 5.0, Opacity to 0</p> 
+</div>--><!-- Vertical Aligned compatible to FF and IE. Both DIV and P involved. It starts writing aprox in the middle but if the text is long, it won't be nice -->
+<div id="appear_demo2" style="display:none; border:2px solid; background:green; width:150px; height:76px; text-align:center; vertical-align:middle;">
+ <p>Duration 5.0, Opacity to 0</p> 
+</div>
+</td>
+</tr></table>
+
+<br><br>
+<div id="test" style="border:1px solid;padding:10px;width:400px;margin-left:100px;text-align:center;">
+<!--Highlight-->
+<div class="highlight_demo tipo1" style="padding:8px;width:350px;" onclick="new Effect.Highlight(this, { startcolor: '#ffff99',
+endcolor: '#ffffff' }); return false;">Click and Highlight me</div>
+<div class="highlight_demo tipo2" style="padding:8px;width:350px;" onclick="new Effect.Highlight(this.parentNode, { startcolor: '#99ffff',
+endcolor: '#ffffff' }); return false;">Click me and Highlight the box</div>
+<div class="highlight_demo tipo3" style="padding:8px;width:350px;" onclick="new Effect.Highlight($('title'), { startcolor: '#ff99ff',
+endcolor: '#ffffff' }); return false;">Click me and Highlight the title</div>
+</div>
+
+<!--<DIV style="border:1px solid;">-->
+<br><span style="float:left;border:1px dashed;margin-left:100px;padding:4px;">
+<!--Morph-->
+<div id="morph_demo" style="background:#58de4e;color:#f9ff5f;width:150px;height:50px;vertical-align:middle;" onclick="$('morph_demo').morph('background:#58de4e; duration:14; width:550px;'); $('morph_demo').innerHTML=''; $('decrease').style.visibility='visible'; return false;">Click me to grow</div>'
+<div id='decrease' style="width:70px;margin-left:550px;background:#50984b;color:#f9ff5f;visibility:hidden;" onclick="$('morph_demo').morph('background:#9a9a9a; width:150px;'); $('morph_demo').innerHTML='Click me again'; $('decrease').style.visibility='hidden'; return false;">Go back</div>
+<!--Move-->
+<div id="move_demo" style="background:#537983;color:#fff;padding:2px; border:1px solid #000; width:100px;" onclick="new Effect.Move(this, { x: 90, y: -80 }); $('move_demo').innerHTML='Auch!!'; return false;">Click me</a></div>
+
+<br>
+<!--Parallel-->
+<div id="parallel_demo" style="width:150px;height:40px;background:#78487e;"><a href="#" id="animate_parallel_demo">Click me</a></div>
+<script type="text/javascript">
+ $('animate_parallel_demo').observe('click', function(event) {
+   event.stop();
+  
+   new Effect.Parallel([
+     new Effect.Move('parallel_demo', { sync: true, x: 600, y: 0, mode: 'relative' }), 
+     new Effect.Opacity('parallel_demo', { sync: true, from: 1, to: 0 })
+    ], { 
+     duration: 2.5
+   });
+ }); 
+</script>
+</span>
+
+<!--More Draggable (IE tests) -->
+<span style="float:right;border:2px dashed;">
+ <div id="drag_demo_1" style="width:100px; height:100px; background:#7baaed; border:1px solid #333; text-align:center; vertical-align:middle;">Move me</div>
+  <script type="text/javascript">
+    new Draggable('drag_demo_1');
+  </script>
+</span>
+<!--</DIV>-->
+
+
+</body>
+</html>
