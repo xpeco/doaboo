@@ -163,7 +163,8 @@
 	 <TMPL_ELSE>  <!-- If -->
 	    <td>
 	    	<TMPL_IF NAME="IsKey">
-	    	   <span class="key" id="<TMPL_VAR NAME="ColNum">"><TMPL_VAR NAME="Valor"></span>
+	    	   <span class="key" id="<TMPL_VAR NAME="RowNum">"><TMPL_VAR NAME="Valor"></span>
+			   <span style="display:none;" id="ColIndex"><TMPL_VAR NAME="ColNum"></span>
 			<TMPL_ELSE>
 			   <TMPL_VAR NAME="Valor">
 			</TMPL_IF>
@@ -221,8 +222,8 @@
 	  columns of <TMPL_VAR name="Table"> (<span id="totalselrecs"><TMPL_VAR name="Totalselec"></span> selected) 
 	  &nbsp;&nbsp;&nbsp;&nbsp;
 	  <input type="hidden" name="showmod" id="showmod" value="showall">
-	  <img src="/doaboo/images/showselected.png" onclick="javascript:document.getElementById('showmod').value='selected';StoreKeys('1');document.tableform.submit();">
-      <img src="/doaboo/images/shownonselected.png" onclick="javascript:document.getElementById('showmod').value='unselected';StoreKeys('0');document.tableform.submit();">
+	  <img src="/doaboo/images/showselected.png" onclick="javascript:document.getElementById('showmod').value='selected';document.tableform.submit();">
+      <img src="/doaboo/images/shownonselected.png" onclick="javascript:document.getElementById('showmod').value='unselected';document.tableform.submit();">
 	  <img src="/doaboo/images/showallrecs.png" onclick="javascript:document.getElementById('Valor');document.tableform.submit();"> 
 </div>	
 	

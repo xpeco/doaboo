@@ -101,7 +101,8 @@ function SelectRecord(index,action){
  var cookie_text;
  //Select record
  if (action == 1) { 
- 	MarkRecord(index,'1'); //line color
+ 	MarkRecord(index,'1');  //line color
+ 	ProcessKeys(index,'1'); //store keys of the corresponding record
 	cookie_text = GetCookie('sel_recs');
 	if (cookie_text == null) {
 		cookie_text = index+',';
@@ -120,6 +121,7 @@ function SelectRecord(index,action){
  else { 
  	MarkRecord(index,'0'); //line color
     RemoveFromCookie('sel_recs',index);
+	ProcessKeys(index,'0'); //delete keys from cookies of the corresponding record
 	//Decrease selected records number
 	var totalselrecs = document.getElementById('totalselrecs');
 	var totsel = parseInt(totalselrecs.innerHTML);
@@ -233,35 +235,90 @@ function GetCookie(cookie_name) {
   return null;
 }
 
-//StoreKeys
-function StoreKeys(mod) {
+//*************************************
+//ProcessKeys
+//*************************************
+function ProcessKeys(index,mod) {
+  //DEBUG
+  //With the Select/Unselect-ALL option, send special info to db.pl
+  //DEBUG: more than one key field => more cookies
+  //If the ColNum in fieldname changes => a new column is key => make array of cookie_names and store them all (loop FOR)
+  var keyval = document.getElementById(index).innerHTML;
+  var colnum = document.getElementById('ColIndex').innerHTML;
+  var fieldname = document.getElementById('Field_'+colnum).innerHTML;
+  var cookie_name = 'SELECTED_'+fieldname;
+  var cookie_text = GetCookie(cookie_name);
+  var value = '['+colnum+']:'+keyval;	
+  //Select: store key in cookie
+  if (mod == 1) {
+	if (cookie_text == null) {
+	  cookie_text = value + ',';
+     }
+    else {
+	  cookie_text = cookie_text + value + ',';
+	 }
+    var expiration  = getCookieExpirDate();
+    document.cookie = cookie_name + '=' + escape(cookie_text) + '; ' + 'expires='+expiration+'; ' ;
+  }
+  //Unselect: delete from cookie
+  else {
+   RemoveFromCookie(cookie_name,value);
+  }			    
+  return true;
+}
+
+//********************************************************
+//********************************************************
+// Function deprecated: to be deleted
+function StoreKeys_Deprecated() {
 //DEBUG
-//The list of marked recs include those not shown which key is not present... 
+//The list of marked recs must include those not shown which key is not present on screen... 
 //all the keys should be saved in a relation with the record number and taken afterwards either for sel or unsel!!!
 //DEBUG	
 //mod var to make the difference on Selected (1) or Unselected (0) => if record checked 
-  var cookie_value = '';
+  var cookie_value_selec = '';
   var list   = document.getElementById('tablediv').getElementsByTagName('span');
+  var selected = GetCookie('sel_recs'); 
+  selected = ','+selected; //Look for the exact number BETWEEN COMMAS
+  //Loop of records ON SCREEN
   for (var i=1; i<list.length; i++) {
   	 if (list[i].className == 'key') {
-	   var fieldname = document.getElementById('Field_'+list[i].id).innerHTML;
-	   cookie_value = cookie_value + list[i].innerHTML + ',';
-	   //DEBUG
-	   //If the fieldname changes => a new column is key => make array of cookie_names and store them all (for)
-	  }
-  }
-  var cookie_name = 'SELECTED_'+fieldname;
+	    var parts = list[i].id.split("_");  //recnum=parts[0] colnum=parts[1]
+	    //Get column name for the cookie_name 	
+	    var fieldname = document.getElementById('Field_'+parts[1]).innerHTML;
+		var cookie_name = 'SELECTED_'+fieldname;
+		var itis  = selected.indexOf(',' + parts[0] + ','); //check if recnum present in cookie
+		var value = '[' + parts[0] + ']:' + list[i].innerHTML; 
+		if (itis != -1) {
+		        //Selected		
+				alert('Recnum found in sel cookie list: ' + parts[0]); //DEBUG
+				//Get cookie value for the HTML content in span with class=key
+				cookie_value_selec = cookie_value_selec + value + ',';
+		}
+		else {
+			  //Unselected
+			  RemoveFromCookie(cookie_name,value);
+			  alert('Remove: '+value);	
+		}
+				
+	   //DEBUG: more than one key field
+	   //If the ColNum in fieldname changes => a new column is key => make array of cookie_names and store them all (for loop)
+	  } //if
+  } //for
+  
   var cookie_text = GetCookie(cookie_name);
   if (cookie_text == null) {
-  	cookie_text = cookie_value;
+  	cookie_text = cookie_value_selec;
   }
   else {
-  	cookie_text = cookie_text + cookie_value;
+  	cookie_text = cookie_text + cookie_value_selec;
   }
   var expiration  = getCookieExpirDate();
   document.cookie = cookie_name + '=' + escape(cookie_text) + '; ' + 'expires='+expiration+'; ' ;
   return true;
 }
+//*****************************************************
+//*****************************************************
 
 
 //Browser Size //Review idem with scriptaculous
