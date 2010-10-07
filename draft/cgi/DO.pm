@@ -99,7 +99,7 @@ sub getrecords{
 
 # Step 1: get fields and its types from View. No permissions, if the user can see the view also he can see its fields.
 # Description should be eq to desc at doaboo!
-	my $qq="select ADM_VIEW_FIELDS.NAME as name, ADM_VIEW_FIELDS.RANGE_TYPE as range, ADM_VIEW_FIELDS.RANGE as `expression`, ADM_VIEW_FIELDS.ORDER as `order`, ADM_VIEW_FIELDS.SHOW as `show`, doaboo_attributes.type as type, relation, topic from ADM_VIEW_FIELDS,ADM_VIEWS,doaboo_attributes where doaboo_attributes.type <> \'CALCULATED\' and ADM_VIEWS.OBJECT=\'$topic\' and ADM_VIEWS.NAME=\'$view\' and \(\(USER_VIEW=\'$self->{login}\' or GROUP_VIEW IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or \(USER_VIEW=\'\' and GROUP_VIEW=\'\'\)\) and ADM_VIEW_FIELDS.ADM_VIEW=concat\(\'[[\',ADM_VIEWS.OBJECT,\']][[\',ADM_VIEWS.NAME,\']]\'\) and doaboo_attributes.name=ADM_VIEW_FIELDS.NAME and doaboo_attributes.topic in \(select id from doaboo_topics where name=ADM_VIEWS.OBJECT\) order by ADM_VIEW_FIELDS.POSITION ASC";
+	my $qq="select ADM_VIEW_FIELDS.NAME as `name`, ADM_VIEW_FIELDS.RANGE_TYPE as `range`, ADM_VIEW_FIELDS.RANGE as `expression`, ADM_VIEW_FIELDS.ORDER as `order`, ADM_VIEW_FIELDS.SHOW as `show`, doaboo_attributes.type as `type`, `relation`, `topic` from ADM_VIEW_FIELDS,ADM_VIEWS,doaboo_attributes where doaboo_attributes.type <> \'CALCULATED\' and ADM_VIEWS.OBJECT=\'$topic\' and ADM_VIEWS.NAME=\'$view\' and \(\(USER_VIEW=\'$self->{login}\' or GROUP_VIEW IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or \(USER_VIEW=\'\' and GROUP_VIEW=\'\'\)\) and ADM_VIEW_FIELDS.ADM_VIEW=concat\(\'[[\',ADM_VIEWS.OBJECT,\']][[\',ADM_VIEWS.NAME,\']]\'\) and doaboo_attributes.name=ADM_VIEW_FIELDS.NAME and doaboo_attributes.topic in \(select id from doaboo_topics where name=ADM_VIEWS.OBJECT\) order by ADM_VIEW_FIELDS.POSITION ASC";
 
 
 	my $fields=$self->{db}->DBCONN::rawget($qq);
@@ -147,9 +147,9 @@ sub getrecords{
 				$f->{name}="$topicname->[0]->{name}`.`$topickeys->[0]->{name}"; # avoid expressions/code into relation fields pointing to multiple keys
 			}
 			else
-			{
+			{print "No rel\n";
 				$field="`$topic`.`$f->{name}` as `$f->{name}`";
-				$f->{name}="$tn`.`$f->{name}";
+				$f->{name}="$tn`.`$f->{name}"; print "Adding $f->{name}\n";
 				$select_order.="`$f->{name}` $f->{order}, " if ($f->{order} ne '');
 			}
 
@@ -243,7 +243,7 @@ sub getstored{
 	my $query="select $fields from $topic where $where limit 1;";
 print "Query: $query\n";
 
-	my $result=$self->{db}->DBCONN::rawget($query,'ARRAY');
+	my $result=$self->{db}->DBCONN::rawget($query);
 	return $result;
 }
 
