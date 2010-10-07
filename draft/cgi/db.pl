@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use DO;
 use DBCONN;
+use DO;
 use CGI;
 use CGI::Session;
 use HTML::Template;
@@ -58,7 +58,6 @@ sub GetRecsForTable {
     #DEBUG
     #my $rows = DBI::dump_results($sth);
     #$sth->{TYPE} NAME, NAME_uc, NAME_lc, NAME_hash, NAME_lc_hash and NAME_uc_HASH.
-
 
     ########################
     # Fields 
@@ -206,6 +205,22 @@ $template->param(user      => $user->{login});
 if ((defined $ENV{'HTTP_REFERER'})&&($ENV{'HTTP_REFERER'} =~ m/login.pl/)) { 
   $template->param(Adjust => 1);
 }
+
+
+########################
+# Topics in Menubar
+########################
+my @tops;
+my $usuario=DO->new(login=>$user->{login},$user->{password}); #DEBUG
+my $topics=$usuario->gettopics;
+foreach my $topic(@$topics)
+{
+ my %rowh;
+ $rowh{Topic} = $topic->{name};
+ push @tops, \%rowh;
+}
+$template->param(Topics=>\@tops);
+
 
 ######################################################
 #Get Records and Fill Table template with the results

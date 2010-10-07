@@ -13,13 +13,16 @@ my $cookie; #session cookie
 my $login;  #form value
 my $passw;  #form value
 
+#my $dpath="/home/base/doaboo"; #DEBUG
+
 ######################
 # Template Definition
 ######################
 #Global_vars to 1 if we want to share them inside/outside loops i.e.
 my $t = HTML::Template->new(filename => $tmpl,
                             path     => "$ENV{DOABOOPATH}",
-                            die_on_bad_params => 1,
+                            #path     => "$dpath", #DEBUG
+			    die_on_bad_params => 1,
                             global_vars       => 0,
                             case_insensitive  => 1,
                             loop_context_vars => 1
