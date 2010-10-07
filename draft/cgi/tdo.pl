@@ -6,7 +6,7 @@ use warnings;
 use DO;
 $ENV{DOABOOPATH}='/home/peco/doaboo/draft'; # recursive config
 
-my $user=DO->new(login=>'spa',password=>'123');
+my $user=DO->new(login=>'asanchez',password=>'123');
 #my $fields=$user->DO::query("select type from doaboo_attributes where topic in \(select id from doaboo_topics where name='CUSTOMER'\)");
 #print "F: $fields->[0]->{NAME}\n";
 print "error:$user->{error}\n";
@@ -16,7 +16,7 @@ if ($user->{error}) #if (not $user->{error})
 	print "Group: $user->{group}\n";
 	#my $q=$user->query('select DATE from ALARMS limit 1');
 	
-	my $topic='FILER';
+	my $topic='ALARMS';
 	print "Topic: $topic\n";
 	
 	print "Views:\n";
@@ -53,8 +53,8 @@ if ($user->{error}) #if (not $user->{error})
 	}
 
 
-#	my $id="NUMBER='1'";
-#	print "Stored: ".$user->getstored($topic,$id)."\n";
+#	my $id="REFERENCE='60072'";
+#	print "Stored: ".$user->getstored($topic,$id)->[0]->{REFERENCE}."\n";
 
-	print "--".$user->getrecords($topic,'9991_ASUP_MISSING')."\n";
+	print "--".$user->getrecords($topic,'ALARMS_CONTRACT')."\n";
 }
