@@ -14,12 +14,12 @@ print "<H3>Testing platform</H3>\n";
 my $result = $dbh->DBCONN::rawget('SELECT serialn FROM machines LIMIT 1','ARRAY');
 print "Value returned: $result <br><br>";
 
-my $sth = $dbh->prepare('SELECT serialn FROM machines');
+my $sth = $dbh->prepare('SELECT serialn FROM MACHINES');
 $sth->execute();
 my $res = $sth->fetchrow_hashref();
 print "Value returned: $res->{serialn} <br><br>";
 
-my $results = $dbh->selectall_hashref('SELECT * FROM machines', 'serialn');
+my $results = $dbh->selectall_hashref('SELECT * FROM MACHINES', 'serialn');
 foreach my $serialn (keys %$results) {
  print "The type of serialn $serialn is $results->{$serialn}->{type} <br>";
 }
