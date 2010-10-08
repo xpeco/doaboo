@@ -241,7 +241,7 @@ sub getstored{
 	}
 
 	my $query="select $fields from $topic where $where limit 1;";
-print "Query: $query\n";
+        #print "Query: $query\n";
 
 	my $result=$self->{db}->DBCONN::rawget($query);
 	return $result;
