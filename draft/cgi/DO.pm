@@ -8,11 +8,11 @@ use USERS;
 
 sub new{
 	my $class=shift;
-   my $self={@_};
-   bless($self, $class);
-   $self->_initdb; # Creates the db connection
+	my $self={@_};
+	bless($self, $class);
+	$self->_initdb; # Creates the db connection
 	$self->_inituser; # Check pass and store the basic user info
-   return $self;
+	return $self;
 }
 
 sub query{

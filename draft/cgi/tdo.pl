@@ -53,8 +53,15 @@ if ($user->{error}) #if (not $user->{error})
 	}
 
 
-#	my $id="REFERENCE='60072'";
+	my $id="REFERENCE='60072'";
 #	print "Stored: ".$user->getstored($topic,$id)->[0]->{REFERENCE}."\n";
-
-	print "--".$user->getrecords($topic,'ALARMS_CONTRACT')."\n";
+   my $rd=$user->getstored($topic,$id);
+   foreach my $e(@$rd)
+   {
+		foreach my $val (keys %$e)
+		{
+			print "$val is $e->{$val}\n";
+		}
+	}
+#	print "--".$user->getrecords($topic,'ALARMS_CONTRACT')."\n";
 }
