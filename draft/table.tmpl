@@ -4,12 +4,17 @@
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-15">
    <title>DOABOO TABLE</title>
    <link rel="stylesheet" href="/doaboo/doaboo.css" media="screen" type="text/css">
-   <TMPL_INCLUDE NAME="doaboo.js">
+  <TMPL_INCLUDE NAME="doaboo.js">
    <!--Menubar and Appear/Hide effects-->
    <link rel="stylesheet" href="/doaboo/menubar/menu.css" media="screen" type="text/css" />
-   <script src="/doaboo/menubar/prototype.js" type="text/javascript"></script>
-   <script src="/doaboo/menubar/scriptaculous.js" type="text/javascript"></script>
-   <script src="/doaboo/menubar/menu.js" type="text/javascript"></script>
+   <link rel="stylesheet" href="/doaboo/modalbox.css" media="screen" type="text/css" />
+   <script src="/doaboo/js/prototype.js" type="text/javascript"></script>
+   <script src="/doaboo/js/scriptaculous.js" type="text/javascript"></script>
+   <script src="/doaboo/js/effects.js" type="text/javascript"></script>
+   <script src="/doaboo/js/builder.js" type="text/javascript"></script>
+   <script src="/doaboo/js/modalbox.js"  type="text/javascript"></script>
+   <script src="/doaboo/menubar/menu.js" type="text/javascript"></script> <!-- loaded after the other js -->
+  
    <!--/Menubar-->
    
   <!-- XMLHttpRequest -->
@@ -46,7 +51,31 @@
     }  
    return null;  
   }  
-  //-->  
+ //-->  
+  </script>  	
+ 
+  <script> 
+  function PopUpRec(url,win) {  
+    xmlhttp=GetXmlHttpObject();  
+    if (xmlhttp==null) {  
+     alert ("Browser does not support HTTP Request");  
+     return;  
+    }  
+    xmlhttp.open("GET",url,false);  
+    win.document.write(xmlhttp.responseText);  
+    xmlhttp.send(null);  
+  }  
+ 
+ function ShowDetail(index) {
+      var keycol=($('ColIndex').innerHTML);
+      var keyparam = $('Field_'+keycol).innerHTML+'=\''+$(index).innerHTML+'\''; //Single quotes necessary for the where DB condition
+      var url='/doaboo-cgi/recsheet.pl?obj=<TMPL_VAR NAME="Table">&us=<TMPL_VAR NAME="user">&key='+keyparam;
+      Modalbox.show(url,{title:"Data Details",width:900,height:500});
+      //mywindow = window.open('/doaboo/record.html','map','scrollbars=1,titlebar=no,width=640');
+      //mywindow.document.write('TEST');
+      //PopUpRec(url,mywindow);
+      //return true;
+  }
   </script>  	
     
 </head>
@@ -118,7 +147,7 @@
 			  <!-- > --> <!-- close input -->
      </td>
      <td class="control">
-        <img src="/doaboo/images/details.png"  onclick="javascript:">
+        <img src="/doaboo/images/details.png" onclick="ShowDetail('<TMPL_VAR NAME="Initrecord">'); return true;">
         <img src="/doaboo/images/details2.png" onclick="javascript:">
 	 </td>
      <td class="control">
@@ -149,8 +178,8 @@
 				  <!-- > --> <!-- close input -->
 	     </td>
          <td class="control">
-       	    <img src="/doaboo/images/details.png"  onclick="javascript:">
-            <img src="/doaboo/images/details2.png" onclick="javascript:">
+       	    <img src="/doaboo/images/details.png"  onclick="ShowDetail('<TMPL_VAR NAME="Index">'); return true;">
+            <img src="/doaboo/images/details2.png" onclick="">
 	     </td>
          <td class="control">
            <img src="/doaboo/images/delete.png" onclick="javascript:$('tr_'+<TMPL_VAR NAME="Index">).hide();">!!
