@@ -163,6 +163,12 @@ sub record {
 	      $code=$dbh->DBDOABOO::_normalize($code);
 	      $string.=" , logic=\"$code\"";
 	    }
+
+            #Filter range as it is a reserved word in MySQL
+            if ($string =~ 'range') {
+              $string=~s/range=/`range`=/g;
+            }
+
 	    if (defined $id) {
 	      my $query=$dbh->prepare("update doaboo_"."$format"." set "."$string"." where id=\'$id\'")->execute;
 	    }
@@ -190,7 +196,7 @@ sub relation {
 	     }
 
 sub _init {
-	    my $dbh=DBI->connect("DBI:mysql:spatest:localhost",'spatest','spatest') or die "Cannot connect to database: $DBI::errstr";
+	    my $dbh=DBI->connect("DBI:mysql:aire:localhost",'baseu','baseee') or die "Cannot connect to database: $DBI::errstr";
 	    return $dbh;
 	  }
 1;
