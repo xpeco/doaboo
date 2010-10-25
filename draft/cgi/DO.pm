@@ -25,11 +25,100 @@ sub query{
 	return $result;
 }
 
+sub _checktopic
+{
+	my $self=shift;
+	my $topic=shift;
+	my $result;
+	if($self->{rtopics} eq 'ALLOWANCE')
+	{
+		$result=$self->{db}->DBCONN::rawget("select id, name as NAME, hint as HINT, description as `DESC` from doaboo_topics where name=\'$topic\' and name not in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'OBJECT\' and ADM_RESTRICTION_OBJECTS=\'$topic\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+		if ($result->[0]->{id} ne '') {return $result->[0];}
+		else { return 'DENIED';}
+	}
+	else
+	{
+		$result=$self->{db}->DBCONN::rawget("select id, name as NAME, hint as HINT, description as `DESC` from doaboo_topics where name=\'$topic\' and name in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'OBJECT\' and ADM_RESTRICTION_OBJECTS=\'$topic\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+		if ($result->[0]->{id} ne '') {return $result->[0];}
+		else { return 'DENIED';}
+	}
+}
+
+sub _checkfields
+{
+	my $self=shift;
+	my $topic_id=shift;
+	my $result;
+	if($self->{rfields} eq 'ALLOWANCE')
+	{
+		$result->{ATTRIBUTE}=$self->{db}->DBCONN::rawget("select *,name as NAME,description as `DESC`, hint as HINT from doaboo_attributes where topic=\'$topic_id\' and  name not in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'FIELD\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+	}
+	else
+	{
+		$result->{ATTRIBUTE}=$self->{db}->DBCONN::rawget("select *,name as NAME,description as `DESC`, hint as HINT from doaboo_attributes where topic=\'$topic_id\' and  name in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'FIELD\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+	}
+}
+
+sub _checkfield
+{
+	my $self=shift;
+	my $topic_id=shift;
+	my $field_id=shift;
+	my $result;
+	if($self->{rfields} eq 'ALLOWANCE')
+	{
+		$result->{ATTRIBUTE}=$self->{db}->DBCONN::rawget("select *,name as NAME,description as `DESC`, hint as HINT from doaboo_attributes where topic=\'$topic_id\' and id=\'$field_id\' and name not in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'FIELD\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+		if ($result->[0]->{id} ne '') {return $result->[0];}
+		else { return 'DENIED';}
+	}
+	else
+	{
+		$result->{ATTRIBUTE}=$self->{db}->DBCONN::rawget("select *,name as NAME,description as `DESC`, hint as HINT from doaboo_attributes where topic=\'$topic_id\' and id=\'$field_id\' and name in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'FIELD\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+		if ($result->[0]->{id} ne '') {return $result->[0];}
+		else { return 'DENIED';}
+	}
+}
+
+sub _checkactions
+{
+	my $self=shift;
+	my $topic_id=shift;
+	my $result;
+	if($self->{ractions} eq 'ALLOWANCE')
+	{
+		$result->{METHOD}=$self->{db}->DBCONN::rawget("select *, name as NAME,description as `DESC`, hint as HINT from doaboo_actions where topic=\'$topic_id\' and name not in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'METHOD\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+	}
+	else
+	{
+		$result->{METHOD}=$self->{db}->DBCONN::rawget("select *, name as NAME,description as `DESC`, hint as HINT from doaboo_actions where topic=\'$topic_id\' and name in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'METHOD\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+	}
+}
+
+sub _checkaction
+{
+	my $self=shift;
+	my $topic_id=shift;
+	my $action_id=shift;
+	my $result;	
+	if($self->{ractions} eq 'ALLOWANCE')
+	{
+		$result->{METHOD}=$self->{db}->DBCONN::rawget("select *, name as NAME,description as `DESC`, hint as HINT from doaboo_actions where topic=\'$topic_id\' and id=\'$action_id\' name not in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'METHOD\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+		if ($result->[0]->{id} ne '') {return $result->[0];}
+		else { return 'DENIED';}
+	}
+	else
+	{
+		$result->{METHOD}=$self->{db}->DBCONN::rawget("select *, name as NAME,description as `DESC`, hint as HINT from doaboo_actions where topic=\'$topic_id\' and id=\'$action_id\' name in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'METHOD\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+		if ($result->[0]->{id} ne '') {return $result->[0];}
+		else { return 'DENIED';}
+	}
+}
+
 sub gettopics{
 # Returns the list of available Topics
 	my $self=shift;
 	my $result;
-	if($self->{factions} eq 'ALLOWANCE')
+	if($self->{rtopics} eq 'ALLOWANCE')
 	{
 		$result=$self->{db}->DBCONN::rawget("select *,name AS NAME,description as `DESC` from doaboo_topics where name not in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'OBJECT\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
 	}
@@ -39,6 +128,22 @@ sub gettopics{
 	}
 	return $result;
 }
+
+sub gettopic{
+# Returns the structure of a Topic
+	my $self=shift;
+	my $topic=shift;
+	my $result;
+
+	$result=$self->checktopic($topic);
+	if($result ne 'DENIED')
+	{
+		$result->{ATTRIBUTE}=$self->_checkfields($result->{id});
+		$result->{METHOD}=$self->_checkactions($result->{id});
+	}
+	return $result;
+}
+
 
 sub getviews{
 # Returns the list of available Views
@@ -119,163 +224,6 @@ sub getalarms{
 	return $result;
 }
 
-sub getrecords{
-# Returns the complete SQL to fill Table
-	my $self=shift;
-	my $topic=shift;
-	my $view=shift;
-	my $limit=shift;
-
-# Step 1: get fields and its types from View. No permissions, if the user can see the view also he can see its fields.
-# Description should be eq to desc at doaboo!
-	my $qq="select ADM_VIEW_FIELDS.NAME as `name`, ADM_VIEW_FIELDS.RANGE_TYPE as `range`, ADM_VIEW_FIELDS.RANGE as `expression`, ADM_VIEW_FIELDS.ORDER as `order`, ADM_VIEW_FIELDS.SHOW as `show`, doaboo_attributes.type as `type`, `relation`, `topic` from ADM_VIEW_FIELDS,ADM_VIEWS,doaboo_attributes where doaboo_attributes.type <> \'CALCULATED\' and ADM_VIEWS.OBJECT=\'$topic\' and ADM_VIEWS.NAME=\'$view\' and \(\(USER_VIEW=\'$self->{login}\' or GROUP_VIEW IN \(select ADM_GROUP from ADM_USERS where ADM_LOGIN=\'$self->{login}\'\)\) or \(USER_VIEW=\'\' and GROUP_VIEW=\'\'\)\) and ADM_VIEW_FIELDS.ADM_VIEW=concat\(\'[[\',ADM_VIEWS.OBJECT,\']][[\',ADM_VIEWS.NAME,\']]\'\) and doaboo_attributes.name=ADM_VIEW_FIELDS.NAME and doaboo_attributes.topic in \(select id from doaboo_topics where name=ADM_VIEWS.OBJECT\) order by ADM_VIEW_FIELDS.POSITION ASC";
-
-
-	my $fields=$self->{db}->DBCONN::rawget($qq);
-#print "########################\n";
-#print "$qq\n";
-#print "########################\n";
-
-	my @topics;
-	push(@topics,$topic);
-	my $select_topics='';#$topic;
-	my $select_fields='';
-	my $select_where='';
-	my $select_order='';
-
-# compose where adding more tables
-
-	foreach my $f(@$fields)
-	{
-		if ($f->{show} ne 'N')
-		{
-			my $field='';
-			my $tn=$topic;
-			if ($f->{type} eq 'RELATION')
-			{
-				# Get the keys to the where
-				my $topicname=$self->{db}->DBCONN::rawget("select name,id from doaboo_topics where id=\'$f->{relation}\' limit 1");
-				my $topickeys=$self->{db}->DBCONN::rawget("select name from doaboo_attributes where topic=\'$topicname->[0]->{id}\' and clave=\'Y\'");
-				foreach my $topickey(@$topickeys)
-				{
-					$select_where.="`$topicname->[0]->{name}`.`$topickey->{name}` = `$topic`.`$f->{name}` and ";
-					$select_order.="`$topicname->[0]->{name}`.`$topickey->{name}` $f->{order}, " if $f->{order} ne '';
-				}
-				# Get the fields from the related_table to compose the cap
-				my $topicaps=$self->{db}->DBCONN::rawget("select name from doaboo_attributes where topic=\'$topicname->[0]->{id}\' and key_caption=\'Y\'");
-				$tn=$topicname->[0]->{name};
-				my $alias=$f->{name};
-				foreach my $topicap(@$topicaps)
-				{
-					$field.="`$topicname->[0]->{name}`.`$topicap->{name}`,' - ', ";
-				}
-				$field=~s/\,\' \- \'\, \Z//;
-				$field="concat($field) as `$alias`";
-				push(@topics,$topicname->[0]->{name}) if (not grep(/^$topicname->[0]->{name}$/,@topics));
-				# rename f->{name} adding its topic to calc expressions to not being ambiguous
-				$f->{name}="$topicname->[0]->{name}`.`$topickeys->[0]->{name}"; # avoid expressions/code into relation fields pointing to multiple keys
-			}
-			else
-			{print "No rel\n";
-				$field="`$topic`.`$f->{name}` as `$f->{name}`";
-				$f->{name}="$tn`.`$f->{name}"; print "Adding $f->{name}\n";
-				$select_order.="`$f->{name}` $f->{order}, " if ($f->{order} ne '');
-			}
-
-			$select_fields.="$field, ";
-
-			if ($f->{range} eq 'EXPRESSION')
-			{
-				$select_where.=_calcexp($f->{name},$f->{expression});
-			}
-			if ($f->{range} eq 'CODE')
-			{
-				$select_where.=_calccode($self->{login},$f->{name},$f->{expression});
-			}
-#			if ($f->{order} ne '')
-#			{
-#				$select_order.="`$f->{name}` $f->{order}, ";
-#			}
-		}
-	}
-
-	foreach my $t(@topics)
-	{
-		$select_topics.="`$t`, ";
-	}
-	$select_topics=~s/\, \Z//;
-
-
-#print "SELECT FIELDS: $select_fields\n";
-# Step 3: improve fields with caption and relationships (?). Relationships should be automanage by foreign keys, but for the captions is a 'pseudo-calculated'... Maybe this is the last step.
-
-# Step 4: get restricions by instance, composing the where section of the query. The result of an eval restrictions.
-#$self->{group} instead of Customer
-
-	my $restrictions=$self->{db}->DBCONN::rawget("select ADM_RESTRICTION_DETAIL,ADM_RESTRICTION_CODE from ADM_RESTRICTIONS where ADM_RESTRICTION_OBJECTS=\'$topic\' and ADM_RESTRICTION_GROUP=\'Customer\' and ADM_RESTRICTION_ELEMENT=\'INSTANCE\'");
-	foreach my $r(@$restrictions)
-	{
-		# Add Fake PulsAGo
-		$r->{ADM_RESTRICTION_DETAIL}="$topic`.`$r->{ADM_RESTRICTION_DETAIL}";
-		$select_where.=_calccode($self->{login},$r->{ADM_RESTRICTION_DETAIL},$r->{ADM_RESTRICTION_CODE});
-	}
-	
-	$select_where=~s/(and \Z)//;
-	$select_fields=~s/\, \Z//;
-	$select_order=~s/\, \Z//;
-
-   $select_where='where '.$select_where if ($select_where ne '');
-
-	my $query="select SQL_CALC_FOUND_ROWS $select_fields from $select_topics $select_where";
-#then execute select FOUND_ROWS();
-
-	if ($select_order ne '')
-	{
-		$query.=" order by $select_order";
-	}
-	
-	if(defined $limit)
-	{
-		$query.=" limit $limit";
-	}
-	return $query;
-}
-
-
-#sub getallrecords{
-#	my $self=shift;
-#	my $topic=shift;
-#	my $result=$self->{db}->DBCONN::rawget("select * from $topic");
-#	return $result;
-#}
-
-sub getstored{
-# Returns the record_details
-# No implementa permisos por instancia porque entiendo que un usuario ve lo que puede
-# ver y por tanto no le daria a un instance_details de un registro que no ve...
-# Pero podría trucar la llamada pasando un ID distinto!!
-# Se soluciona agregando al where la seccion del where en base a los permisos.
-	my $self=shift;
-	my $topic=shift;
-	my $where=shift; # where key1='xx' and key2='yy'
-
-	my $fields;
-	if($self->{factions} eq 'ALLOWANCE')
-	{
-		$fields=$self->{db}->DBCONN::rawget("select name from doaboo_attributes where topic in \(select id from doaboo_topics where name=\'$topic\'\) and name not in \(select ADM_RESTRICTION_DETAIL from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=name and ADM_RESTRICTION_GROUP=\'$self->{group}\'\) and type<>\'CALCULATED\'",'SQL'); 
-	}
-	else
-	{
-		$fields=$self->{db}->DBCONN::rawget("select name from doaboo_attributes where topic in \(select id from doaboo_topics where name=\'$topic\'\) and name in \(select ADM_RESTRICTION_DETAIL from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=doaboo_attributes.name and ADM_RESTRICTION_GROUP=\'$self->{group}\'\) and type<>\'CALCULATED\'",'SQL'); 
-	}
-
-	my $query="select $fields from $topic where $where limit 1;";
-        #print "Query: $query\n";
-
-	my $result=$self->{db}->DBCONN::rawget($query);
-	return $result;
-}
-
 sub getreports{
 	my $self=shift;
 	my $topic=shift;
@@ -286,17 +234,31 @@ sub getreports{
 sub getactions{
 	my $self=shift;
 	my $topic=shift;
-	my $result='';
-	if($self->{ractions} eq 'ALLOWANCE')
+	my $result;
+
+	my $check=$self->_checktopic($topic);
+	if($check ne 'DENIED')
 	{
-		$result=$self->{db}->DBCONN::rawget("select `id`,`description`,`hint` from doaboo_actions where topic in \(select id from doaboo_topics where `NAME`=\'$topic\'\) and name not in \(select ADM_RESTRICTION_DETAIL from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT='METHOD' and ADM_RESTRICTION_OBJECTS='FILER' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
-	}
-	else
-	{
-		$result=$self->{db}->DBCONN::rawget("select `id`,`description`,`hint` from doaboo_actions where topic in \(select id from doaboo_topics where `NAME`=\'$topic\'\) and name in \(select ADM_RESTRICTION_DETAIL from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT='METHOD' and ADM_RESTRICTION_OBJECTS='FILER' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+		$result=$self->_checkactions($check->{id});
 	}
 	return $result;
 }
+
+sub getaction{
+	my $self=shift;
+	my $topic=shift;
+	my $action=shift;
+	my $result='DENIED';
+
+	my $check=$self->_checktopic($topic);
+#	if($check ne 'DENIED')
+#	{
+		$result=$self->_checkaction($check->{id},$action);
+		return $result;
+#	}
+#	return $result;
+}
+
 
 sub _calcexp{
 	my $field=shift;
