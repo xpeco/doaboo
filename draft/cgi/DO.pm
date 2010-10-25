@@ -31,11 +31,11 @@ sub gettopics{
 	my $result;
 	if($self->{factions} eq 'ALLOWANCE')
 	{
-		$result=$self->{db}->DBCONN::rawget("select * from doaboo_topics where name not in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'OBJECT\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+		$result=$self->{db}->DBCONN::rawget("select *,name AS NAME,description as `DESC` from doaboo_topics where name not in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'OBJECT\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
 	}
 	else
 	{
-		$result=$self->{db}->DBCONN::rawget("select * from doaboo_topics where name in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'OBJECT\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+		$result=$self->{db}->DBCONN::rawget("select *,name as NAME,description as `DESC` from doaboo_topics where name in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'OBJECT\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
 	}
 	return $result;
 }
@@ -89,6 +89,35 @@ sub getrelationsfrom{
 	return $result;
 }
 
+sub getscripts{
+# Returns the list of available Scripts
+	my $self=shift;
+	my $result;
+	if($self->{factions} eq 'ALLOWANCE')
+	{
+		$result=$self->{db}->DBCONN::rawget("select * from doaboo_scripts where name not in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'SCRIPT\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+	}
+	else
+	{
+		$result=$self->{db}->DBCONN::rawget("select * from doaboo_scripts where name in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'SCRIPT\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+	}
+	return $result;
+}
+
+sub getalarms{
+# Returns the list of available Alarms
+	my $self=shift;
+	my $result;
+	if($self->{factions} eq 'ALLOWANCE')
+	{
+		$result=$self->{db}->DBCONN::rawget("select * from doaboo_alarms where name not in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'ALARM\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+	}
+	else
+	{
+		$result=$self->{db}->DBCONN::rawget("select * from doaboo_alarms where name in \(select ADM_RESTRICTION_OBJECTS from ADM_RESTRICTIONS where ADM_RESTRICTION_ELEMENT=\'ALARM\' and ADM_RESTRICTION_GROUP=\'$self->{group}\'\)");
+	}
+	return $result;
+}
 
 sub getrecords{
 # Returns the complete SQL to fill Table
